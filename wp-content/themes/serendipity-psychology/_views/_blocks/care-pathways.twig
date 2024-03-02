@@ -1,0 +1,8 @@
+{% set care_pathways = options.care_pathways %}
+{% include "_components/buckets.twig" with {
+    id: 'carePathways',
+    fields: care_pathways,
+    buckets: carePathways,
+    bgColour: section.background_colour,
+    dontShowButton: 11
+} %}

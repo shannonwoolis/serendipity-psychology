@@ -1,0 +1,95 @@
+<header class="fixed left-0 top-0 w-full z-[999]">
+
+	<div class="blue-shadow bg-white relative z-10">
+		<div class="py-3 lg:py-0 relative container items-center justify-between flex">
+
+			<a aria-label="Go to homepage" class="block lg:inline-block" href="{{site.site_url}}">
+				<img class="mx-auto w-36 min-w-36 2xs:w-40 2xs:min-w-40 lg:w-36 lg:min-w-36 xl:w-44 xl:min-w-44 mr-4 xl:mr-8" src="{{options.site_logo.url}}" alt="{{site.title}} Logo"/>
+			</a>
+
+			<div class="hidden lg:flex flex-col w-full">
+				<div class="bg-secondary-pale relative rounded-bl-2xl pl-4 flex justify-between items-center">
+					<div class="w-screen absolute h-full top-0 left-full bg-secondary-pale"></div>
+					<nav id="menu-secondary" class="menu" aria-labelledby="secondary-navigation">
+						<span class="sr-only" id="secondary-navigation">Secondary Navigation</span>
+						<ul class="flex flex-wrap justify-start menu-secondary menu-secondary-js">
+							{% for item in secondaryMenu.items %}
+								<li class="{{item.class}}">
+									<a href="{{item.link}}" class="relative text-black text-xs 3xl:text-sm block px-2 py-3 hover:text-primary focus:text-primary">
+										{{item.name}}
+										{% if item.children %}{{ fn('icon','angles-down','text-primary text-4xs 3xl:text-3xs xl:ml-1') }}{% endif %}
+									</a>
+									{% if item.children %}
+										<ul class="sub-menu">
+											{% for child in item.children %}
+												<li class="{{child.class}}">
+													<a class="block px-4 py-2 text-black text-xs 3xl:text-sm hover:text-primary focus:text-primary" href="{{child.link}}">{{child.name}}</a>
+												</li>
+											{% endfor %}
+										</ul>
+									{% endif %}
+								</li>
+							{% endfor %}
+						</ul>
+					</nav>
+
+					{% include "_components/phone-top-right.twig" %}
+				</div>
+
+				<div class="flex items-center justify-between">
+
+					<nav id="menu-primary" class="menu" aria-labelledby="primary-navigation">
+						<span class="sr-only" id="primary-navigation">Primary Navigation</span>
+						<ul class="flex flex-wrap justify-start menu-primary">
+							{% for item in primaryMenu.items %}
+								<li class="{{item.class}}">
+									<a href="{{item.link}}" class="relative block px-3 py-6 text-black hover:text-primary focus:text-primary">
+										{{item.name}}
+										{% if item.children %}{{ fn('icon','angles-down','text-primary text-xs ml-1') }}{% endif %}
+									</a>
+									{% if item.children %}
+										<ul class="sub-menu">
+											{% for child in item.children %}
+												<li class="{{child.class}}">
+													<a href="{{child.link}}" class="block text-xs px-4 py-2 text-black hover:text-primary focus:text-primary">{{child.name}}</a>
+												</li>
+											{% endfor %}
+										</ul>
+									{% endif %}
+								</li>
+							{% endfor %}
+						</ul>
+					</nav>
+
+					{% include "_atoms/button.twig" with {
+						link: '/contact-us/',
+						text: 'Get Started',
+						colour: 'primary',
+						classes: '',
+					} %}
+
+				</div>
+			</div>
+
+			<div class="flex items-center lg:hidden">
+				<div class="hidden sm:block mr-6">
+					{% include "_components/phone-top-right.twig" %}
+				</div>
+				<button title="Toggle Mobile Menu" class="flex flex-col items-center justify-center font-medium text-black pb-2 pt-3 px-3 text-center bg-secondary-light rounded-tr-2xl" data-mobile-menu-toggle>
+					{{ function('icon', 'bars', 'text-primary') }}
+					<span class="">Menu</span>
+				</button>
+			</div>
+
+		</div>
+	</div>
+
+	<div class="container relative z-0">
+		<div class="transform scale-[0.8] xs:scale-95 sm:scale-100 origin-top-right blue-shadow absolute top-full right-4 sm:right-6 md:right-8 lg:right-6 xl:right-10 bg-white rounded-br-2xl px-6 py-3">
+			{% filter shortcodes %}
+				[trustindex no-registration=google]
+			{% endfilter %}
+		</div>
+	</div>
+
+</header>

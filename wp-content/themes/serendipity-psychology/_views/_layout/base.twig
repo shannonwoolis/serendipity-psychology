@@ -1,0 +1,26 @@
+{% include "_layout/head.twig" %}
+
+{% block header %}
+	{% include "_components/header.twig" %}
+{% endblock %}
+
+<div class="pt-[83.9px] lg:pt-[117.5px]">
+
+	{% block hero %}
+		{% include "_components/hero.twig" %}
+	{% endblock %}
+
+	{% block content %}
+	{% endblock %}
+
+	{% block form %}
+		{% include "_components/get-started.twig" %}
+	{% endblock %}
+
+	{% block footer %}
+		{% include "_components/footer.twig" %}
+	{% endblock %}
+
+</div>
+
+{% include "_layout/foot.twig" %}

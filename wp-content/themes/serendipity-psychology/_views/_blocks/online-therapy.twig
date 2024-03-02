@@ -1,0 +1,53 @@
+{% set online = options.online %}
+<div id="onlineTherapy" class="{{ spacingY }}">
+    <div class="container">
+        <div class="flex flex-wrap relative {{ spacingT }}">
+            {% include "_atoms/picture.twig" with {
+                source: online.image.url,
+                pictureClasses: 'w-full h-full absolute top-0 left-0 z-0',
+                lazyload: false,
+                breakpoints: {
+                    "1024px" : {
+                        w: 1280,
+                        h: null,
+                        crop: 'right'
+                    },
+                    "768px" : {
+                        w: 1024,
+                        h: null,
+                        crop: 'right'
+                    },
+                    "1px" : {
+                        w: 640,
+                        h: null,
+                        crop: 'right'
+                    },
+                },
+                img: {
+                    classes: 'w-full h-full object-cover object-right',
+                    w: 640,
+                    h: null,
+                    crop: 'right',
+                }
+            } %}
+
+            <div class="w-[95%] xs:w-[90%] md:w-2/3 lg:w-1/2 3xl:w-2/5 flex flex-col items-start relative z-10 bg-white bg-opacity-80 xs:bg-opacity-70 rounded-tr-4xl lg:rounded-tr-5xl {{ spacingY }} px-4 2xs:px-6 md:px-8 lg:px-16 2xl:px-20">
+                {% if online.pre_title %}<span class="mb-2 font-subheading pre-title text-primary">{{ online.pre_title }}</span>{% endif %}
+				{% if online.title %}<span class="font-heading text-3xl sm:text-4xl xl:text-5xl 4xl:text-6xl leading-tight">{{ online.title }}</span>{% endif %}
+				{% if online.copy %}<div class="mt-6 copy">{{ online.copy }}</div>{% endif %}
+				{% if online.buttons %}
+					<div class="flex flex-wrap items-center md:mt-2">
+						{% for button in online.buttons %}
+							{% include "_atoms/button.twig" with {
+								link: button.button.url,
+								text: button.button.title,
+								colour: button.colour,
+								classes: 'mt-2 mr-2',
+							} %}
+						{% endfor %}
+					</div>
+				{% endif %}
+            </div>
+        </div>
+    </div>
+</div>

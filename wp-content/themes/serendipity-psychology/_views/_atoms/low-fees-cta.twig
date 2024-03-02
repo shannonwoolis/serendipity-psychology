@@ -1,0 +1,6 @@
+{% set cta = options.low_fees_cta %}
+<a href="{{ cta.link.url }}" class="mt-auto p-6 bg-{{ backgroundColour ? backgroundColour : 'secondary-pale' }} flex flex-col relative transform transition-all hover:scale-103">
+    {% if cta.pre_title %}<span class="mb-2 font-subheading text-2xl md:text-3xl text-primary">{{ cta.pre_title }}</span>{% endif %}
+    {% if cta.title %}<span class="font-heading text-2xl md:text-3xl leading-tight">{{ cta.title }}</span>{% endif %}
+    <span class="absolute bottom-0 right-0 w-12 h-12 flex justify-center items-center bg-primary rounded-tl-xl text-white">{{ fn('icon','angles-right','w-6 h-6') }}</span>
+</a>

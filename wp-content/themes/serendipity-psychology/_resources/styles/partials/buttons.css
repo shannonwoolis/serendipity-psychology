@@ -1,0 +1,35 @@
+/* ---------------------------------------------------
+Buttons
+--------------------------------------------------- */
+
+.btn {
+    @apply inline-flex items-center px-5 py-3 rounded-tl-2xl transition duration-300 font-medium text-sm leading-tight;
+
+    .icon {
+        @apply text-3xs ml-2 min-w-4;
+    }
+}
+
+.btn-primary {
+    @apply text-white bg-primary hover:bg-primary-dark;
+
+    .icon {
+        @apply text-secondary;
+    }
+}
+
+.btn-secondary {
+    @apply text-black bg-secondary hover:bg-secondary-dark;
+
+    .icon {
+        @apply text-primary;
+    }
+}
+
+.btn-grey {
+    @apply text-black bg-grey hover:bg-grey-dark;
+
+    .icon {
+        @apply text-primary;
+    }
+}

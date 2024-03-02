@@ -1,0 +1,8 @@
+{% set conditions_fields = options.conditions_fields %}
+{% include "_components/buckets.twig" with {
+    id: 'conditions',
+    fields: conditions_fields,
+    buckets: conditions,
+    bgColour: section.background_colour,
+    dontShowButton: 13
+} %}

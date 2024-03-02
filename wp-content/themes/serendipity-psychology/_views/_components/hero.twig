@@ -1,0 +1,56 @@
+{% set hero = post.meta('hero') %}
+
+<div class="w-full hero bg-grey">
+	<div class="max-w-screen-4xl mx-auto flex flex-wrap relative">
+		<div class="w-full lg:w-1/2">
+			{% include "_atoms/hero-image.twig" with { classes: 'lg:hidden' } %}
+
+			<div class="flex flex-col {{ spacingY }} {{ spacingX }}">
+				{% if hero.pre_title %}<span class="mb-2 font-subheading pre-title text-primary">{{ hero.pre_title }}</span>{% endif %}
+				{% if hero.title %}<span class="font-heading leading-tight {{ fn('is_front_page') ? 'text-5xl sm:text-6xl lg:text-7xl xl:text-8xl' : 'text-4xl sm:text-5xl lg:text-6xl xl:text-7xl' }}">{{ hero.title }}</span>{% endif %}
+				{% if hero.copy %}<span class="copy -mb-6 mt-4">{{ hero.copy }}</span>{% endif %}
+				{% if hero.buttons %}
+					<div class="flex flex-wrap items-center mt-4 md:mt-8">
+						{% for button in hero.buttons %}
+							{% include "_atoms/button.twig" with {
+								link: button.button.url,
+								text: button.button.title,
+								colour: button.colour,
+								classes: 'mt-2 mr-2',
+							} %}
+						{% endfor %}
+					</div>
+				{% endif %}
+			</div>
+
+			{% if hero.usps %}
+				<div class="bg-primary rounded-tr-4xl lg:rounded-tr-5xl">
+					<div class="{{ spacingY }} {{ spacingX }}">
+						<div class="flex flex-wrap -m-4 lg:pr-16">
+							{% for item in hero.usps %}
+								<div class="w-full sm:w-1/2 flex flex-col p-4">
+									<img src="{{ item.icon.url|resize(100) }}" class="w-12 h-12 object-contain mb-3">
+									<span class="text-lg text-secondary leading-tight font-heading pr-2">{{ item.text }}</span>
+								</div>
+							{% endfor %}
+						</div>
+					</div>
+				</div>
+			{% endif %}
+		</div>
+		<div class="top-0 right-0 w-full lg:w-1/2 relative {{ hero.usps or hero.show_insurance_providers ? 'lg:pb-32' }}">
+			{% include "_atoms/hero-image.twig" with { classes: 'hidden lg:block' } %}
+
+			{% if hero.show_insurance_providers %}
+				<div class="py-8 lg:py-0 lg:absolute lg:left-0 lg:bottom-6 w-full flex flex-wrap xl:flex-nowrap justify-between items-center {{ spacingX }}">
+					<span class="font-heading text-primary leading-tight mb-2 xl:mb-0">
+						Insurance <br class="hidden xl:block">Providers
+					</span>
+					<div class="-mx-2 xl:ml-8 xl:mr-0 w-full flex flex-wrap xs:justify-between items-center md:flex-nowrap">
+						{% include "_atoms/logos.twig" %}
+					</div>
+				</div>
+			{% endif %}
+		</div>
+	</div>
+</div>

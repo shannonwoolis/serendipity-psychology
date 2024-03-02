@@ -1,0 +1,75 @@
+/* ---------------------------------------------------
+Core
+--------------------------------------------------- */
+
+body,
+html {
+  min-height: 101%;
+  scroll-behavior: smooth;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  @apply font-sans text-base antialiased leading-relaxed text-black;
+}
+
+/* Uses IntersectionObserver to identify when the viewport has scrolled, and then show back to top */
+
+/* #pixel-to-watch {
+  @apply absolute left-0;
+  width: 1px;
+  height: 1px;
+  top: 300px;
+} */
+
+.container {
+  @apply w-full px-4 2xs:px-6 md:px-8 lg:px-6 xl:px-10 mx-auto;
+  max-width: calc(theme("screens.4xl") + theme("spacing.8"));
+}
+
+a {
+  @apply transition duration-300;
+}
+
+/***********************************************************
+Lazyload **************************************************/
+
+.lazyload,
+.lazyloading {
+  @apply opacity-0;
+}
+
+.lazyloaded {
+  @apply transition duration-300 transform opacity-100;
+}
+
+/***********************************************************
+SVG Icons **************************************************/
+
+.icon {
+  @apply inline-block;
+  width: 1em;
+  height: 1em;
+  stroke-width: 0;
+  stroke: currentColor;
+  fill: currentColor;
+}
+
+/***********************************************************
+Trustindex **************************************************/
+.ti-widget.ti-goog .ti-header {
+  @apply !p-0;
+}
+
+/***********************************************************
+Shadows **************************************************/
+.blue-shadow {
+  box-shadow: 0 20px 30px rgba(0,43,89,0.07);
+}
+
+/***********************************************************
+Testimonials **************************************************/
+.more {
+  display: none;
+}

@@ -1,0 +1,13 @@
+<div class="py-2 flex flex-wrap items-end 2xl:items-center flex-col 2xl:flex-row text-xs 3xl:text-sm">
+    <span class="mb-0.5 2xl:mb-0 2xl:mr-4 flex items-center">
+        {{ fn('icon','email','text-primary mr-1') }}
+        Email: 
+        <a href="mailto:{{ options.site_email }}" class="ml-1 text-primary hover:underline font-bold">{{ options.site_email }}</a>
+    </span>
+
+    <span class="flex items-center">
+        {{ fn('icon','phone','text-primary mr-1') }}
+        Phone: 
+        <a href="tel:{{ options.default_phone_number }}" class="ml-1 text-primary hover:underline font-bold">{{ options.default_phone_number }}</a>
+    </span>
+</div>

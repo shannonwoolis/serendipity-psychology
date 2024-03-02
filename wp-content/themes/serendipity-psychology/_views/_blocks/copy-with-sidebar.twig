@@ -1,0 +1,54 @@
+<div class="max-w-screen-4xl mx-auto lg:px-6 xl:px-10">
+    {% for row in post.meta('copy') %}
+        {% set odd = loop.index is odd %}
+        <div class="flex flex-wrap {{ odd ? 'lg:flex-row-reverse' : 'lg:flex-row' }}">
+            <div class="relative w-full lg:w-[45%] overflow-hidden {{ odd ? 'rounded-bl-4xl lg:rounded-bl-5xl lg:-mr-6 xl:-mr-10 lg:ml-6 xl:ml-10' : 'rounded-tr-4xl lg:rounded-tr-5xl lg:-ml-6 xl:-ml-10 lg:mr-6 xl:mr-10' }}">
+                {% include "_atoms/picture.twig" with {
+                    source: row.image.url,
+                    pictureClasses: 'w-full lg:h-full lg:absolute lg:top-0 lg:left-0',
+                    lazyload: false,
+                    breakpoints: {
+                        "1024px" : {
+                            w: 1280,
+                            h: null,
+                            crop: 'center'
+                        },
+                        "768px" : {
+                            w: 1024,
+                            h: 400,
+                            crop: 'center'
+                        },
+                        "1px" : {
+                            w: 640,
+                            h: 350,
+                            crop: 'center'
+                        },
+                    },
+                    img: {
+                        classes: 'w-full h-full object-cover object-center',
+                        w: 640,
+                        h: 350,
+                        crop: 'center',
+                    }
+                } %}
+            </div>
+
+            <div class="w-full lg:w-[55%] px-4 2xs:px-6 md:px-8 {{ spacingY }} {{ odd ? 'lg:pr-8 lg:pl-0' : 'lg:pl-8 lg:pr-0' }}">
+                <div class="copy">
+                    {% if row.h1 %}<h1>{{ row.h1 }}</h1>{% endif %}
+                    {{ row.copy }}
+                </div>
+                <div class="flex flex-wrap mt-4">
+                    {% for button in row.buttons %}
+                        {% include "_atoms/button.twig" with {
+                            link: button.button.url,
+                            text: button.button.title,
+                            colour: button.colour,
+                            classes: 'mt-2 mr-2',
+                        } %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>

@@ -1,0 +1,8 @@
+{% set specialist_therapies = options.specialist_therapies %}
+{% include "_components/buckets.twig" with {
+    id: 'specialistTherapies',
+    fields: specialist_therapies,
+    buckets: specialistTherapies,
+    bgColour: section.background_colour,
+    dontShowButton: 9
+} %}
