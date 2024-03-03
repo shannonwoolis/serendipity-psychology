@@ -1,0 +1,26 @@
+<div class="{{ spacingY }} bg-{{ section.background_colour ? section.background_colour : 'white' }}">
+    <div class="container">
+        {% if section.title or section.pre_copy %}
+            <div class="copy">
+                {% if section.title %}<h2>{{ section.title }}</h2>{% endif %}
+                {% if section.pre_copy %}{{ section.pre_copy }}{% endif %}
+            </div>
+        {% endif %}
+
+        <div class="flex flex-wrap -m-4">
+            {% for item in section.block %}
+                <div class="w-full sm:w-1/2 md:w-1/3 p-4">
+                    <div class="bg-primary text-white p-6 rounded-tr-3xl flex flex-col h-full">
+                        {% if item.icon %}<img src="" data-src="{{ item.icon|resize(200) }}" class="lazyload w-16 h-16 mb-4 object-center object-contain">{% endif %}
+                        {% if item.title %}<span class="text-lg sm:text-xl lg:text-2xl font-heading text-secondary leading-tight">{{ item.title }}</span>{% endif %}
+                        {% if item.copy %}
+                            <div class="mt-4 text-sm copy">
+                                {{ item.copy }}
+                            </div>
+                        {% endif %}
+                    </div> 
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

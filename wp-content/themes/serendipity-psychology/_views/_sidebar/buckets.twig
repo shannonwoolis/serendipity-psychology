@@ -1,0 +1,7 @@
+<div class="flex flex-wrap -m-4">
+    {% for post in side.buckets %}
+        <div class="w-full md:w-1/2 p-4">
+            {% include "_atoms/bucket.twig" %}
+        </div>
+    {% endfor %}
+</div>
