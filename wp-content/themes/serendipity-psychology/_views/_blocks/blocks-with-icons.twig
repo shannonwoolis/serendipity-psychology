@@ -12,7 +12,13 @@
                 <div class="w-full sm:w-1/2 md:w-1/3 p-4">
                     <div class="bg-primary text-white p-6 rounded-tr-3xl flex flex-col h-full">
                         {% if item.icon %}<img src="" data-src="{{ item.icon|resize(200) }}" class="lazyload w-16 h-16 mb-4 object-center object-contain">{% endif %}
-                        {% if item.title %}<span class="text-lg sm:text-xl lg:text-2xl font-heading text-secondary leading-tight">{{ item.title }}</span>{% endif %}
+                        {% if item.title %}
+                            {% if item.link %}
+                                <a href="{{ item.link }}" class="text-lg sm:text-xl lg:text-2xl font-heading text-secondary leading-tight underline hover:text-white">{{ item.title }}</a>
+                            {% else %}
+                                <span class="text-lg sm:text-xl lg:text-2xl font-heading text-secondary leading-tight">{{ item.title }}</span>
+                            {% endif %}
+                        {% endif %}
                         {% if item.copy %}
                             <div class="mt-4 text-sm copy">
                                 {{ item.copy }}
@@ -22,5 +28,11 @@
                 </div>
             {% endfor %}
         </div>
+
+        {% if section.after_copy %}
+            <div class="copy mt-8">
+                {% if section.after_copy %}{{ section.after_copy }}{% endif %}
+            </div>
+        {% endif %}
     </div>
 </div>
