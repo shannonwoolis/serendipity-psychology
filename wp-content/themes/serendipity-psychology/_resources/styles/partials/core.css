@@ -73,3 +73,33 @@ Testimonials **************************************************/
 .more {
   display: none;
 }
+
+/***********************************************************
+Iframes **************************************************/
+.map-embed {
+  iframe {
+    @apply !w-full h-60;
+  }
+}
+
+/***********************************************************
+Tables **************************************************/
+.when-table {
+  @apply w-full table-fixed;
+  
+  td, th {
+    @apply leading-none text-sm border-4 sm:border-8 border-white text-center py-2 align-middle;
+  }
+
+  td:first-of-type {
+    @apply font-medium text-left border-none;
+  }
+
+  th {
+    @apply font-medium py-1 border-none;
+  }
+
+  .icon {
+    @apply sm:text-base;
+  }
+}

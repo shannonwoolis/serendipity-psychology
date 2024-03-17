@@ -3,7 +3,7 @@
 <div class="w-full hero bg-grey">
 	<div class="max-w-screen-4xl mx-auto flex flex-wrap relative">
 		<div class="w-full lg:w-1/2">
-			{% include "_atoms/hero-image.twig" with { classes: 'lg:hidden' } %}
+			{% include "_atoms/hero-image.twig" with { classes: 'lg:hidden lg:h-full' } %}
 
 			<div class="flex flex-col {{ spacingY }} {{ spacingX }}">
 				{% if hero.pre_title %}<span class="mb-2 font-subheading pre-title text-primary">{{ hero.pre_title }}</span>{% endif %}
@@ -39,7 +39,7 @@
 			{% endif %}
 		</div>
 		<div class="top-0 right-0 w-full lg:w-1/2 relative {{ hero.usps or hero.show_insurance_providers ? 'lg:pb-32' }}">
-			{% include "_atoms/hero-image.twig" with { classes: 'hidden lg:block' } %}
+			{% include "_atoms/hero-image.twig" with { classes: 'hidden lg:block lg:h-full' } %}
 
 			{% if hero.show_insurance_providers %}
 				<div class="py-8 lg:py-0 lg:absolute lg:left-0 lg:bottom-6 w-full flex flex-wrap xl:flex-nowrap justify-between items-center {{ spacingX }}">

@@ -1,0 +1,68 @@
+{% if type == 'small' %}
+    <div class="{{ classes }}">
+        <div class="flex flex-col cursor-pointer group {{ classes }}" tabindex="0">
+            <span class="sr-only">Open video</span>
+
+            <div class="flex flex-col xs:flex-row group-hover:scale-103 transform transition-all video-popup-trigger">
+                <span class="items-center p-6 justify-center min-w-24 sm:min-w-32 rounded-tl-2xl bg-secondary-dark text-white flex">{{ fn('icon','play','w-7 h-7') }}</span>
+                <div class="bg-white p-6 w-full">
+                    <span class="text-primary-light leading-tight mb-1 font-heading text-xl block">{{ video.title }}</span>
+                    <span class="text-blackblock">{{ video.sub_title }}</span>
+                </div>
+            </div>
+
+            <div class="video-popup">
+				<span class="loader"></span>
+				<div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;">
+					<div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;">
+						{{ video.embed_code }}
+					</div>
+				</div>
+			</div>
+			<div class="modal-underlay" tabindex="0">
+				<span class="sr-only">Close video</span>
+			</div>
+        </div>
+    </div>
+{% else %}
+    <div class="{{ classes }}">
+        <div class="flex flex-col cursor-pointer group {{ classes }}" tabindex="0">
+            <div class="relative video-popup-trigger bg-primary rounded-tl-3xl">
+                <span class="sr-only">Open video</span>
+                {% include "_atoms/picture.twig" with {
+                    source: video.placeholder.url,
+                    pictureClasses: "w-full rounded-tl-3xl " ~ pictureClasses,
+                    lazyload: true,
+                    breakpoints: {
+                        "1px" : {
+                            w: 800,
+                            h: 500,
+                            crop: 'center'
+                        }
+                    },
+                    img: {
+                        classes: "lazyload rounded-tl-3xl w-full h-full object-cover object-center opacity-50",
+                        alt: "Video placeholder",
+                    },
+                } %}
+                <span class="absolute items-center justify-center w-32 h-20 text-secondary bg-white rounded-tl-2xl transition transform -translate-x-1/2 -translate-y-1/2 pointer-events-none group-hover:scale-110 top-1/2 left-1/2 flex">{{ fn('icon','play','w-7 h-7') }}</span>
+            </div>
+
+            <div class="video-popup">
+				<span class="loader"></span>
+				<div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;">
+					<div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;">
+						{{ video.embed_code }}
+					</div>
+				</div>
+			</div>
+			<div class="modal-underlay" tabindex="0">
+				<span class="sr-only">Close video</span>
+			</div>
+        </div>
+		<div class="mt-6 w-full">
+            <span class="text-primary-light leading-tight mb-1 font-heading text-xl block">{{ video.title }}</span>
+            <span class="text-blackblock">{{ video.sub_title }}</span>
+        </div>
+    </div>
+{% endif %}

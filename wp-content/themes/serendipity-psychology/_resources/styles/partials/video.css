@@ -1,0 +1,71 @@
+/*---------------------------------------------------------------
+    Video Popup
+--------------------------------------------------------------- */
+ 
+.video-popup {
+    display: block !important; 
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    width: 90%;
+    max-width: 600px;
+    z-index: 9999;
+    visibility: hidden;
+    opacity: 0;
+    transition: .3s;
+    text-align: center;
+ 
+    &.active {
+        opacity: 1;
+        visibility: visible;
+    }
+ 
+    .loader {
+        display: inline-block;
+        width: 10px;
+        height: 60px;
+        border-top: 3px solid #fff;
+        border-bottom: 3px solid #fff;
+        animation: loader .8s linear infinite;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-left: -5px;
+        margin-top: -30px;
+        z-index: 10;
+    }
+ 
+    .wistia_responsive_padding {
+        z-index: 20;
+    }
+
+    iframe {
+        @apply mx-auto;
+    }
+}
+ 
+@keyframes loader {
+    to {
+        transform: rotate(360deg);
+    }
+}
+ 
+.modal-underlay {
+    @apply w-full h-full left-0 top-0 fixed bg-primary bg-opacity-50 rounded-sm;
+    z-index: 9998;
+    visibility: hidden;
+    opacity: 0;
+    transition: .3s;
+    display: block !important;
+ 
+    &:hover {
+        @apply bg-primary bg-opacity-70;
+    }
+ 
+    &.active {
+        opacity: 1;
+        visibility: visible;
+    }
+}

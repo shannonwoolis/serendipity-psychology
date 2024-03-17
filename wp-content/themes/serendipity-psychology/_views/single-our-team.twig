@@ -1,0 +1,208 @@
+{% extends '_layout/base.twig' %}
+
+{% set nameArray = post.title|split(" ") %}
+{% if nameArray|first == 'Dr.' or nameArray|first == 'Dr' %}
+	{% set firstName = nameArray[1] %}
+{% else %}
+	{% set firstName = nameArray|first %}
+{% endif %}
+
+{% block hero %}
+	{% set hero = post.meta('hero') %}
+
+	<div class="w-full hero bg-grey">
+		<div class="max-w-screen-4xl mx-auto flex flex-wrap relative">
+			<div class="w-full lg:w-3/5 lg:pr-8">
+				{% include "_atoms/hero-image.twig" with { classes: 'lg:hidden' } %}
+
+				<div class="flex flex-col {{ spacingY }} {{ spacingX }}">
+					{% if hero.pre_title %}
+						<span class="mb-2 font-subheading pre-title text-primary">{{ hero.pre_title }}</span>
+					{% endif %}
+					{% if hero.title %}
+						<span class="font-heading leading-tight {{ fn('is_front_page') ? 'text-4xl xs:text-5xl xl:text-6xl 3xl:text-7xl' : 'text-3xl sm:text-4xl lg:text-5xl xl:text-6xl' }}">{{ hero.title }}</span>
+					{% endif %}
+					{% if hero.copy %}
+						<span class="copy -mb-6 mt-4">{{ hero.copy }}</span>
+					{% endif %}
+					{% if hero.buttons %}
+						<div class="flex flex-wrap items-center mt-4 md:mt-8">
+							{% for button in hero.buttons %}
+								{% include "_atoms/button.twig" with {
+                                    link: button.button.url,
+                                    text: button.button.title,
+                                    colour: button.colour,
+                                    classes: 'mt-2 mr-2',
+                                } %}
+							{% endfor %}
+						</div>
+					{% endif %}
+				</div>
+			</div>
+			<div class="top-0 right-0 w-full lg:w-2/5">
+				{% include "_atoms/hero-image.twig" with { classes: 'hidden lg:block lg:h-[600px]' } %}
+
+				{% if post.meta('videos') or post.meta('testimonial') %}
+					<div class="px-4 2xs:px-6 md:px-8 lg:pl-0 lg:pr-6 xl:pr-10 {{ spacingB }}">
+						{% if post.meta('videos') %}
+							<div class="mt-10">
+								{% for video in post.meta('videos') %}
+									{% if loop.first %}
+										{% include "_atoms/video.twig" with {
+                                            type: 'small'
+                                        } %}
+									{% endif %}
+								{% endfor %}
+							</div>
+						{% endif %}
+
+						{% if post.meta('testimonial') %}
+							<div class="mt-10">
+								<div class="relative -m-4">
+									<div class="flex flex-wrap">
+										{% for testimonial in post.meta('testimonial') %}
+											<div class="w-full p-4">
+												{% include "_atoms/testimonial-card.twig" %}
+											</div>
+										{% endfor %}
+									</div>
+								</div>
+							</div>
+						{% endif %}
+					</div>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block content %}
+	{% set where = post.meta('where') %}
+	{% set when = post.meta('when') %}
+	{% if where.show or when.show %}
+		<div class="{{ spacingY }} bg-white">
+			<div class="container">
+				<div class="flex flex-wrap">
+					{% if where.show %}
+						<div class="w-full lg:w-1/2 {{ when.show ? 'lg:pr-8' }}">
+							<h2 class="text-primary">{{ where.title ? where.title : 'Where ' ~ firstName ~ ' Works' }}</h2>
+							{% if where.copy %}
+								<div class="copy">{{ where.copy }}</div>
+							{% endif %}
+							<div class="mt-4 map-embed">
+								{{ where.map_embed_code }}
+							</div>
+						</div>
+					{% endif %}
+					{% if when.show %}
+						<div class="w-full mt-10 lg:mt-0 lg:w-1/2 {{ where.show ? 'lg:pl-8' }}">
+							<h2 class="text-primary">{{ when.title ? when.title : 'When ' ~ firstName ~ ' Works' }}</h2>
+							{% if when.copy %}
+								<div class="copy">{{ when.copy }}</div>
+							{% endif %}
+							<div class="mt-4 flex">
+								{% set daysArray = [when.monday,when.tuesday,when.wednesday,when.thursday,when.friday,when.saturday,when.sunday] %}
+
+                                <table class="when-table">
+									<thead>
+										<tr>
+											<th></th>
+											<th>Mon</th>
+											<th>Tues</th>
+											<th>Weds</th>
+											<th>Thurs</th>
+											<th>Fri</th>
+											<th>Sat</th>
+											<th>Sun</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>Morn<span class="hidden sm:inline">ing</span></td>
+											{% for day in daysArray %}
+                                                {% if day.morning %}
+                                                    <td class="bg-secondary-dark text-white">
+                                                        {{ fn('icon','check-double') }}
+                                                    </td>
+                                                {% else %}
+                                                    <td class="bg-grey"></td>
+                                                {% endif %}
+                                            {% endfor %}
+										</tr>
+										<tr>
+											<td>After<span class="block sm:inline">noon</span></td>
+											{% for day in daysArray %}
+                                                {% if day.afternoon %}
+                                                    <td class="bg-secondary-dark text-white">
+                                                        {{ fn('icon','check-double') }}
+                                                    </td>
+                                                {% else %}
+                                                    <td class="bg-grey"></td>
+                                                {% endif %}
+                                            {% endfor %}
+										</tr>
+										<tr>
+											<td>Eve<span class="hidden sm:inline">ning</span></td>
+											{% for day in daysArray %}
+                                                {% if day.evening %}
+                                                    <td class="bg-secondary-dark text-white">
+                                                        {{ fn('icon','check-double') }}
+                                                    </td>
+                                                {% else %}
+                                                    <td class="bg-grey"></td>
+                                                {% endif %}
+                                            {% endfor %}
+										</tr>
+										<tr>
+											<td>Night</td>
+											{% for day in daysArray %}
+                                                {% if day.night %}
+                                                    <td class="bg-secondary-dark text-white">
+                                                        {{ fn('icon','check-double') }}
+                                                    </td>
+                                                {% else %}
+                                                    <td class="bg-grey"></td>
+                                                {% endif %}
+                                            {% endfor %}
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					{% endif %}
+				</div>
+
+                <div class="flex flex-wrap {{ where.show or when.show ? spacingT }}">
+                    {% if post.meta('videos') %}
+                        <div class="w-full max-w-screen-sm lg:w-1/3 lg:pr-16">
+                            {% for video in post.meta('videos') %}
+                                {% if loop.first %}
+                                    {% include "_atoms/video.twig" %}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="w-full mt-10 lg:mt-0 lg:w-2/3">
+                        {% set qualsTitles = ['Qualifications','Professional Registrations & Memberships','Core Therapeutic Modalities','Specialisms'] %}
+                        {% set qualsEtc = [post.meta('qualifications'),post.meta('professional_registrations_memberships'),post.meta('core_therapeutic_modalities'),post.meta('specialisms')] %}
+                        <div class="flex flex-wrap -m-4">
+                            {% for qual in qualsEtc %}
+                                {% if qual %}
+                                    <div class="p-4 w-full md:w-1/2">
+                                        <h3 class="text-primary">{{ qualsTitles[loop.index - 1] }}</h3>
+                                        <div class="copy qual-copy">
+                                            {{ qual }}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+			</div>
+		</div>
+	{% endif %}
+
+	{% include "_blocks/process.twig" %}
+{% endblock %}

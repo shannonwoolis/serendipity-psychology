@@ -12,7 +12,7 @@ $context['categories'] = get_categories( array(
 if(is_singular( array('care-pathways', 'specialist-therapies', 'conditions') )) {
   Timber::render( [ 'page.twig' ], $context );
 } else {
-  Timber::render( [ 'single.twig' ], $context );
+  Timber::render( [ 'single-' . $timber_post->post_type . '.twig', 'single.twig' ], $context );
 }
 
 if (is_single()) { ?>

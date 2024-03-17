@@ -81,6 +81,8 @@
       $context['spacingT'] = 'pt-12 lg:pt-16 2xl:pt-20';
       $context['spacingB'] = 'pb-12 lg:pb-16 2xl:pb-20';
       $context['spacingX'] = 'px-4 2xs:px-6 md:px-8 lg:px-6 xl:px-10';
+      $context['spacingR'] = 'pr-4 2xs:pr-6 md:pr-8 lg:pr-6 xl:pr-10';
+      $context['spacingL'] = 'pl-4 2xs:pl-6 md:pl-8 lg:pl-6 xl:pl-10';
 
       return $context;
     }
