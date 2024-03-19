@@ -1,0 +1,17 @@
+{% if posts.pagination.pages %}
+    <div class="tool-pagination mt-6 w-full p-4 flex flex-wrap justify-between items-center">
+        <a href="{{posts.pagination.prev.link}}#posts" class="btn btn-grey disabled cursor-pointer hover:text-secondary-dark {{ posts.pagination.prev ? '' : 'disabled'}}">{{ fn('icon','angles-left', 'sm:mr-2') }} Prev</a>
+        <ul class="pages flex flex-wrap justify-center">
+            {% for page in posts.pagination.pages %}
+                <li class="mx-1">
+                    {% if page.link %}
+                        <a href="{{page.link}}#posts" class="{{page.class}} cursor-pointer hover:text-secondary-dark" aria-label="Page {{page.title}}">{{page.title}}</a>
+                    {% else %}
+                        <span class="{{page.class}} text-secondary-dark">{{page.title}}</span>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+        <a href="{{posts.pagination.next.link}}#posts" class="btn btn-grey rounded-none rounded-tl-3xl cursor-pointer hover:text-secondary-dark {{ posts.pagination.next ? '' : 'disabled'}}">Next {{ fn('icon','angles-right', 'sm:ml-2') }}</a>
+    </div>
+{% endif %}

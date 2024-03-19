@@ -1,0 +1,24 @@
+<div class="{{ spacingY }}">
+    <div class="container">
+        <span class="mb-2 block font-subheading pre-title text-primary">Your questions answered</span>
+        <span class="text-black font-heading text-3xl md:text-4xl lg:text-5xl leading-tight mb-3 block">{{ section.title }}</span>
+        <div class="flex flex-wrap -m-2 {{ section.title ? 'mt-6' }}">
+            {% for faq in section.faqs %}
+                <div class="w-full md:w-1/2 p-2">
+                    <details class="bg-secondary rounded-tr-3xl">
+                        <summary class="w-full list-none">
+                            <div class="flex justify-between w-full px-6 py-4 font-medium text-base text-left transition cursor-pointer">
+                                {{ faq.question }}{{ fn('icon','angles-down','text-primary min-w-4 ml-4 mt-1' ) }}
+                            </div>
+                        </summary>
+                        <div class="px-6 pb-4">
+                            <div id="faq-{{ loop.index }}" class="copy text-sm opacity-80 md:text-base -mb-4">
+                                {{ faq.answer }}
+                            </div>
+                        </div>
+                    </details>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

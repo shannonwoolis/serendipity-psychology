@@ -1,0 +1,32 @@
+{% set item = Post(item) %}
+<a href="{{ item.link }}" class="flex relative transform transition-all hover:scale-103">
+    {% include "_atoms/picture.twig" with {
+        source: item.thumbnail.src|default(theme.link ~ '/_resources/images/team-placeholder.jpg'),
+        pictureClasses: 'relative z-0',
+        lazyload: true,
+        breakpoints: {
+            "1600px" : {
+                w: 500,
+                h: 320,
+                crop: 'center'
+            },
+            "480px" : {
+                w: 400,
+                h: 400,
+                crop: 'center'
+            },
+            "1px" : {
+                w: 480,
+                h: 300,
+                crop: 'center'
+            },
+        },
+        img: {
+            classes: 'lazyload',
+            w: 480,
+            h: 300,
+            crop: 'center',
+        }
+    } %}
+    <span class="max-w-[90%] absolute bottom-0 right-0 z-10 btn btn-secondary">{{ item.title }} {{ fn('icon','angles-right') }}</span>
+</a>

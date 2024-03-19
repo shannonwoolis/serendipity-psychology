@@ -103,3 +103,19 @@ Tables **************************************************/
     @apply sm:text-base;
   }
 }
+
+/***********************************************************
+FAQs **************************************************/
+details[open] {
+  .icon {
+      @apply transform rotate-180;
+  }
+  summary {
+    @apply text-primary;
+  }
+}
+details > summary {
+  &::-webkit-details-marker, &::marker {
+    @apply hidden;
+  }
+}

@@ -7,7 +7,13 @@
 
 			<div class="flex flex-col {{ spacingY }} {{ spacingX }}">
 				{% if hero.pre_title %}<span class="mb-2 font-subheading pre-title text-primary">{{ hero.pre_title }}</span>{% endif %}
-				{% if hero.title %}<span class="font-heading leading-tight {{ fn('is_front_page') ? 'text-4xl xs:text-5xl xl:text-6xl 3xl:text-7xl' : 'text-3xl sm:text-4xl lg:text-5xl xl:text-6xl' }}">{{ hero.title }}</span>{% endif %}
+				{% if hero.title %}
+					{% if hero.h1 %}
+						<h1 class="font-heading leading-tight {{ fn('is_front_page') ? 'text-4xl xs:text-5xl xl:text-6xl 3xl:text-7xl' : 'text-3xl sm:text-4xl lg:text-5xl xl:text-6xl' }}">{{ hero.title }}</h1>
+					{% else %}
+						<span class="font-heading leading-tight {{ fn('is_front_page') ? 'text-4xl xs:text-5xl xl:text-6xl 3xl:text-7xl' : 'text-3xl sm:text-4xl lg:text-5xl xl:text-6xl' }}">{{ hero.title }}</span>
+					{% endif %}
+				{% endif %}
 				{% if hero.copy %}<span class="copy -mb-6 mt-4">{{ hero.copy }}</span>{% endif %}
 				{% if hero.buttons %}
 					<div class="flex flex-wrap items-center mt-4 md:mt-8">

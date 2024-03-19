@@ -1,0 +1,32 @@
+<div class="{{ spacingY }}">
+    <div class="container">
+        {% if section.title %}
+            <span class="text-primary font-heading text-4xl md:text-5xl lg:text-6xl leading-tight mb-3 block">{{ section.title }}</span>
+        {% endif %}
+        {% if section.copy %}
+            <div class="copy">{{ section.copy }}</div>
+        {% endif %}
+        
+        <div id="posts" class="flex flex-wrap -m-4 mt-2">
+            <div class="p-4 w-full flex flex-wrap">
+                {% for cat in teamCategories %}
+                    {% set cat = Term(cat) %}
+                    {% include "_atoms/button.twig" with {
+                        link: cat.link,
+                        text: cat.title,
+                        colour: 'grey',
+                        classes: 'mt-2 mr-2',
+                    } %}
+                {% endfor %}
+            </div>
+            {% for item in allTeam %}
+                <div class="w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5 p-4">
+                    {% include "_atoms/team-card.twig" %}
+                </div>
+            {% endfor %}
+            {% include "_atoms/pagination.twig" with {
+                posts: allTeam 
+            } %}
+        </div>
+    </div>
+</div>
