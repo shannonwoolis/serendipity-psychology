@@ -1,0 +1,24 @@
+<div class="{{ spacingY }} bg-{{ section.background_colour ? section.background_colour : 'white' }}">
+    <div class="container">
+        {% for row in section.copy_rows %}
+            <div class="flex flex-wrap">
+                <div class="w-full">
+                    <div class="copy">
+                        {% if row.h1 %}<h1>{{ row.h1 }}</h1>{% endif %}
+                        {{ row.copy }}
+                    </div>
+                    <div class="flex flex-wrap mt-4">
+                        {% for button in row.buttons %}
+                            {% include "_atoms/button.twig" with {
+                                link: button.button.url,
+                                text: button.button.title,
+                                colour: button.colour,
+                                classes: 'mt-2 mr-2',
+                            } %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>

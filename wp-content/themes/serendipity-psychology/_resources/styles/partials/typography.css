@@ -84,14 +84,17 @@ h3 {
             a {
                 @apply inline;
             }
+
+            &::before {
+                content: '';
+                @apply absolute top-0 left-0 inline-block min-w-4 w-4 h-4 bg-center bg-contain bg-no-repeat;
+            }
         }
     }
 
     .styled-list {
         li {
             &::before {
-                content: '';
-                @apply absolute top-0 left-0 inline-block min-w-4 w-4 h-4 bg-center bg-contain bg-no-repeat;
                 background-image: url('/wp-content/themes/serendipity-psychology/_resources/images/icons/check-double-primary.png');
             }
         }
@@ -99,19 +102,33 @@ h3 {
 
     ul {
         li {
-            @apply pl-4;
-
             &::before {
-                content: '';
-                @apply absolute top-1.5 left-0 inline-block min-w-1.5 w-1.5 h-1.5 rounded-full bg-primary
+                @apply top-0.5 w-3 h-3 min-w-3;
+                background-image: url('/wp-content/themes/serendipity-psychology/_resources/images/icons/angles-right-primary.png');
             }
+        }
+    }
+
+    .gallery {
+        @apply grid gap-2 mb-6;
+
+        &.gallery-columns-2 {
+            @apply grid-cols-2;
+        }
+
+        &.gallery-columns-3 {
+            @apply grid-cols-3;
+        }
+
+        &.gallery-columns-4 {
+            @apply grid-cols-4;
         }
     }
 }
 
 .qual-copy {
     ul {
-        @apply pl-0 flex flex-wrap mb-0;
+        @apply bg-transparent p-0 flex flex-wrap mb-0;
         li {
             @apply relative w-full list-none leading-tight my-1.5 pl-6;
     
@@ -123,6 +140,39 @@ h3 {
                 content: '';
                 @apply absolute top-0 left-0 inline-block min-w-4 w-4 h-4 bg-center bg-contain bg-no-repeat;
                 background-image: url('/wp-content/themes/serendipity-psychology/_resources/images/icons/check-double-secondary.png');
+            }
+        }
+    }
+}
+
+.dark-copy {
+    ul, .styled-list {
+        @apply bg-transparent p-0 flex flex-wrap mb-6;
+        li {
+            @apply relative w-full list-none leading-tight my-1.5 pl-6;
+    
+            a {
+                @apply inline;
+            }
+            
+            &::before {
+                content: '';
+                @apply absolute top-0 left-0 inline-block min-w-4 w-4 h-4 bg-center bg-contain bg-no-repeat;
+            }
+        }
+    }
+    .styled-list {
+        li {
+            &::before {
+                background-image: url('/wp-content/themes/serendipity-psychology/_resources/images/icons/check-double-secondary.png');
+            }
+        }
+    }
+    ul {
+        li {
+            &::before {
+                @apply top-0.5 w-3 h-3 min-w-3;
+                background-image: url('/wp-content/themes/serendipity-psychology/_resources/images/icons/angles-right-secondary.png');
             }
         }
     }

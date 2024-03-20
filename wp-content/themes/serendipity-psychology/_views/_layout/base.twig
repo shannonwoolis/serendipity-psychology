@@ -14,7 +14,11 @@
 	{% endblock %}
 
 	{% block form %}
-		{% include "_components/get-started.twig" %}
+		{% if post.id in [17, 19] %}
+			{% include "_components/join-the-team.twig" %}
+		{% else %}
+			{% include "_components/get-started.twig" %}
+		{% endif %}
 	{% endblock %}
 
 	{% block footer %}

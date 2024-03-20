@@ -1,0 +1,19 @@
+{% include "_atoms/picture.twig" with {
+    source: side.image.url,
+    pictureClasses: 'relative z-0',
+    lazyload: true,
+    breakpoints: {
+        "1px" : {
+            w: 750,
+            h: 500,
+            crop: 'center'
+        },
+    },
+    img: {
+        classes: 'lazyload rounded-tr-3xl',
+        w: 750,
+        h: 500,
+        crop: 'center',
+        alt: side.image.alt
+    }
+} %}

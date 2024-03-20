@@ -9,4 +9,5 @@ function remove_textarea() {
     remove_post_type_support( 'specialist-therapies', 'editor' );
     remove_post_type_support( 'care-pathways', 'editor' );
     remove_post_type_support( 'conditions', 'editor' );
+    remove_post_type_support( 'resources', 'editor' );
 }

@@ -17,13 +17,31 @@
 								<li class="{{item.class}}">
 									<a href="{{item.link}}" class="relative text-black text-xs 3xl:text-sm block px-2 py-3 hover:text-primary focus:text-primary">
 										{{item.name}}
-										{% if item.children %}{{ fn('icon','angles-down','text-primary text-4xs 3xl:text-3xs xl:ml-1') }}{% endif %}
+										{% if item.children %}
+											{{ fn('icon','angles-down','text-primary text-4xs 3xl:text-3xs xl:ml-1') }}
+										{% endif %}
 									</a>
 									{% if item.children %}
 										<ul class="sub-menu">
 											{% for child in item.children %}
 												<li class="{{child.class}}">
-													<a class="block px-4 py-2 text-black text-xs 3xl:text-sm hover:text-primary focus:text-primary" href="{{child.link}}">{{child.name}}</a>
+													<a class="block px-6 py-2.5 text-black text-xs 3xl:text-sm hover:text-primary focus:text-primary" href="{{child.link}}">
+														{{child.name}}
+														{% if child.children %}
+															{{ fn('icon','angles-right','text-primary text-4xs 3xl:text-3xs xl:ml-1') }}
+														{% endif %}
+													</a>
+													{% if child.children %}
+														<ul class="sub-menu">
+															{% for infant in child.children %}
+																<li class="{{infant.class}}">
+																	<a class="block px-6 py-2.5 text-black text-xs 3xl:text-sm hover:text-primary focus:text-primary" href="{{infant.link}}">
+																		{{infant.name}}
+																	</a>
+																</li>
+															{% endfor %}
+														</ul>
+													{% endif %}
 												</li>
 											{% endfor %}
 										</ul>
@@ -45,13 +63,31 @@
 								<li class="{{item.class}}">
 									<a href="{{item.link}}" class="relative block px-3 py-6 text-black hover:text-primary focus:text-primary">
 										{{item.name}}
-										{% if item.children %}{{ fn('icon','angles-down','text-primary text-xs ml-1') }}{% endif %}
+										{% if item.children %}
+											{{ fn('icon','angles-down','text-primary text-xs ml-1') }}
+										{% endif %}
 									</a>
 									{% if item.children %}
 										<ul class="sub-menu">
 											{% for child in item.children %}
 												<li class="{{child.class}}">
-													<a href="{{child.link}}" class="block text-xs px-4 py-2 text-black hover:text-primary focus:text-primary">{{child.name}}</a>
+													<a href="{{child.link}}" class="block text-xs px-6 py-2.5 text-black hover:text-primary focus:text-primary">
+														{{child.name}}
+														{% if child.children %}
+															{{ fn('icon','angles-right','text-primary text-4xs 3xl:text-3xs xl:ml-1') }}
+														{% endif %}
+													</a>
+													{% if child.children %}
+														<ul class="sub-menu">
+															{% for infant in child.children %}
+																<li class="{{infant.class}}">
+																	<a class="block px-6 py-2.5 text-black text-xs 3xl:text-sm hover:text-primary focus:text-primary" href="{{infant.link}}">
+																		{{infant.name}}
+																	</a>
+																</li>
+															{% endfor %}
+														</ul>
+													{% endif %}
 												</li>
 											{% endfor %}
 										</ul>
