@@ -7,7 +7,16 @@
 <div class="pt-[83.9px] lg:pt-[117.5px]">
 
 	{% block hero %}
-		{% include "_components/hero.twig" %}
+		{% set hero = post.meta('hero') %}
+		{% include "_components/hero.twig" with {
+			pre_title: hero.pre_title,
+			title: hero.title,
+			h1: hero.h1,
+			copy: hero.copy,
+			buttons: hero.buttons,
+			usps: hero.usps,
+			show_insurance_providers: hero.show_insurance_providers
+		} %}
 	{% endblock %}
 
 	{% block content %}

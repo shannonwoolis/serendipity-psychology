@@ -1,23 +1,21 @@
-{% set hero = post.meta('hero') %}
-
 <div class="w-full hero bg-grey">
 	<div class="max-w-screen-4xl mx-auto flex flex-wrap relative">
 		<div class="w-full lg:w-1/2">
 			{% include "_atoms/hero-image.twig" with { classes: 'lg:hidden lg:h-full' } %}
 
 			<div class="flex flex-col {{ spacingY }} {{ spacingX }}">
-				{% if hero.pre_title %}<span class="mb-2 font-subheading pre-title text-primary">{{ hero.pre_title }}</span>{% endif %}
-				{% if hero.title %}
-					{% if hero.h1 %}
-						<h1 class="font-heading leading-tight {{ fn('is_front_page') ? 'text-4xl xs:text-5xl xl:text-6xl 3xl:text-7xl' : 'text-3xl sm:text-4xl lg:text-5xl xl:text-6xl' }}">{{ hero.title }}</h1>
+				{% if pre_title %}<span class="mb-2 font-subheading pre-title text-primary">{{ pre_title }}</span>{% endif %}
+				{% if title %}
+					{% if h1 %}
+						<h1 class="font-heading mb-0 leading-tight {{ fn('is_front_page') ? 'text-4xl xs:text-5xl xl:text-6xl 3xl:text-7xl' : 'text-3xl sm:text-4xl lg:text-5xl xl:text-6xl' }}">{{ title }}</h1>
 					{% else %}
-						<span class="font-heading leading-tight {{ fn('is_front_page') ? 'text-4xl xs:text-5xl xl:text-6xl 3xl:text-7xl' : 'text-3xl sm:text-4xl lg:text-5xl xl:text-6xl' }}">{{ hero.title }}</span>
+						<span class="font-heading mb-0 leading-tight {{ fn('is_front_page') ? 'text-4xl xs:text-5xl xl:text-6xl 3xl:text-7xl' : 'text-3xl sm:text-4xl lg:text-5xl xl:text-6xl' }}">{{ title }}</span>
 					{% endif %}
 				{% endif %}
-				{% if hero.copy %}<span class="copy -mb-6 mt-4">{{ hero.copy }}</span>{% endif %}
-				{% if hero.buttons %}
-					<div class="flex flex-wrap items-center mt-4 md:mt-8">
-						{% for button in hero.buttons %}
+				{% if copy %}<span class="copy -mb-6 mt-4">{{ copy }}</span>{% endif %}
+				{% if buttons %}
+					<div class="flex flex-wrap items-center mt-4">
+						{% for button in buttons %}
 							{% include "_atoms/button.twig" with {
 								link: button.button.url,
 								text: button.button.title,
@@ -29,11 +27,11 @@
 				{% endif %}
 			</div>
 
-			{% if hero.usps %}
+			{% if usps %}
 				<div class="bg-primary rounded-tr-4xl lg:rounded-tr-5xl">
 					<div class="{{ spacingY }} {{ spacingX }}">
 						<div class="flex flex-wrap -m-4 lg:pr-16">
-							{% for item in hero.usps %}
+							{% for item in usps %}
 								<div class="w-full sm:w-1/2 flex flex-col p-4">
 									<img src="{{ item.icon.url|resize(100) }}" class="w-12 h-12 object-contain mb-3">
 									<span class="text-lg text-secondary leading-tight font-heading pr-2">{{ item.text }}</span>
@@ -44,10 +42,10 @@
 				</div>
 			{% endif %}
 		</div>
-		<div class="top-0 right-0 w-full lg:w-1/2 relative {{ hero.usps or hero.show_insurance_providers ? 'lg:pb-32' }}">
+		<div class="top-0 right-0 w-full lg:w-1/2 relative {{ usps or show_insurance_providers ? 'lg:pb-32' }}">
 			{% include "_atoms/hero-image.twig" with { classes: 'hidden lg:block lg:h-full' } %}
 
-			{% if hero.show_insurance_providers %}
+			{% if show_insurance_providers %}
 				<div class="py-8 lg:py-0 lg:absolute lg:left-0 lg:bottom-6 w-full flex flex-wrap xl:flex-nowrap justify-between items-center {{ spacingX }}">
 					<span class="font-heading text-primary leading-tight mb-2 xl:mb-0">
 						Insurance <br class="hidden xl:block">Providers

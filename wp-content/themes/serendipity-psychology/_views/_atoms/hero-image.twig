@@ -1,7 +1,7 @@
 <div class="rounded-bl-4xl lg:rounded-bl-5xl relative overflow-hidden w-full h-64 md:h-80 {{ classes }}">
     <div class="{{ hero.video ? 'md:hidden' }}">  
         {% include "_atoms/picture.twig" with {
-            source: hero.image.url,
+            source: hero.image.url|default(post.thumbnail.src),
             pictureClasses: 'w-full h-full absolute top-0 left-0',
             lazyload: false,
             breakpoints: {

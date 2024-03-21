@@ -1,5 +1,7 @@
 {% extends '_layout/base.twig' %}
 
 {% block content %}
-
+	{% for section in post.meta('page_layout') %}
+		{% include "_blocks/"~section.acf_fc_layout|replace({"_":"-"})~".twig" %}
+	{% endfor %}
 {% endblock %}
