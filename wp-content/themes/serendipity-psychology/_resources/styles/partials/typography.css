@@ -183,12 +183,13 @@ h3 {
         .styled-list, ul {
             @apply bg-white;
         }
-    }
-    .btn-grey {
-        @apply bg-white;
-    }
-    .bg-secondary-pale {
-        @apply bg-white;
+
+        .btn-grey {
+            @apply bg-white;
+        }
+        .bg-secondary-pale {
+            @apply bg-white;
+        }
     }
 }
 
