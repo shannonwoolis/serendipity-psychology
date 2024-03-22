@@ -52,3 +52,12 @@ Desktop Navs
     }
   }
 }
+
+
+.desktop-none {
+  @apply lg:hidden;
+}
+
+.mobile-none {
+  @apply hidden lg:block;
+}
