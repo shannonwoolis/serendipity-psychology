@@ -3,29 +3,29 @@ Mobile Nav
 --------------------------------------------------- */
 
 /* Important to set */
-$menuTitleHeight: 59px;
+$menuTitleHeight: 57.7px;
 
 /* Colours */
-$mobNavBg: theme("colors.gray.100");
+$mobNavBg: theme("colors.white");
 
-$titleBg: theme("colors.gray.300");
-$titleText: theme("colors.gray.600");
+$titleBg: theme("colors.primary.DEFAULT");
+$titleText: theme("colors.white");
 
-$linkText: theme("colors.gray.800");
+$linkText: theme("colors.black");
 $linkBg: transparent;
-$linkBorder: theme("colors.gray.200");
+$linkBorder: theme("colors.grey.dark");
 
-$linkTextActive: theme("colors.white");
-$linkBgActive: theme("colors.gray.600");
+$linkTextActive: theme("colors.black");
+$linkBgActive: theme("colors.primary.pale");
 
-$linkTextOn: theme("colors.gray.300");
-$linkBgOn: theme("colors.gray.800");
+$linkTextOn: theme("colors.black");
+$linkBgOn: theme("colors.secondary.pale");
 
 $dropdownArrowBg: transparent;
 $dropdownArrowText: inherit;
 
 $closeText: theme("colors.white");
-$closeTextBg: theme("colors.red.800");
+$closeTextBg: theme("colors.secondary.extraDark");
 
 .mob-nav {
   @apply fixed top-0 bottom-0 right-0 w-4/5 h-full duration-300;
@@ -89,12 +89,11 @@ $closeTextBg: theme("colors.red.800");
   }
 
   .sub-arrow {
-    @apply absolute top-0 right-0 z-10 px-0 text-center cursor-pointer;
-    padding-top: 14px;
-    padding-bottom: 14px;
+    @apply absolute top-0 right-0 z-10 px-0 text-center cursor-pointer text-primary;
+    padding-top: 15px;
+    padding-bottom: 15px;
     border-left: 1px solid $linkBorder;
-    width: 45px;
-    color: $linkText;
+    width: 50px;
     background-color: $linkBg;
 
     .icon {

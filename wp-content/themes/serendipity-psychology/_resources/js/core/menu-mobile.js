@@ -3,9 +3,9 @@
 // --------------------------------------------------------------------------------------------------
 
 // Set some vars for the icons
-var iconAngleUp = "<svg class='icon icon-angle-up'><use xlink:href='" + themeURL.themeURL + "/_resources/images/icons-sprite.svg#icon-angle-up'></use></svg>";
+var iconAngleUp = "<svg class='icon icon-angles-up'><use xlink:href='" + themeURL.themeURL + "/_resources/images/icons-sprite.svg#icon-angles-up'></use></svg>";
 var iconAngleDown =
-    "<svg class='icon icon-angle-down'><use xlink:href='" + themeURL.themeURL + "/_resources/images/icons-sprite.svg#icon-angle-down'></use></svg>";
+    "<svg class='icon icon-angles-down'><use xlink:href='" + themeURL.themeURL + "/_resources/images/icons-sprite.svg#icon-angles-down'></use></svg>";
 
 // // Copy primary and secondary menus to .mob-nav element
 var mobNav = document.querySelector('.mob-nav .scroll-container');
@@ -26,7 +26,7 @@ subNavPosition.forEach((element) => {
 });
 
 // Get all the sub nav arrow icons
-var allArrows = document.querySelectorAll('.sub-arrow .icon-angle-down');
+var allArrows = document.querySelectorAll('.sub-arrow .icon-angles-down');
 
 // Add active class to all sub nav arrow icons
 allArrows.forEach((element) => {
