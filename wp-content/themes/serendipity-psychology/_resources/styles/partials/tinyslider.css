@@ -8,7 +8,7 @@ button[data-action="start"] {
 }
 
 .tns-nav {
-    @apply absolute top-full -mt-8 left-7 transform -translate-x-1/2 flex items-center;
+    @apply absolute top-full -mt-8 left-3 flex items-center;
     
     button {
         @apply w-2 h-2 p-0 mx-1 transition rounded-full opacity-50 bg-primary;
