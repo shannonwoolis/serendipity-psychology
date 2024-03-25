@@ -16,14 +16,12 @@ if (typeof (testimonials) != 'undefined' && testimonials != null) {
             1024: {
                 items: 3,
             },
-            // 1280: {
-            //     items: 4,
-            // },
         },
         autoplay: false,
         loop: false,
         mouseDrag: true,
-        controls: false,
+        controls: true,
+        controlsContainer: ".tns-controls-testimonials",
         nav: true,
         autoHeight: true,
         lazyload: true

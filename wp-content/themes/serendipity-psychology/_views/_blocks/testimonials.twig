@@ -4,7 +4,9 @@
             <div class="flex flex-wrap js-testimonials-slider">
                 {% for testimonial in testimonials %}
                     <div class="w-full p-4">
-                        {% include "_atoms/testimonial-card.twig" %}
+                        {% include "_atoms/testimonial-card.twig" with {
+                            extraClasses: 'h-full'
+                        } %}
                     </div>
                 {% endfor %}
             </div>

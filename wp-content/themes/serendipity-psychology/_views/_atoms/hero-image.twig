@@ -1,33 +1,35 @@
 <div class="rounded-bl-4xl lg:rounded-bl-5xl relative overflow-hidden w-full h-64 md:h-80 {{ classes }}">
     <div class="{{ hero.video ? 'md:hidden' }}">  
-        {% include "_atoms/picture.twig" with {
-            source: hero.image.url|default(post.thumbnail.src),
-            pictureClasses: 'w-full h-full absolute top-0 left-0',
-            lazyload: false,
-            breakpoints: {
-                "1024px" : {
-                    w: 1280,
-                    h: null,
-                    crop: 'center'
+        {% if hero.image.url|default(post.thumbnail.src) %}
+            {% include "_atoms/picture.twig" with {
+                source: hero.image.url|default(post.thumbnail.src),
+                pictureClasses: 'w-full h-full absolute top-0 left-0',
+                lazyload: false,
+                breakpoints: {
+                    "1024px" : {
+                        w: 1280,
+                        h: null,
+                        crop: 'center'
+                    },
+                    "768px" : {
+                        w: 1024,
+                        h: null,
+                        crop: 'center'
+                    },
+                    "1px" : {
+                        w: 640,
+                        h: null,
+                        crop: 'center'
+                    },
                 },
-                "768px" : {
-                    w: 1024,
-                    h: null,
-                    crop: 'center'
-                },
-                "1px" : {
+                img: {
+                    classes: 'w-full h-full object-cover object-center',
                     w: 640,
                     h: null,
-                    crop: 'center'
-                },
-            },
-            img: {
-                classes: 'w-full h-full object-cover object-center',
-                w: 640,
-                h: null,
-                crop: 'center',
-            }
-        } %}
+                    crop: 'center',
+                }
+            } %}
+        {% endif %}
     </div>
     {% if hero.video %}
         <video autoplay muted loop class="hidden sm:block absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 min-w-full min-h-full object-cover object-center">

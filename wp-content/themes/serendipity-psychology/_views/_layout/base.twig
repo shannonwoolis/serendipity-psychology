@@ -10,7 +10,7 @@
 		{% set hero = post.meta('hero') %}
 		{% include "_components/hero.twig" with {
 			pre_title: hero.pre_title,
-			title: hero.title,
+			title: hero.title|default(post.title),
 			h1: hero.h1,
 			copy: hero.copy,
 			buttons: hero.buttons,
