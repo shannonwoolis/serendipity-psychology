@@ -127,8 +127,12 @@ h3 {
 }
 
 .qual-copy {
+    @apply -mb-6;
+    p {
+        @apply mb-4;
+    }
     ul {
-        @apply bg-transparent p-0 flex flex-wrap mb-0;
+        @apply bg-transparent p-0 flex flex-wrap;
         li {
             @apply relative w-full list-none leading-tight my-1.5 pl-6;
     
