@@ -1,5 +1,5 @@
 {% set item = Post(item) %}
-<a href="{{ item.link }}" class="flex relative transform transition-all hover:scale-103">
+<a href="{{ item.link }}" class="flex bg-primary h-full flex-col rounded-tr-3xl relative transform transition-all hover:scale-103">
     {% include "_atoms/picture.twig" with {
         source: item.thumbnail.src|default(theme.link ~ '/_resources/images/team-placeholder.jpg'),
         pictureClasses: 'relative z-0',
@@ -12,11 +12,15 @@
             },
         },
         img: {
-            classes: 'lazyload',
+            classes: 'rounded-tr-3xl lazyload',
             w: 480,
             h: 480,
             crop: 'center',
         }
     } %}
-    <span class="max-w-[90%] absolute bottom-0 right-0 z-10 btn btn-secondary">{{ item.title }} {{ fn('icon','angles-right') }}</span>
+    {# <span class="max-w-[90%] absolute bottom-0 right-0 z-10 btn btn-secondary">{{ item.title }} {{ fn('icon','angles-right') }}</span> #}
+    <span class="p-4 bg-primary text-white flex flex-col">
+        <span class="font-heading text-lg leading-tight">{{ item.title }}</span>
+        <span class="text-secondary text-sm">{{ item.meta('hero').pre_title }}</span>
+    </span>
 </a>
