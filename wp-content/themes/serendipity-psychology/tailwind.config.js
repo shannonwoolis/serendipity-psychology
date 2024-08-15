@@ -18,7 +18,7 @@ module.exports = {
     fontFamily: {
       sans: ["DM Sans", "sans-serif"],
       heading: ["Poppins", "sans-serif"],
-      subheading: ["Rochester", "cursive"],
+      subheading: ["Great Vibes", "cursive"],
     },
     filter: {
       none: "none",
