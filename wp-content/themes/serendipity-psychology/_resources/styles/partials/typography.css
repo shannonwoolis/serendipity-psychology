@@ -75,7 +75,7 @@ h3 {
         @apply p-4 mb-8 bg-gray-100;
     }
 
-    .styled-list, ul {
+    .styled-list, > ul {
         @apply px-6 py-4 bg-grey list-none flex flex-wrap;
 
         li {
