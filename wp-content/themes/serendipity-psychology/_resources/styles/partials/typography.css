@@ -95,6 +95,7 @@ h3 {
     ul {
         li {
             ul {
+                @apply mb-0;
                 li {
                     @apply sm:w-full sm:pr-0;
                 }
@@ -116,6 +117,12 @@ h3 {
                 @apply top-0.5 w-3 h-3 min-w-3;
                 background-image: url('/wp-content/themes/serendipity-psychology/_resources/images/icons/angles-right-primary.png');
             }
+        }
+    }
+
+    .full-width-list {
+        li {
+            @apply w-full sm:w-full sm:pr-0;
         }
     }
 
