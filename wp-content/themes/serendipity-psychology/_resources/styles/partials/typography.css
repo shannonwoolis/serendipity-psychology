@@ -75,7 +75,7 @@ h3 {
         @apply p-4 mb-8 bg-gray-100;
     }
 
-    .styled-list, > ul {
+    .styled-list, ul {
         @apply px-6 py-4 bg-grey list-none flex flex-wrap;
 
         li {
@@ -88,6 +88,16 @@ h3 {
             &::before {
                 content: '';
                 @apply absolute top-0 left-0 inline-block min-w-4 w-4 h-4 bg-center bg-contain bg-no-repeat;
+            }
+        }
+    }
+
+    ul {
+        li {
+            ul {
+                li {
+                    @apply sm:w-full sm:pr-0;
+                }
             }
         }
     }
