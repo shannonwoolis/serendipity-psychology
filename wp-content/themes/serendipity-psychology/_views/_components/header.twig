@@ -15,7 +15,7 @@
 						<ul class="flex flex-wrap justify-start menu-secondary menu-secondary-js">
 							{% for item in secondaryMenu.items %}
 								<li class="{{item.class}}">
-									<a href="{{item.link}}" class="relative text-black text-xs 3xl:text-sm block px-2 py-3 hover:text-primary focus:text-primary">
+									<a href="{{item.link}}" class="relative text-black text-xs xl:text-sm block px-2 py-3 hover:text-primary focus:text-primary">
 										{{item.name}}
 										{% if item.children %}
 											{{ fn('icon','angles-down','text-primary text-4xs 3xl:text-3xs xl:ml-1') }}
@@ -51,7 +51,14 @@
 						</ul>
 					</nav>
 
-					{% include "_components/phone-top-right.twig" %}
+					<div class="py-2 text-xs 3xl:text-sm">
+						<span class="mb-0.5 2xl:mb-0 2xl:mr-4 flex items-center">
+							{{ fn('icon','email','text-primary mr-1') }}
+							Email: 
+							<a href="mailto:{{ options.site_email }}" class="ml-1 text-primary hover:underline font-bold">{{ options.site_email }}</a>
+						</span>
+					</div>
+					{# {% include "_components/phone-top-right.twig" %} #}
 				</div>
 
 				<div class="flex items-center justify-between">
@@ -61,10 +68,10 @@
 						<ul class="flex flex-wrap justify-start menu-primary">
 							{% for item in primaryMenu.items %}
 								<li class="{{item.class}}">
-									<a href="{{item.link}}" class="relative block px-3 py-6 text-black hover:text-primary focus:text-primary">
+									<a href="{{item.link}}" class="relative block px-2 xl:px-3 py-6 text-black hover:text-primary focus:text-primary">
 										{{item.name}}
 										{% if item.children %}
-											{{ fn('icon','angles-down','text-primary text-xs ml-1') }}
+											{{ fn('icon','angles-down','text-primary text-xs xl:ml-1') }}
 										{% endif %}
 									</a>
 									{% if item.children %}
@@ -97,13 +104,7 @@
 						</ul>
 					</nav>
 
-					{% include "_atoms/button.twig" with {
-						link: '/contact-us/',
-						text: 'Get Started',
-						colour: 'primary',
-						classes: '',
-					} %}
-
+					{% include "_components/phone-top-right.twig" %}
 				</div>
 			</div>
 

@@ -119,3 +119,9 @@ details > summary {
     @apply hidden;
   }
 }
+
+/***********************************************************
+Trustindex **************************************************/
+.ti-header-logo {
+  @apply flex !h-auto bg-white px-2 pt-2 pb-1 rounded;
+}

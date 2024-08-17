@@ -7,9 +7,9 @@
 				{% if pre_title %}<span class="mb-2 font-subheading pre-title text-primary">{{ pre_title }}</span>{% endif %}
 				{% if title %}
 					{% if h1 %}
-						<h1 class="font-heading mb-0 leading-tight {{ fn('is_front_page') ? 'text-5xl xs:text-6xl xl:text-7xl 3xl:text-8xl 2xl:pr-16' : 'text-3xl sm:text-4xl lg:text-5xl xl:text-6xl' }}">{{ title }}</h1>
+						<h1 class="font-heading mb-0 leading-tight {{ fn('is_front_page') ? 'text-4xl xs:text-5xl xl:text-6xl 3xl:text-7xl 2xl:pr-16' : 'text-3xl sm:text-4xl lg:text-5xl xl:text-6xl' }}">{{ title }}</h1>
 					{% else %}
-						<span class="font-heading mb-0 leading-tight {{ fn('is_front_page') ? 'text-5xl xs:text-6xl xl:text-7xl 3xl:text-8xl 2xl:pr-16' : 'text-3xl sm:text-4xl lg:text-5xl xl:text-6xl' }}">{{ title }}</span>
+						<span class="font-heading mb-0 leading-tight {{ fn('is_front_page') ? 'text-4xl xs:text-5xl xl:text-6xl 3xl:text-7xl 2xl:pr-16' : 'text-3xl sm:text-4xl lg:text-5xl xl:text-6xl' }}">{{ title }}</span>
 					{% endif %}
 				{% endif %}
 				{% if copy %}<span class="copy -mb-6 mt-4">{{ copy }}</span>{% endif %}

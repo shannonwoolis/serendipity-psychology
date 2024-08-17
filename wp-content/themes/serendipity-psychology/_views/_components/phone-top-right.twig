@@ -1,4 +1,4 @@
-<div class="py-2 flex flex-wrap items-end 2xl:items-center flex-col 2xl:flex-row text-xs 3xl:text-sm">
+{# <div class="py-2 flex flex-wrap items-end 2xl:items-center flex-col 2xl:flex-row text-xs 3xl:text-sm">
     <span class="mb-0.5 2xl:mb-0 2xl:mr-4 flex items-center">
         {{ fn('icon','email','text-primary mr-1') }}
         Email: 
@@ -10,4 +10,17 @@
         Phone: 
         <a href="tel:{{ options.default_phone_number }}" class="ml-1 text-primary hover:underline font-bold">{{ options.default_phone_number }}</a>
     </span>
+</div> #}
+<div class="flex items-center">
+    <span class="flex items-center mr-3 xl:mr-6 xl:text-lg">
+        {{ fn('icon','phone','text-primary mr-1') }}
+        {# Phone:  #}
+        <a href="tel:{{ options.default_phone_number }}" class="ml-1 text-primary hover:underline font-bold">{{ options.default_phone_number }}</a>
+    </span>
+    {% include "_atoms/button.twig" with {
+        link: '/contact-us/',
+        text: 'Get Started',
+        colour: 'primary',
+        classes: '',
+    } %}
 </div>
