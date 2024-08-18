@@ -161,7 +161,7 @@ jQuery(document).ready(function() {
 	var isBadgeWidget = function() {
 		let layoutId = jQuery('.ti-widget-editor-preview .ti-widget').data('layout-id');
 
-		return [ 11, 12, 20, 22, 24, 25, 26, 27, 28, 29, 35, 55, 56, 57, 58, 59, 60, 61, 62 ].indexOf(layoutId) != -1;
+		return [ 11, 12, 20, 22, 24, 25, 26, 27, 28, 29, 35, 55, 56, 57, 58, 59, 60, 61, 62, 97, 98, 99, 100, 101, 102, 103, 104 ].indexOf(layoutId) != -1;
 	};
 
 	// apply filter when change or init
@@ -235,18 +235,6 @@ jQuery(document).ready(function() {
 				Trustindex.resize_widgets();
 			}
 		}
-
-		// ajax save
-		if (init !== true) {
-			jQuery.post('', {
-				command: 'save-filter',
-				_wpnonce: jQuery('#ti-filter-star').data('nonce'),
-				filter: JSON.stringify({
-					'stars': stars,
-					'only-ratings': showOnlyRatings
-				})
-			});
-		}
 	}
 
 	// hooks
@@ -302,8 +290,6 @@ jQuery(document).ready(function() {
 
 		let ids = (jQuery('input[name=layout-select]:checked').data('ids') + "").split(',');
 
-		console.log('filter', ids);
-
 		if (ids.length === 0 || ids[0] === "") {
 			jQuery('.ti-preview-boxes-container').find('.ti-full-width, .ti-half-width').fadeIn();
 		}
@@ -313,24 +299,6 @@ jQuery(document).ready(function() {
 		}
 
 		return false;
-	});
-
-	/*************************************************************************/
-	/* MODAL */
-	jQuery(document).on('click', '.btn-modal-close', function(event) {
-		event.preventDefault();
-
-		jQuery(this).closest('.ti-modal').fadeOut();
-	});
-
-	jQuery(document).on('click', '.ti-modal', function(event) {
-		if (event.target.nodeName !== 'A') {
-			event.preventDefault();
-
-			if (!jQuery(event.target).closest('.ti-modal-dialog').length) {
-				jQuery(this).fadeOut();
-			}
-		}
 	});
 
 	/*************************************************************************/
@@ -494,7 +462,7 @@ jQuery(document).ready(function() {
 		// generate reply with AI if not edit
 		if (replyBox.attr('data-state') === 'reply' || replyBox.attr('data-state') === 'copy-reply') {
 			let data = JSON.parse(replyBox.next().html());
-			generateAiReply(data.review.text, function(reply) {
+			generateAiReply(data.review.text || "", function(reply) {
 				btn.removeClass('ti-btn-loading');
 
 				// popup closed
@@ -511,7 +479,7 @@ jQuery(document).ready(function() {
 				let textarea = replyBox.find('.state-'+ replyBox.attr('data-state') +' textarea');
 				textarea.val(reply).focus().expand();
 
-				if (!data.review.text.trim()) {
+				if (!data.review.text || data.review.text.trim() === "") {
 					replyBox.find('.ti-alert.ti-alert-empty-review').removeClass('d-none');
 				}
 
@@ -806,6 +774,23 @@ jQuery(document).on('click', '.btn-copy2clipboard', function(event) {
 	navigator.clipboard.writeText(text).then(feedback);
 });
 
+// - import/modal.js
+jQuery(document).on('click', '.btn-modal-close', function(event) {
+	event.preventDefault();
+
+	jQuery(this).closest('.ti-modal').fadeOut();
+});
+
+jQuery(document).on('click', '.ti-modal', function(event) {
+	if (event.target.nodeName !== 'A') {
+		event.preventDefault();
+
+		if (!jQuery(event.target).closest('.ti-modal-dialog').length) {
+			jQuery(this).fadeOut();
+		}
+	}
+});
+
 // - import/feature-request.js
 jQuery(document).on('click', '.btn-send-feature-request', function(event) {
 	event.preventDefault();
@@ -859,14 +844,14 @@ jQuery(document).on('click', '.btn-send-feature-request', function(event) {
 // remember on hover
 jQuery(document).on('mouseenter', '.ti-quick-rating', function(event) {
 	let container = jQuery(this);
-	let selected = container.find('.ti-star-check.active');
+	let selected = container.find('.ti-star-check.ti-active, .star-check.active');
 
 	if (selected.length) {
 		// add index to data & remove all active stars
-		container.data('selected', selected.index()).find('.ti-star-check').removeClass('ti-active');
+		container.data('selected', selected.index()).find('.ti-star-check, .star-check').removeClass('ti-active active');
 
 		// give back active star on mouse enter
-		container.one('mouseleave', () => container.find('.ti-star-check').eq(container.data('selected')).addClass('ti-active'));
+		container.one('mouseleave', () => container.find('.ti-star-check, .star-check').eq(container.data('selected')).addClass('ti-active active'));
 	}
 });
 

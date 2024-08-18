@@ -204,6 +204,7 @@ jQuery( document ).ready(function() {
         jQuery( `*[data-step="${stepID}"]` ).closest( 'tr' ).addClass( 'ps-active-nav' );
         jQuery( '.ps-wizard-success' ).html( '' );
         jQuery( '.ps-wizard-error' ).html( '' );
+        jQuery( '.ps-wizard-connectivity-information' ).remove();
         refreshWizard();
 
     }
@@ -338,7 +339,14 @@ jQuery( document ).ready(function() {
                 }
                 if( response.success === false ) {
 
+                    var selectedSocket = jQuery( '.ps-wizard-socket-check:checked' ).val();
                     jQuery( '.ps-wizard-error' ).html( `<span class="dashicons dashicons-warning"></span> ${response.data.message}` );
+                    
+                    if( selectedSocket === 'smtp' ) {
+
+                        jQuery( '.ps-wizard-error' ).after( `<div class="ps-wizard-connectivity-information">${PostSMTPWizard.connectivityTestMsg}</div>` );
+
+                    }
 
                 }
 
@@ -496,8 +504,10 @@ jQuery( document ).ready(function() {
 
         var placeholder = jQuery( this ).find( 'h4' ).text();
         var imgSrc = jQuery( this ).find( 'img' ).attr( 'src' ); 
+        var productURL = jQuery( this ).data( 'url' );
 
         jQuery( '.ps-pro-for-img' ).attr( 'src', imgSrc );
+        jQuery( '.ps-pro-product-url' ).attr( 'href', productURL );
         jQuery( '.ps-pro-for' ).text( placeholder );
         jQuery( '.ps-pro-popup-overlay' ).fadeIn();
 

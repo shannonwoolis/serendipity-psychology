@@ -11,23 +11,23 @@ exit;
 }
 if (isset($_GET['notification'])) {
 $type = sanitize_text_field($_GET['notification']);
+$options = $pluginManagerInstance->getNotificationOptions($type);
 switch (sanitize_text_field($_GET['action'])) {
 case 'later':
 $pluginManagerInstance->setNotificationParam($type, 'timestamp', time() + (14 * 86400));
 break;
 case 'close':
-if ($type !== 'rate-us') {
+if ($options['hide-on-close']) {
 $pluginManagerInstance->setNotificationParam($type, 'active', false);
 }
 break;
 case 'open':
+if ($options['hide-on-open']) {
 $pluginManagerInstance->setNotificationParam($type, 'active', false);
-if ($type === 'rate-us') {
-header('Location: https://wordpress.org/support/plugin/'. $pluginManagerInstance->get_plugin_slug() . '/reviews/?rate=5#new-post');
-exit;
 }
-if (function_exists('trustindexNotificationOpenRedirect')) {
-trustindexNotificationOpenRedirect($type);
+if ($options['redirect']) {
+header('Location: '. $options['redirect']);
+exit;
 }
 break;
 case 'hide':
@@ -101,18 +101,20 @@ $selectedTab = $tabs[0]['slug'];
 <?php echo wp_kses_post(__('For some reason, the <strong>CSS</strong> file required to run the plugin was not loaded.<br />One of your plugins is probably causing the problem.', 'trustindex-plugin')); ?>
 </p>
 </div>
-<script type="text/javascript">
+<?php
+$jsKey = 'trustindex-check-frontend-assets';
+$jsFiles = [];
+foreach ($assetCheckJs as $id => $file) {
+$jsFiles []= [
+'id' => $id,
+'url' => $pluginManagerInstance->get_plugin_file_url($file),
+];
+}
+$jsContent = "
 window.onload = function() {
 let notLoaded = [];
 let loadedCount = 0;
-let jsFiles = [
-<?php foreach ($assetCheckJs as $id => $file): ?>
-{
-url: '<?php echo esc_attr($pluginManagerInstance->get_plugin_file_url($file)); ?>',
-id: '<?php echo esc_attr($id); ?>'
-},
-<?php endforeach; ?>
-];
+let jsFiles = ". wp_json_encode($jsFiles) .";
 let addElement = function(type, url, callback) {
 let element = document.createElement(type);
 if (type === 'script') {
@@ -123,14 +125,14 @@ else {
 element.type = 'text/css';
 element.rel = 'stylesheet';
 element.href = url;
-element.id = '<?php echo esc_html($assetCheckCssId); ?>-css';
+element.id = '". esc_html($assetCheckCssId) ."-css';
 }
 document.head.appendChild(element);
 element.addEventListener('load', function() { callback(true); });
 element.addEventListener('error', function() { callback(false); });
 };
 let isCSSExists = function() {
-let link = document.getElementById('<?php echo esc_html($assetCheckCssId); ?>-css');
+let link = document.getElementById('". esc_html($assetCheckCssId) ."-css');
 return link && Boolean(link.sheet);
 };
 let isJSExists = function(id) {
@@ -150,7 +152,7 @@ warningBox.querySelector('p strong').innerHTML = notLoaded.join(', ');
 }
 }
 if (!isCSSExists()) {
-addElement('link', '<?php echo esc_attr($pluginManagerInstance->get_plugin_file_url($assetCheckCssFile)); ?>', function(success) {
+addElement('link', '". esc_attr($pluginManagerInstance->get_plugin_file_url($assetCheckCssFile)) ."', function(success) {
 loadedCount++;
 if (!success) {
 notLoaded.push('CSS');
@@ -178,7 +180,11 @@ loadedCount++;
 }
 });
 };
-</script>
+";
+wp_register_script($jsKey, false, [], true, [ 'in_footer' => true ]);
+wp_enqueue_script($jsKey);
+wp_add_inline_script($jsKey, $jsContent);
+?>
 <?php endif; ?>
 <div id="trustindex-plugin-settings-page" class="ti-plugin-wrapper ti-toggle-opacity">
 <div class="ti-header-nav">
@@ -214,7 +220,7 @@ href="<?php echo esc_url(admin_url('admin.php?page='. esc_attr(sanitize_text_fie
 <strong><?php echo wp_kses_post($proxyCheck); ?></strong><br /><br />
 <?php echo esc_html(__('Therefore, our plugin might not work properly. Please, contact your hosting support, they can resolve this easily.', 'trustindex-plugin')); ?>
 </p>
-<a href="<?php echo wp_nonce_url('?page='. esc_attr(sanitize_text_field($_GET['page'])) .'&tab='. esc_attr(sanitize_text_field($_GET['tab'])) .'&test_proxy', 'ti-test-proxy'); ?>" class="ti-btn ti-btn-loading-on-click"><?php echo esc_html(__('Test again', 'trustindex-plugin')); ?></a>
+<a href="<?php echo esc_url(wp_nonce_url('?page='. esc_attr(sanitize_text_field($_GET['page'])) .'&tab='. esc_attr(sanitize_text_field($_GET['tab'])) .'&test_proxy', 'ti-test-proxy')); ?>" class="ti-btn ti-btn-loading-on-click"><?php echo esc_html(__('Test again', 'trustindex-plugin')); ?></a>
 </div>
 <?php endif; ?>
 <?php if (!isset($noContainerElementTabs) || !in_array($selectedTab, $noContainerElementTabs)): ?>

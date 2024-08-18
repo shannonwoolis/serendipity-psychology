@@ -44,8 +44,10 @@ class Post_SMTP_Mobile {
 		
 		add_filter( 'post_smtp_sanitize', array( $this, 'sanitize' ), 10, 3 );
         add_filter( 'post_smtp_admin_tabs', array( $this, 'tabs' ), 11 );
-
+       
+		include_once 'includes/functions.php';
         include_once 'includes/rest-api/v1/rest-api.php';
+        include_once 'includes/rest-api/v2/rest-api.php';
         include_once 'includes/controller/v1/controller.php';
         include_once 'includes/email-content.php';
         
@@ -104,7 +106,7 @@ class Post_SMTP_Mobile {
      */
     public function tabs( $tabs ) {
         
-        $tabs['mobile-app'] = __( 'Mobile App', 'post-smtp' );
+        $tabs['mobile-app'] = sprintf( '<span class="dashicons dashicons-smartphone"></span> %s', __( 'Mobile App', 'post-smtp' ) );
 
         return $tabs;
         
@@ -177,8 +179,8 @@ class Post_SMTP_Mobile {
                     <h3>Download Post SMTP Mobile Application</h3>
                 </div>
                 <div style="float: right; margin: 19px 0;">
-                    <a href="https://play.google.com/store/apps/details?id=com.postsmtp" target="_blank" /><img src="<?php echo esc_url( POST_SMTP_ASSETS . 'images/icons/google-play.png' ) ?>" class="google-logo" /></a>
-                    <a href="https://apps.apple.com/us/app/post-smtp/id6473368559" target="_blank" /><img src="<?php echo esc_url( POST_SMTP_ASSETS . 'images/icons/apple-store.png' ) ?>" class="apple-logo" /></a>
+                    <a href="https://play.google.com/store/apps/details?id=com.postsmtp&referrer=utm_source%3Dplugin%26utm_medium%3Dsettings%26anid%3Dadmob" target="_blank" /><img src="<?php echo esc_url( POST_SMTP_ASSETS . 'images/icons/google-play.png' ) ?>" class="google-logo" /></a>
+                    <a href="https://apps.apple.com/us/app/post-smtp/id6473368559?utm_source=plugin&utm_medium=dashboard&utm_campaign=plugin" target="_blank" /><img src="<?php echo esc_url( POST_SMTP_ASSETS . 'images/icons/apple-store.png' ) ?>" class="apple-logo" /></a>
                 </div>
                 <div style="clear: both;"></div>
             </div>

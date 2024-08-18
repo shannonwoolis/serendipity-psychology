@@ -55,22 +55,21 @@ class PostmanEmailLogs {
             isset( $_GET['log_id'] ) && !empty( $_GET['log_id'] )
         ) {
 
+            // Print
+            if( isset( $_GET['print'] ) && $_GET['print'] == 1  ) {
+
+                echo "<script>window.print();</script>";
+
+            }
+
             $id = sanitize_text_field( $_GET['log_id'] );
             $email_query_log = new PostmanEmailQueryLog();
             $log = $email_query_log->get_log( $id, '' );
+            $header = $log['original_headers'];
             $msg = $log['original_message'];
             $msg = preg_replace( "/<script\b[^>]*>(.*?)<\/script>/s", '', $msg );
 
-            // Strip <xml> and comment tags.
-            $msg = preg_replace( '/<xml\b[^>]*>(.*?)<\/xml>/is', '', $msg );
-            $msg = preg_replace( '/<!--(.*?)-->/', '', $msg );
-
-            $allowed_html = wp_kses_allowed_html( 'post' );
-            $allowed_html['style'][''] = true;
-
-            $msg = wp_kses( $msg, $allowed_html );
-
-            echo '<pre>' . $msg . '</pre>';
+            echo ( isset ( $header ) && strpos( $header, "text/html" ) ) ? $msg : '<pre>' . $msg . '</pre>' ;
 
             die;
 
@@ -318,6 +317,7 @@ class PostmanEmailLogs {
             $query['end'] = sanitize_text_field( $_GET['length'] );
             $query['search'] = sanitize_text_field( $_GET['search']['value'] );
             $query['order'] = sanitize_text_field( $_GET['order'][0]['dir'] );
+            $query['status'] = isset( $_GET['status'] ) ? sanitize_text_field( $_GET['status'] ) : '';
             
 			//MainWP | Get Sites
             if( isset( $_GET['site_id'] ) ) {
@@ -330,13 +330,13 @@ class PostmanEmailLogs {
             $query['order_by'] = sanitize_text_field( $_GET['columns'][$_GET['order'][0]['column']]['data'] );
 
             //Date Filter :)
-            if( isset( $_GET['from'] ) ) {
+            if( isset( $_GET['from'] ) && !empty( $_GET['from'] ) ) {
 
                 $query['from'] = strtotime( sanitize_text_field( $_GET['from'] ) );
 
             }
 
-            if( isset( $_GET['to'] ) ) {
+            if( isset( $_GET['to'] ) && !empty( $_GET['to'] ) ) {
 
                 $query['to'] = strtotime( sanitize_text_field( $_GET['to'] ) ) + 86400;
 
@@ -520,7 +520,7 @@ class PostmanEmailLogs {
 			$logs = $email_query_log->get_all_logs( $args );
             $csv_headers = array(
                 'solution',
-                'success',
+                'response',
                 'from_header',
                 'to_header',
                 'cc_header',
@@ -550,7 +550,7 @@ class PostmanEmailLogs {
             foreach ( $logs as $log ) {
 
                 $data[0] = $log->solution;
-                $data[1] = $log->success;
+                $data[1] = $log->success == 1 ? 'Sent' : $log->success;
                 $data[2] = $log->from_header;
                 $data[3] = $log->to_header;
                 $data[4] = $log->cc_header;

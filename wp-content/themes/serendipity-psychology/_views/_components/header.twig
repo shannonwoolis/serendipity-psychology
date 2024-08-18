@@ -123,9 +123,18 @@
 
 	<div class="container relative z-0">
 		<div class="transform scale-[0.8] xs:scale-95 sm:scale-100 origin-top-right blue-shadow absolute top-full right-4 sm:right-6 md:right-8 lg:right-6 xl:right-10 bg-white rounded-br-2xl px-6 py-3">
-			{% filter shortcodes %}
+			<a href="http://search.google.com/local/reviews?placeid=ChIJH01167-Zd0gR9SfYvT0CnQo" target="_blank" class="flex items-center">
+				<span class="text-sm uppercase font-bold mr-2">Excellent</span>
+				<span class="flex text-yellow-400 mr-2">
+					{% for i in 1..5 %}
+						{{ fn('icon','star','text-lg mr-0.25 -mt-0.5') }}
+					{% endfor %}
+				</span>
+				<img class="w-[62px]" src="{{ theme.link }}/_resources/images/google-logo.png">
+			</a>
+			{# {% filter shortcodes %}
 				[trustindex no-registration=google]
-			{% endfilter %}
+			{% endfilter %} #}
 		</div>
 	</div>
 

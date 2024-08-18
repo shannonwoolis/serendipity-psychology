@@ -196,16 +196,30 @@ add_action(
 
 function wpcf7_swv_add_checkbox_rules( $schema, $contact_form ) {
 	$tags = $contact_form->scan_form_tags( array(
-		'type' => array( 'checkbox*', 'radio' ),
+		'basetype' => array( 'checkbox', 'radio' ),
 	) );
 
 	foreach ( $tags as $tag ) {
-		$schema->add_rule(
-			wpcf7_swv_create_rule( 'required', array(
-				'field' => $tag->name,
-				'error' => wpcf7_get_message( 'invalid_required' ),
-			) )
-		);
+		if ( $tag->is_required() or 'radio' === $tag->type ) {
+			$schema->add_rule(
+				wpcf7_swv_create_rule( 'required', array(
+					'field' => $tag->name,
+					'error' => wpcf7_get_message( 'invalid_required' ),
+				) )
+			);
+		}
+
+		if ( 'radio' === $tag->type or $tag->has_option( 'exclusive' ) ) {
+			$schema->add_rule(
+				wpcf7_swv_create_rule( 'maxitems', array(
+					'field' => $tag->name,
+					'threshold' => 1,
+					'error' => $contact_form->filter_message(
+						__( "Too many items are selected.", 'contact-form-7' )
+					),
+				) )
+			);
+		}
 	}
 }
 
@@ -259,10 +273,21 @@ function wpcf7_swv_add_checkbox_enum_rules( $schema, $contact_form ) {
 			continue;
 		}
 
+		$field_values = array_map(
+			static function ( $value ) {
+				return html_entity_decode(
+					(string) $value,
+					ENT_QUOTES | ENT_HTML5,
+					'UTF-8'
+				);
+			},
+			$field_values
+		);
+
 		$field_values = array_filter(
 			array_unique( $field_values ),
-			function ( $value ) {
-				return is_string( $value ) && '' !== $value;
+			static function ( $value ) {
+				return '' !== $value;
 			}
 		);
 

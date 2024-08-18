@@ -23,6 +23,19 @@ $wpdb->query("UPDATE `". $pluginManagerInstance->get_tablename('reviews') ."` SE
 }
 exit;
 }
+if (isset($_GET['toggle-hide'])) {
+check_admin_referer('ti-toggle-hide');
+$id = (int)$_GET['toggle-hide'];
+if ($id) {
+$hidden = 1;
+if ($wpdb->get_var('SELECT hidden FROM `'. $pluginManagerInstance->get_tablename('reviews') .'` WHERE id = '. $id)) {
+$hidden = 0;
+}
+$wpdb->query("UPDATE `". $pluginManagerInstance->get_tablename('reviews') ."` SET hidden = $hidden WHERE id = '$id'");
+}
+header('Location: admin.php?page=' . sanitize_text_field($_GET['page']) . '&tab=' . sanitize_text_field($_GET['tab']));
+exit;
+}
 /* Replied flag saving:
 - Google: comes after source connect
 - Facebook: we saved internal
@@ -46,38 +59,35 @@ update_option($pluginManagerInstance->get_option_name('reply-generated'), 1, fal
 exit;
 }
 
-if (isset($_POST['review_download_timestamp'])) {
+if (isset($_POST['download_data'])) {
 check_admin_referer('ti-download-reviews');
-$pageDetails = isset($_POST['page_details']) ? json_decode(stripcslashes($_POST['page_details']), true) : null;
-if (isset($pageDetails['reviews']) && is_array($pageDetails['reviews']) && $pageDetails['reviews']) {
-$pluginManagerInstance->save_reviews($pageDetails['reviews']);
-}
-$oldPageDetails = $pluginManagerInstance->getPageDetails();
-if (isset($pageDetails['name'])) {
-$oldPageDetails['name'] = $pageDetails['name'];
-if (isset($oldPageDetails['address'])) {
-$oldPageDetails['address'] = $pageDetails['address'];
-}
-if (isset($oldPageDetails['avatar_url'])) {
-$oldPageDetails['avatar_url'] = $pageDetails['avatar_url'];
-}
-if (isset($pageDetails['write_review_url'])) {
-$oldPageDetails['write_review_url'] = $pageDetails['write_review_url'];
-}
-$oldPageDetails['rating_number'] = $pageDetails['rating_number'];
-$oldPageDetails['rating_score'] = $pageDetails['rating_score'];
-update_option($pluginManagerInstance->get_option_name('page-details'), $oldPageDetails, false);
-$GLOBALS['wp_object_cache']->delete($pluginManagerInstance->get_option_name('page-details'), 'options');
-}
-update_option($pluginManagerInstance->get_option_name('download-timestamp'), (int)$_POST['review_download_timestamp'], false);
-if (!$pluginManagerInstance->getNotificationParam('review-download-available', 'hidden')) {
-$pluginManagerInstance->setNotificationParam('review-download-available', 'do-check', true);
-$pluginManagerInstance->setNotificationParam('review-download-available', 'active', false);
-}
+$data = json_decode(stripcslashes($_POST['download_data']), true);
+if (isset($data['reviews']) && is_array($data['reviews']) && $data['reviews']) {
+$pluginManagerInstance->save_reviews($data['reviews']);
 if (!$pluginManagerInstance->getNotificationParam('review-download-finished', 'hidden')) {
 $pluginManagerInstance->setNotificationParam('review-download-finished', 'active', true);
 }
 $pluginManagerInstance->sendNotificationEmail('review-download-finished');
+}
+$pageDetails = $pluginManagerInstance->getPageDetails();
+if (isset($data['name'])) {
+$pageDetails['name'] = $data['name'];
+if (isset($pageDetails['address'])) {
+$pageDetails['address'] = $data['address'];
+}
+if (isset($pageDetails['avatar_url'])) {
+$pageDetails['avatar_url'] = $data['avatar_url'];
+}
+$pageDetails['rating_number'] = $data['rating_number'];
+$pageDetails['rating_score'] = $data['rating_score'];
+update_option($pluginManagerInstance->get_option_name('page-details'), $pageDetails, false);
+$GLOBALS['wp_object_cache']->delete($pluginManagerInstance->get_option_name('page-details'), 'options');
+}
+update_option($pluginManagerInstance->get_option_name('download-timestamp'), time() + (int)$data['next_update_available'], false);
+if (!$pluginManagerInstance->getNotificationParam('review-download-available', 'hidden')) {
+$pluginManagerInstance->setNotificationParam('review-download-available', 'do-check', true);
+$pluginManagerInstance->setNotificationParam('review-download-available', 'active', false);
+}
 exit;
 }
 $reviews = [];
@@ -124,13 +134,13 @@ jQuery(".ti-review-content").TI_shorten({
 });
 jQuery(".ti-review-content").TI_format();
 ');
-$downloadTimestamp = get_option($pluginManagerInstance->get_option_name('download-timestamp'), time() - 1);
+$downloadTimestamp = get_option($pluginManagerInstance->get_option_name('download-timestamp'), time());
 $pageDetails = $pluginManagerInstance->getPageDetails();
 ?>
 <div class="ti-header-title"><?php echo __('My Reviews', 'trustindex-plugin'); ?></div>
 <div class="ti-box">
 <?php if (!$isReviewDownloadInProgress): ?>
-<?php if ($downloadTimestamp < time()): ?>
+<?php if ($downloadTimestamp <= time()): ?>
 <div class="ti-notice ti-d-none ti-notice-info" id="ti-connect-info">
 <p><?php echo __("A popup window should be appear! Please, go to there and continue the steps! (If there is no popup window, you can check the the browser's popup blocker)", 'trustindex-plugin'); ?></p>
 </div>
@@ -147,9 +157,9 @@ $pageDetails = $pluginManagerInstance->getPageDetails();
 <?php endif; ?>
 <?php $pageDetails = $pluginManagerInstance->getPageDetails(); ?>
 <input type="hidden" id="ti-noreg-page-id" value="<?php echo esc_attr($pageDetails['id']); ?>" />
-<input type="hidden" id="ti-noreg-webhook-url" value="<?php echo $pluginManagerInstance->get_webhook_url(); ?>" />
+<input type="hidden" id="ti-noreg-webhook-url" value="<?php echo $pluginManagerInstance->getWebhookUrl(); ?>" />
 <input type="hidden" id="ti-noreg-email" value="<?php echo get_option('admin_email'); ?>" />
-<input type="hidden" id="ti-noreg-version" value="11.6" />
+<input type="hidden" id="ti-noreg-version" value="<?php echo esc_attr($pluginManagerInstance->getVersion()); ?>" />
 
 <?php
 $reviewDownloadToken = get_option($pluginManagerInstance->get_option_name('review-download-token'));
@@ -162,8 +172,8 @@ update_option($pluginManagerInstance->get_option_name('review-download-token'), 
 <?php endif; ?>
 <div class="ti-upgrade-notice">
 <strong><?php echo __('UPGRADE to PRO Features', 'trustindex-plugin'); ?></strong>
-<p><?php echo sprintf(__('Automatic review update, creating unlimited review widgets, downloading and displaying all reviews, %d review platforms available!', 'trustindex-plugin'), 131); ?></p>
-<a href="https://www.trustindex.io/ti-redirect.php?a=sys&c=wp-google-pro" class="ti-btn"><?php echo __('Create a Free Account for More Features', 'trustindex-plugin'); ?></a>
+<p><?php echo sprintf(__('Automatic review update, creating unlimited review widgets, downloading and displaying all reviews, %d review platforms available!', 'trustindex-plugin'), 133); ?></p>
+<?php echo $pluginManagerInstance->getProFeatureButton('wp-google-pro'); ?>
 </div>
 
 <?php if (!count($reviews)): ?>
@@ -186,7 +196,7 @@ update_option($pluginManagerInstance->get_option_name('review-download-token'), 
 <tbody>
 <?php foreach ($reviews as $review): ?>
 <?php $reviewText = $pluginManagerInstance->getReviewHtml($review); ?>
-<tr data-id="<?php echo esc_attr($review->id); ?>">
+<tr data-id="<?php echo esc_attr($review->id); ?>"<?php if ($review->hidden): ?> class="ti-hidden-review"<?php endif; ?>>
 <td class="ti-text-center">
 <img src="<?php echo esc_url($review->user_photo); ?>" class="ti-user-avatar" /><br />
 <?php echo esc_html($review->user); ?>
@@ -196,6 +206,7 @@ update_option($pluginManagerInstance->get_option_name('review-download-token'), 
 <td>
 <div class="ti-review-content"><?php echo $reviewText; ?></div>
 <?php
+
 $state = 'reply';
 if ($review->reply) {
 $state = 'replied';
@@ -203,6 +214,7 @@ $state = 'replied';
 $hideReplyButton = false;
 $hideReplyButton = get_option($pluginManagerInstance->get_option_name('review-download-modal'), 1);
 ?>
+<?php if (!$review->hidden): ?>
 <?php if (!$hideReplyButton): ?>
 <?php if ($review->reply): ?>
 <a href="#" class="ti-btn ti-btn-default ti-btn-sm ti-btn-default-disabled btn-show-ai-reply"><?php echo __('Reply', 'trustindex-plugin'); ?></a>
@@ -213,7 +225,15 @@ $hideReplyButton = get_option($pluginManagerInstance->get_option_name('review-do
 <?php if ($review->text): ?>
 <a href="<?php echo esc_attr($review->id); ?>" class="ti-btn ti-btn-sm ti-btn-default btn-show-highlight<?php if (isset($review->highlight) && $review->highlight): ?> has-highlight<?php endif; ?>"><?php echo __('Highlight text', 'trustindex-plugin') ;?></a>
 <?php endif; ?>
-<?php if (!$hideReplyButton): ?>
+<?php endif; ?>
+<a href="<?php echo wp_nonce_url('?page='. sanitize_text_field($_GET['page']) .'&tab=my-reviews&toggle-hide='. $review->id, 'ti-toggle-hide'); ?>" class="ti-btn ti-btn-sm ti-btn-default btn-toggle-hide">
+<?php if (!$review->hidden): ?>
+<?php echo __('Hide review', 'trustindex-plugin'); ?>
+<?php else: ?>
+<?php echo __('Show review', 'trustindex-plugin'); ?>
+<?php endif; ?>
+</a>
+<?php if (!$review->hidden && !$hideReplyButton): ?>
 <div class="ti-button-dropdown ti-reply-box<?php if ($state === 'replied'): ?> ti-active<?php endif; ?>" data-state="<?php echo $state; ?>" data-original-state="<?php echo $state; ?>">
 <span class="ti-button-dropdown-arrow" data-button=".btn-show-ai-reply"></span>
 <?php if ($state !== 'copy-reply'): ?>
@@ -229,6 +249,7 @@ $hideReplyButton = get_option($pluginManagerInstance->get_option_name('review-do
 <a href="<?php echo esc_attr($review->id); ?>" data-nonce="<?php echo wp_create_nonce('ti-save-reply'); ?>" class="ti-btn ti-btn-sm btn-post-reply"><?php echo sprintf(__('Upload reply to %s', 'trustindex-plugin'), 'Google'); ?></a>
 <a href="#" class="ti-btn ti-btn-sm ti-btn-no-background btn-hide-ai-reply"><?php echo __('Cancel', 'trustindex-plugin'); ?></a>
 </div>
+
 <div class="ti-reply-box-state state-replied">
 <div class="ti-button-dropdown-title">
 <strong><?php echo sprintf(__('Reply by %s', 'trustindex-plugin'), $pageDetails['name']); ?></strong>
@@ -239,6 +260,7 @@ $hideReplyButton = get_option($pluginManagerInstance->get_option_name('review-do
 <a href="<?php echo esc_attr($review->id); ?>" class="ti-btn ti-btn-sm ti-btn-white btn-show-edit-reply"><?php echo __('Edit reply', 'trustindex-plugin'); ?></a>
 <?php endif; ?>
 </div>
+
 <div class="ti-reply-box-state state-edit-reply">
 <div class="ti-button-dropdown-title">
 <strong><?php echo __('Edit reply', 'trustindex-plugin'); ?></strong>
@@ -290,7 +312,7 @@ $hideReplyButton = get_option($pluginManagerInstance->get_option_name('review-do
 ]
 ]); ?></script>
 <?php endif; ?>
-<?php if ($review->text): ?>
+<?php if (!$review->hidden && $review->text): ?>
 <div class="ti-button-dropdown ti-highlight-box">
 <span class="ti-button-dropdown-arrow" data-button=".btn-show-highlight"></span>
 <div class="ti-button-dropdown-title">
@@ -315,26 +337,6 @@ $hideReplyButton = get_option($pluginManagerInstance->get_option_name('review-do
 </table>
 <?php endif; ?>
 </div>
-<?php if ($reviews && get_option($pluginManagerInstance->get_option_name('review-download-modal'), 1)): ?>
-<div class="ti-modal ti-rateus-modal" style="display: block">
-<div class="ti-modal-dialog">
-<div class="ti-modal-content">
-<span class="ti-close-icon btn-modal-close"></span>
-<div class="ti-modal-body">
-<div class="ti-rateus-title"><?php echo sprintf(__('New feature: %s', 'trustindex-plugin'), __('Reply with ChatGPT', 'trustindex-plugin')); ?></div>
-<p>
-<?php echo __('In order to use this feature, your reviews need to be updated.', 'trustindex-plugin'); ?><br />
-<?php echo __('This could take a little while, so please refresh the page after 3 minutes!', 'trustindex-plugin'); ?>
-</p>
-</div>
-<div class="ti-modal-footer">
-<a href="#" class="ti-btn ti-btn-default btn-modal-close"><?php echo __('Cancel', 'trustindex-plugin') ;?></a>
-<a href="#" data-nonce="<?php echo wp_create_nonce('ti-download-reviews'); ?>" class="ti-btn ti-btn-loading-on-click btn-download-reviews"><?php echo __('Update', 'trustindex-plugin') ;?></a>
-</div>
-</div>
-</div>
-</div>
-<?php endif; ?>
 <?php if (!get_option($pluginManagerInstance->get_option_name('rate-us-feedback'), 0)): ?>
 <?php include(plugin_dir_path(__FILE__ ) . '../include/rate-us-feedback-box.php'); ?>
 <?php endif; ?>
@@ -343,25 +345,3 @@ $tiCampaign1 = 'wp-google-4';
 $tiCampaign2 = 'wp-google-5';
 include(plugin_dir_path(__FILE__ ) . '../include/get-more-customers-box.php');
 ?>
-<?php if (class_exists('Woocommerce')): ?>
-<div class="ti-box">
-<div class="ti-box-header"><?php echo __('Collect reviews automatically for your WooCommerce shop', 'trustindex-plugin'); ?></div>
-<?php if (!class_exists('TrustindexCollectorPlugin')): ?>
-<p><?php echo sprintf(__("Download our new <a href='%s' target='_blank'>%s</a> plugin and get features for free!", 'trustindex-plugin'), 'https://wordpress.org/plugins/customer-reviews-collector-for-woocommerce/', 'Customer Reviews Collector for WooCommerce'); ?></p>
-<?php endif; ?>
-<ul class="ti-check-list">
-<li><?php echo __('Send unlimited review invitations for free', 'trustindex-plugin'); ?></li>
-<li><?php echo __('E-mail templates are fully customizable', 'trustindex-plugin'); ?></li>
-<li><?php echo __('Collect reviews on 100+ review platforms (Google, Facebook, Yelp, etc.)', 'trustindex-plugin'); ?></li>
-</ul>
-<?php if (class_exists('TrustindexCollectorPlugin')): ?>
-<a href="?page=customer-reviews-collector-for-woocommerce%2Fadmin.php&tab=settings" class="ti-btn">
-<?php echo __('Collect reviews automatically', 'trustindex-plugin'); ?>
-</a>
-<?php else: ?>
-<a href="https://wordpress.org/plugins/customer-reviews-collector-for-woocommerce/" target="_blank" class="ti-btn">
-<?php echo __('Download plugin', 'trustindex-plugin'); ?>
-</a>
-<?php endif; ?>
-</div>
-<?php endif; ?>
