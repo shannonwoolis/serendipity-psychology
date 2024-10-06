@@ -1,1 +1,5 @@
+{# {% if 'consultation' in text|lower %}
+    {% set link = 'https://uk.client.tacklit.com/p/serendipity' %}
+    {% set target = '_blank' %}
+{% endif %} #}
 <a href="{{ '#getStarted' in link ? (site.link ~ '/contact-us/') : link }}" class="btn btn-{{ colour }} {{ classes }}" {{ attributes }} {{ target ? 'target="' ~ target ~ '"' }} aria-label="button" {% if tracking %}onClick="{{ tracking }}"{% endif %}>{{ text }} {{ fn('icon','angles-right')}}</a>

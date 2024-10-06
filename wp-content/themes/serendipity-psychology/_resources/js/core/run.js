@@ -14,6 +14,27 @@
 			}
 		});
 
+
+		// Contact form
+		// setInterval(function() {
+		// 	console.log($('.public-DraftEditor-content'));
+
+		// }, 500);
+
+		// // Access the iframe
+		// const iframe = document.querySelector('.serendipity-referral-form iframe');
+		// console.log(iframe);
+
+		// // Get the iframe's document
+		// const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+
+		// // Now you can target elements within the iframe
+		// const elementInsideIframe = iframeDocument.querySelector('.Paperform__Container');
+		// console.log(elementInsideIframe);
+
+		// Perform actions on the element
+		// elementInsideIframe.style.backgroundColor = 'yellow';
+
 	});
 
 }(jQuery));

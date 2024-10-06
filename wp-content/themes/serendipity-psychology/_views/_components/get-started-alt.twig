@@ -1,0 +1,28 @@
+{% set consultation = options.consultation %}
+<div class="w-full bg-primary {{ spacingY }}">
+    <div class="container">
+        <div class="flex flex-col items-start justify-end">
+            {% if consultation.pre_title %}
+                <span class="mb-2 font-subheading pre-title text-secondary">{{ consultation.pre_title }}</span>
+            {% endif %}
+            {% if consultation.title %}
+                <span class="font-heading text-3xl sm:text-4xl xl:text-5xl 4xl:text-6xl leading-tight text-white">{{ consultation.title }}</span>
+            {% endif %}
+            {% if consultation.copy %}
+                <div class="mt-6 copy text-white">{{ consultation.copy }}</div>
+            {% endif %}
+            {% if consultation.buttons %}
+                <div class="flex flex-wrap items-center md:mt-2">
+                    {% for button in consultation.buttons %}
+                        {% include "_atoms/button.twig" with {
+                            link: button.button.url,
+                            text: button.button.title,
+                            colour: button.colour,
+                            classes: 'mt-2 mr-2',
+                        } %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
