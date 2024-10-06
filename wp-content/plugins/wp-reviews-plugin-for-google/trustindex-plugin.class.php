@@ -48,6 +48,11 @@ $tabs[] = [
 }
 $tabs[] = [
 'place' => 'right',
+'slug' => 'instagram-feed-widget',
+'name' => 'Instagram Feed Widget',
+];
+$tabs[] = [
+'place' => 'right',
 'slug' => 'advanced',
 'name' => __('Advanced', 'trustindex-plugin')
 ];
@@ -65,51 +70,11 @@ public function getWebhookUrl()
 {
 return admin_url('admin-ajax.php') . '?action='. $this->getWebhookAction();
 }
-public function getAbRand()
-{
-$rand = get_option($this->get_option_name('ab-rand'));
-if (!$rand || $rand > 12) {
-$rand = rand(1, 12);
-update_option($this->get_option_name('ab-rand'), $rand, false);
-}
-return (int)$rand;
-}
+
 public function getProFeatureButton($campaignId)
 {
-$abRand = $this->getAbRand();
-$buttons = [
-[
-'campaign-suffix' => 'A',
-'text' => __('Create a Free Account for More Features', 'trustindex-plugin'),
-'range' => '1-3',
-],
-[
-'campaign-suffix' => 'C',
-'text' => __('Sign Up Free', 'trustindex-plugin'),
-'range' => '4-6',
-],
-[
-'campaign-suffix' => 'D',
-'text' => __('Create a Free Account', 'trustindex-plugin'),
-'range' => '7-9',
-],
-[
-'campaign-suffix' => 'E',
-'text' => __('Sign Up Free – Try PRO Features', 'trustindex-plugin'),
-'range' => '10-12',
-],
-];
-$currentButton = $buttons[0];
-foreach ($buttons as $button) {
-$tmp = explode('-', $button['range']);
-$rangeMin = (int)$tmp[0];
-$rangeMax = (int)$tmp[1];
-if ($abRand >= $rangeMin && $abRand <= $rangeMax) {
-$currentButton = $button;
-break;
-}
-}
-return '<a class="ti-btn" href="https://www.trustindex.io/ti-redirect.php?a=sys&c='. $campaignId . $currentButton['campaign-suffix'] .'" target="_blank">'. $currentButton['text'] .'</a>';
+
+return '<a class="ti-btn" href="https://www.trustindex.io/ti-redirect.php?a=sys&c='. $campaignId .'" target="_blank">'. __('Create a Free Account for More Features', 'trustindex-plugin') .'</a>';
 }
 public function is_review_download_in_progress()
 {
@@ -157,6 +122,8 @@ public function save_reviews($tmp)
 {
 global $wpdb;
 $tableName = $this->get_tablename('reviews');
+$oldReviews = $wpdb->get_results('SELECT reviewId, hidden, highlight FROM `'. $tableName .'` ORDER BY date DESC', ARRAY_A);
+$oldReviews = array_combine(array_column($oldReviews, 'reviewId'), $oldReviews);
 $wpdb->query('TRUNCATE `'. $tableName .'`');
 if ($wpdb->last_error) {
 throw new Exception('DB truncate failed: '. $wpdb->last_error);
@@ -180,6 +147,13 @@ else {
 $review[ $key ] = $value ? sanitize_text_field(stripslashes($value)) : $value;
 }
 }
+
+$hidden = 0;
+$highlight = null;
+if (isset($review['id']) && isset($oldReviews[$review['id']])) {
+$hidden = $oldReviews[$review['id']]['hidden'];
+$highlight = $oldReviews[$review['id']]['highlight'];
+}
 $wpdb->insert($tableName, [
 'user' => $review['reviewer']['name'],
 'user_photo' => $review['reviewer']['avatar_url'],
@@ -187,7 +161,9 @@ $wpdb->insert($tableName, [
 'rating' => $review['rating'] ? $review['rating'] : 5,
 'date' => substr($review['created_at'], 0, 10),
 'reviewId' => isset($review['id']) ? $review['id'] : null,
-'reply' => isset($review['reply']) ? $review['reply'] : ""
+'reply' => isset($review['reply']) ? $review['reply'] : "",
+'hidden' => $hidden,
+'highlight' => $highlight ? $highlight : null,
 ]);
 if ($wpdb->last_error) {
 throw new Exception('DB instert failed: '. $wpdb->last_error);
@@ -421,24 +397,28 @@ return [
 'load-css-inline',
 'align',
 'review-text-mode',
+'floating-desktop-open',
+'floating-mobile-open',
 'amp-hidden-notification',
 'review-download-token',
 'review-download-inprogress',
 'review-download-request-id',
 'review-download-modal',
 'review-download-is-connecting',
+'review-download-is-failed',
 'review-manual-download',
 'reply-generated',
+'instagram-promo-opened',
 'footer-filter-text',
 'show-header-button',
 'reviews-load-more',
 'activation-redirect',
 'notifications',
-'ab-rand',
 'top-rated-type',
 'top-rated-date',
 'cdn-version-control',
 'version-control',
+'preview',
 ];
 }
 private $widgetOptions = [];
@@ -488,11 +468,13 @@ case 'enable-animation':
 case 'show-arrows':
 case 'show-header-button':
 case 'reviews-load-more':
+case 'floating-desktop-open':
 $default = 1;
 break;
 case 'widget-setted-up':
 case 'disable-font':
 case 'footer-filter-text':
+case 'floating-mobile-open':
 $default = 0;
 break;
 case 'align':
@@ -799,12 +781,13 @@ $className = 'TrustindexPlugin_' . $forcePlatform;
 if (!class_exists($className)) {
 return $this->error_box_for_admins(ucfirst($forcePlatform) . ' plugin is not active or not found!');
 }
-$chosedPlatform = new $className($forcePlatform, $filePath, "do-not-care-12.0", "do-not-care-Widgets for Google Reviews", "do-not-care-Google");
+$chosedPlatform = new $className($forcePlatform, $filePath, "do-not-care-12.2", "do-not-care-Widgets for Google Reviews", "do-not-care-Google");
 $chosedPlatform->setNotificationParam('not-using-no-widget', 'active', false);
 if (!$chosedPlatform->is_noreg_linked()) {
 return $this->error_box_for_admins(sprintf(__('You have to connect your business (%s)!', 'trustindex-plugin'), $forcePlatform));
-}
-else {
+} else if (!$chosedPlatform->getWidgetOption('widget-setted-up')) {
+return $this->error_box_for_admins('You have to complete your widget setup!');
+} else {
 return '<pre class="ti-widget" style="display: none">'. $chosedPlatform->get_noreg_list_reviews($forcePlatform) .'</pre>';
 }
 }
@@ -946,22 +929,13 @@ public static $widget_templates = array (
  'list' => '33,80',
  'grid' => '16,31,38,48,79',
  'badge' => '11,12,20,22,23,55,56,57,58,97,98,99,100,101,102,103,104',
- 'button' => '24,25,26,27,28,29,30,32,35,59,60,61,62',
+ 'button' => '24,25,26,27,28,29,30,32,35,59,60,61,62,106',
  'floating' => '17,21,52,53',
  'popup' => '23,30,32',
+ 'top-rated-badge' => '97,98,99,100,101,102,103,104',
  ),
  'templates' => 
  array (
- 4 => 
- array (
- 'name' => 'Slider I.',
- 'type' => 'slider',
- 'is-active' => true,
- 'is-top-rated-badge' => false,
- 'params' => 
- array (
- ),
- ),
  48 => 
  array (
  'name' => 'Grid I. - Big picture',
@@ -1002,6 +976,16 @@ public static $widget_templates = array (
  array (
  ),
  ),
+ 4 => 
+ array (
+ 'name' => 'Slider I.',
+ 'type' => 'slider',
+ 'is-active' => true,
+ 'is-top-rated-badge' => false,
+ 'params' => 
+ array (
+ ),
+ ),
  14 => 
  array (
  'name' => 'Slider I. - with header',
@@ -1014,7 +998,7 @@ public static $widget_templates = array (
  ),
  105 => 
  array (
- 'name' => 'Slider I. - with Top Rated header',
+ 'name' => 'Slider I. - with Top Rated header and photos',
  'type' => 'slider',
  'is-active' => false,
  'is-top-rated-badge' => true,
@@ -1064,21 +1048,21 @@ public static $widget_templates = array (
  array (
  ),
  ),
- 19 => 
- array (
- 'name' => 'Slider IV.',
- 'type' => 'slider',
- 'is-active' => false,
- 'is-top-rated-badge' => false,
- 'params' => 
- array (
- ),
- ),
  34 => 
  array (
  'name' => 'Slider IV.',
  'type' => 'slider',
  'is-active' => true,
+ 'is-top-rated-badge' => false,
+ 'params' => 
+ array (
+ ),
+ ),
+ 19 => 
+ array (
+ 'name' => 'Slider IV.',
+ 'type' => 'slider',
+ 'is-active' => false,
  'is-top-rated-badge' => false,
  'params' => 
  array (
@@ -1146,7 +1130,7 @@ public static $widget_templates = array (
  ),
  16 => 
  array (
- 'name' => 'Grid',
+ 'name' => 'Grid - with photos',
  'type' => 'grid',
  'is-active' => true,
  'is-top-rated-badge' => false,
@@ -1214,21 +1198,21 @@ public static $widget_templates = array (
  array (
  ),
  ),
- 81 => 
- array (
- 'name' => 'Full sidebar I. - with header',
- 'type' => 'sidebar',
- 'is-active' => false,
- 'is-top-rated-badge' => false,
- 'params' => 
- array (
- ),
- ),
  18 => 
  array (
  'name' => 'Full sidebar I.',
  'type' => 'sidebar',
  'is-active' => true,
+ 'is-top-rated-badge' => false,
+ 'params' => 
+ array (
+ ),
+ ),
+ 81 => 
+ array (
+ 'name' => 'Full sidebar I. - with header',
+ 'type' => 'sidebar',
+ 'is-active' => false,
  'is-top-rated-badge' => false,
  'params' => 
  array (
@@ -1542,7 +1526,17 @@ public static $widget_templates = array (
  ),
  32 => 
  array (
- 'name' => 'Button VII. - with dropdown',
+ 'name' => 'Button VII. - with popup',
+ 'type' => 'button',
+ 'is-active' => true,
+ 'is-top-rated-badge' => false,
+ 'params' => 
+ array (
+ ),
+ ),
+ 106 => 
+ array (
+ 'name' => 'Button VIII.',
  'type' => 'button',
  'is-active' => true,
  'is-top-rated-badge' => false,
@@ -1710,7 +1704,7 @@ public static $widget_styles = array (
  'header-btn-size' => '13px',
  'review-gap' => '16px',
  'button-widget-font-size' => '14px',
- 'ai-summary-background' => 'true',
+ 'ai-summary-background' => 'false',
  'original-rating-text' => '15px',
  ),
  ),
@@ -1801,7 +1795,7 @@ public static $widget_styles = array (
  'header-btn-size' => '13px',
  'review-gap' => '16px',
  'button-widget-font-size' => '14px',
- 'ai-summary-background' => 'true',
+ 'ai-summary-background' => 'false',
  'original-rating-text' => '15px',
  ),
  ),
@@ -1892,7 +1886,7 @@ public static $widget_styles = array (
  'header-btn-size' => '13px',
  'review-gap' => '16px',
  'button-widget-font-size' => '14px',
- 'ai-summary-background' => 'true',
+ 'ai-summary-background' => 'false',
  'original-rating-text' => '15px',
  ),
  ),
@@ -1983,7 +1977,7 @@ public static $widget_styles = array (
  'header-btn-size' => '13px',
  'review-gap' => '16px',
  'button-widget-font-size' => '14px',
- 'ai-summary-background' => 'true',
+ 'ai-summary-background' => 'false',
  'original-rating-text' => '14px',
  ),
  ),
@@ -2074,7 +2068,7 @@ public static $widget_styles = array (
  'header-btn-size' => '13px',
  'review-gap' => '16px',
  'button-widget-font-size' => '14px',
- 'ai-summary-background' => 'true',
+ 'ai-summary-background' => 'false',
  'original-rating-text' => '15px',
  ),
  ),
@@ -2165,7 +2159,7 @@ public static $widget_styles = array (
  'header-btn-size' => '13px',
  'review-gap' => '16px',
  'button-widget-font-size' => '14px',
- 'ai-summary-background' => 'true',
+ 'ai-summary-background' => 'false',
  'original-rating-text' => '14px',
  ),
  ),
@@ -2256,7 +2250,7 @@ public static $widget_styles = array (
  'header-btn-size' => '13px',
  'review-gap' => '16px',
  'button-widget-font-size' => '14px',
- 'ai-summary-background' => 'true',
+ 'ai-summary-background' => 'false',
  'original-rating-text' => '15px',
  ),
  ),
@@ -2347,7 +2341,7 @@ public static $widget_styles = array (
  'header-btn-size' => '13px',
  'review-gap' => '16px',
  'button-widget-font-size' => '14px',
- 'ai-summary-background' => 'true',
+ 'ai-summary-background' => 'false',
  'original-rating-text' => '15px',
  ),
  ),
@@ -2438,7 +2432,7 @@ public static $widget_styles = array (
  'header-btn-size' => '13px',
  'review-gap' => '16px',
  'button-widget-font-size' => '14px',
- 'ai-summary-background' => 'true',
+ 'ai-summary-background' => 'false',
  'original-rating-text' => '15px',
  ),
  ),
@@ -2529,7 +2523,7 @@ public static $widget_styles = array (
  'header-btn-size' => '13px',
  'review-gap' => '16px',
  'button-widget-font-size' => '14px',
- 'ai-summary-background' => 'true',
+ 'ai-summary-background' => 'false',
  'original-rating-text' => '15px',
  ),
  ),
@@ -2620,7 +2614,7 @@ public static $widget_styles = array (
  'header-btn-size' => '13px',
  'review-gap' => '16px',
  'button-widget-font-size' => '14px',
- 'ai-summary-background' => 'true',
+ 'ai-summary-background' => 'false',
  'original-rating-text' => '15px',
  ),
  ),
@@ -2711,7 +2705,7 @@ public static $widget_styles = array (
  'header-btn-size' => '13px',
  'review-gap' => '16px',
  'button-widget-font-size' => '14px',
- 'ai-summary-background' => 'true',
+ 'ai-summary-background' => 'false',
  'original-rating-text' => '15px',
  ),
  ),
@@ -2802,7 +2796,7 @@ public static $widget_styles = array (
  'header-btn-size' => '13px',
  'review-gap' => '16px',
  'button-widget-font-size' => '14px',
- 'ai-summary-background' => 'true',
+ 'ai-summary-background' => 'false',
  'original-rating-text' => '14px',
  ),
  ),
@@ -2893,7 +2887,7 @@ public static $widget_styles = array (
  'header-btn-size' => '13px',
  'review-gap' => '16px',
  'button-widget-font-size' => '14px',
- 'ai-summary-background' => 'true',
+ 'ai-summary-background' => 'false',
  'original-rating-text' => '14px',
  ),
  ),
@@ -2984,7 +2978,7 @@ public static $widget_styles = array (
  'header-btn-size' => '13px',
  'review-gap' => '16px',
  'button-widget-font-size' => '14px',
- 'ai-summary-background' => 'true',
+ 'ai-summary-background' => 'false',
  'original-rating-text' => '14px',
  ),
  ),
@@ -3075,7 +3069,7 @@ public static $widget_styles = array (
  'header-btn-size' => '13px',
  'review-gap' => '16px',
  'button-widget-font-size' => '14px',
- 'ai-summary-background' => 'true',
+ 'ai-summary-background' => 'false',
  'original-rating-text' => '14px',
  ),
  ),
@@ -3166,7 +3160,7 @@ public static $widget_styles = array (
  'header-btn-size' => '13px',
  'review-gap' => '16px',
  'button-widget-font-size' => '14px',
- 'ai-summary-background' => 'true',
+ 'ai-summary-background' => 'false',
  'original-rating-text' => '15px',
  ),
  ),
@@ -3257,7 +3251,7 @@ public static $widget_styles = array (
  'header-btn-size' => '13px',
  'review-gap' => '16px',
  'button-widget-font-size' => '14px',
- 'ai-summary-background' => 'true',
+ 'ai-summary-background' => 'false',
  'original-rating-text' => '15px',
  ),
  ),
@@ -3348,7 +3342,7 @@ public static $widget_styles = array (
  'header-btn-size' => '13px',
  'review-gap' => '16px',
  'button-widget-font-size' => '14px',
- 'ai-summary-background' => 'true',
+ 'ai-summary-background' => 'false',
  'original-rating-text' => '14px',
  ),
  ),
@@ -3439,7 +3433,7 @@ public static $widget_styles = array (
  'header-btn-size' => '13px',
  'review-gap' => '16px',
  'button-widget-font-size' => '14px',
- 'ai-summary-background' => 'true',
+ 'ai-summary-background' => 'false',
  'original-rating-text' => '14px',
  ),
  ),
@@ -3530,7 +3524,7 @@ public static $widget_styles = array (
  'header-btn-size' => '13px',
  'review-gap' => '16px',
  'button-widget-font-size' => '14px',
- 'ai-summary-background' => 'true',
+ 'ai-summary-background' => 'false',
  'original-rating-text' => '15px',
  ),
  ),
@@ -3621,7 +3615,7 @@ public static $widget_styles = array (
  'header-btn-size' => '13px',
  'review-gap' => '16px',
  'button-widget-font-size' => '14px',
- 'ai-summary-background' => 'true',
+ 'ai-summary-background' => 'false',
  'original-rating-text' => '15px',
  ),
  ),
@@ -3712,7 +3706,7 @@ public static $widget_styles = array (
  'header-btn-size' => '13px',
  'review-gap' => '16px',
  'button-widget-font-size' => '14px',
- 'ai-summary-background' => 'true',
+ 'ai-summary-background' => 'false',
  'original-rating-text' => '14px',
  ),
  ),
@@ -3803,7 +3797,7 @@ public static $widget_styles = array (
  'header-btn-size' => '13px',
  'review-gap' => '16px',
  'button-widget-font-size' => '14px',
- 'ai-summary-background' => 'true',
+ 'ai-summary-background' => 'false',
  'original-rating-text' => '14px',
  ),
  ),
@@ -3894,7 +3888,7 @@ public static $widget_styles = array (
  'header-btn-size' => '13px',
  'review-gap' => '16px',
  'button-widget-font-size' => '14px',
- 'ai-summary-background' => 'true',
+ 'ai-summary-background' => 'false',
  'original-rating-text' => '15px',
  ),
  ),
@@ -4230,7 +4224,7 @@ private static $widget_rating_texts = array (
  0 => 'Slecht',
  1 => 'Onder het gemiddelde',
  2 => 'Gemiddeld',
- 3 => 'Goede',
+ 3 => 'Goed',
  4 => 'Uitstekend',
  ),
  'no' => 
@@ -6031,7 +6025,7 @@ public static $widget_top_rated_titles = array (
  'da' => 'Bedst bedømte <br /> webshop %date%',
  'de' => 'Bestbewerteter <br /> Webshop %date%',
  'el' => 'Κορυφαία βαθμολογία <br /> webshop %date%',
- 'es' => 'Tienda web mejor <br /> valorado %date%',
+ 'es' => 'Tienda web mejor <br /> valorada %date%',
  'et' => 'Kõrgeimalt hinnatud <br /> veebipood %date%',
  'fa' => 'متجر الويب <br />الأعلى تقييمًا لعام %date%',
  'fi' => 'Parhaiksi arvioitu <br /> verkkokauppa %date%',
@@ -6171,6 +6165,18 @@ $html = str_replace($matches[0], '<mark class="ti-highlight">' . $replaced_conte
 }
 return $html;
 }
+
+private function getProfileImageSize($layoutId)
+{
+if (in_array($layoutId, [36,37,38,39,44])) {
+return 64;
+}
+return 40;
+}
+private function getHeaderProfileImageSize($layoutId)
+{
+return 65;
+}
 private $previewContent = null;
 private $templateCache = null;
 public function get_noreg_list_reviews($forcePlatform = null, $listAll = false, $defaultStyleId = 4, $defaultSetId = 'light-background', $onlyPreview = false, $defaultReviews = false, $forceDefaultReviews = false)
@@ -6271,6 +6277,8 @@ $showArrows = $this->getWidgetOption('show-arrows', false, $onlyPreview);
 $enableAnimation = $this->getWidgetOption('enable-animation', false, $onlyPreview);
 $align = $this->getWidgetOption('align', false, $onlyPreview);
 $reviewTextMode = $this->getWidgetOption('review-text-mode', false, $onlyPreview);
+$floatingDesktopOpen = $this->getWidgetOption('floating-desktop-open', false, $onlyPreview);
+$floatingMobileOpen = $this->getWidgetOption('floating-mobile-open', false, $onlyPreview);
 $scriptName = 'trustindex-js';
 if (!wp_script_is($scriptName, 'enqueued')) {
 wp_enqueue_script($scriptName, 'https://cdn.trustindex.io/loader.js', [], false, true);
@@ -6334,10 +6342,10 @@ $this->previewContent = [
 $content = preg_replace('/data-set[_-]id=[\'"][^\'"]*[\'"]/m', 'data-set-id="'. $setId .'"', $content);
 $classAppends = [ 'ti-' . substr($this->getShortName(), 0, 4) ];
 $widgetType = self::$widget_templates[ 'templates' ][ $styleId ]['type'];
-if (!in_array($widgetType, [ 'button', 'badge' ]) && !$showLogos) {
+if (!in_array($widgetType, [ 'button', 'badge', 'top-rated-badge' ]) && !$showLogos) {
 $classAppends []= 'ti-no-logo';
 }
-if (!in_array($widgetType, [ 'button', 'badge' ]) && !$showStars) {
+if (!in_array($widgetType, [ 'button', 'badge', 'top-rated-badge' ]) && !$showStars) {
 $classAppends []= 'ti-no-stars';
 }
 if (!$showReviewersPhoto) {
@@ -6360,6 +6368,10 @@ $classAppends []= 'ti-'.(in_array($styleId, [36, 37, 38, 39]) ? 'content' : 'tex
 $content = str_replace('" data-layout-id=', ' '. implode(' ', $classAppends) .'" data-no-translation="true" data-layout-id=', $content);
 if ($dateformat === 'modern') {
 $content = str_replace('" data-layout-id=', '" data-time-locale="'. self::$widget_date_format_locales[ $lang ] .'" data-layout-id=', $content);
+}
+if ($widgetType === 'floating') {
+$content = str_replace('" data-layout-id=', '" data-widget-default-closed="'. ($floatingDesktopOpen ? 0 : 1) .'" data-layout-id=', $content);
+$content = str_replace('" data-layout-id=', '" data-widget-default-closed-mobile="'. ($floatingMobileOpen ? 0 : 1) .'" data-layout-id=', $content);
 }
 if ($onlyPreview) {
 wp_enqueue_style("trustindex-widget-css-". $this->getShortName() ."-". $styleId . "-". $setId, "https://cdn.trustindex.io/assets/widget-presetted-css/". $styleId ."-". $setId .".css");
@@ -6418,11 +6430,19 @@ $verifiedIconTooltipText = str_replace('%platform%', 'PLATFORM_NAME', self::$wid
 $ratingContent .= '<span class="'.$verifiedIconClass.'"><span class="ti-verified-tooltip">'.$verifiedIconTooltipText.'</span></span>';
 }
 if (!$array['show-reviewers-photo']) {
-$matches[1] = str_replace('<div class="ti-profile-img"> <img src="%reviewer_photo%" alt="%reviewer_name%" /> </div>', '', $matches[1]);
+$matches[1] = str_replace('<div class="ti-profile-img"> <img src="%reviewer_photo%" loading="lazy" alt="%reviewer_name%" /> </div>', '', $matches[1]);
 }
+$imageUrl = $r->user_photo;
+$image2xUrl = $imageUrl;
+
+$size = $this->getProfileImageSize($array['style-id']);
+$imageUrl = preg_replace('/([=-])(s\d+|w\d+-h\d+)/', "$1w$size-h$size", $imageUrl);
+$size *= 2;
+$image2xUrl = preg_replace('/([=-])(s\d+|w\d+-h\d+)/', "$1w$size-h$size", $imageUrl);
 $reviewContent .= str_replace(
 [
 '%platform%',
+'%reviewer_photo% 2x',
 '%reviewer_photo%',
 '%reviewer_name%',
 '%created_at%',
@@ -6433,7 +6453,8 @@ $reviewContent .= str_replace(
 ],
 [
 $platformName,
-$r->user_photo,
+$image2xUrl.' 2x',
+$imageUrl,
 $r->user,
 $date,
 $this->getReviewHtml($r),
@@ -6466,6 +6487,13 @@ $ratingTextUcfirst = ucfirst(strtolower($ratingText));
 if (function_exists('mb_strtolower')) {
 $ratingTextUcfirst = mb_substr($ratingText, 0, 1, 'UTF-8') . mb_strtolower(mb_substr($ratingText, 1, null, 'UTF-8'));
 }
+$imageUrl = isset($array['page-details']['avatar_url']) ? $array['page-details']['avatar_url'] : null;
+$image2xUrl = $imageUrl;
+
+$size = $this->getHeaderProfileImageSize($array['style-id']);
+$imageUrl = preg_replace('/([=-])(s\d+|w\d+-h\d+)/', "$1w$size-h$size", $imageUrl);
+$size *= 2;
+$image2xUrl = preg_replace('/([=-])(s\d+|w\d+-h\d+)/', "$1w$size-h$size", $imageUrl);
 $array['content'] = str_replace(
 [
 '%platform%',
@@ -6475,6 +6503,7 @@ $array['content'] = str_replace(
 "RATING_SCALE",
 "RATING_TEXT",
 "Rating_Text",
+"PLATFORM_URL_LOGO 2x",
 "PLATFORM_URL_LOGO",
 "PLATFORM_NAME",
 '<span class="ti-star e"></span><span class="ti-star e"></span><span class="ti-star e"></span><span class="ti-star e"></span><span class="ti-star e"></span>',
@@ -6488,7 +6517,8 @@ number_format((float)$ratingScore, 1),
 $this->is_ten_scale_rating_platform() ? 10 : 5,
 $ratingText,
 $ratingTextUcfirst,
-isset($array['page-details']['avatar_url']) ? $array['page-details']['avatar_url'] : null,
+$image2xUrl.' 2x',
+$imageUrl,
 $this->get_platform_name($this->getShortName(), $array['page-details']['id']),
 $this->is_ten_scale_rating_platform() ? "<div class='ti-rating-box'>". $this->formatTenRating($ratingScore, $array['language']) ."</div>" : $this->get_rating_stars($ratingScore),
 '<div class="ti-small-logo"><img src="'. $this->get_plugin_file_url('static/img/platform/logo.svg') . '" alt="'. ucfirst($this->getShortName()) .'"></div>',
@@ -6502,7 +6532,7 @@ $array['content'] = str_replace('platform/'. ucfirst($this->getShortName()) .'/l
 if ($this->is_ten_scale_rating_platform() && $array['style-id'] == 11) {
 $array['content'] = str_replace('<span class="ti-rating">'. $ratingScore .'</span> ', '', $array['content']);
 }
-if (in_array($array['style-id'], [ 8, 10, 11, 12, 13, 20, 22, 24, 25, 26, 27, 28, 29, 35, 55, 56, 57, 58, 59, 60, 61, 62 ])) {
+if (in_array($array['style-id'], [ 8, 10, 11, 12, 13, 20, 22, 24, 25, 26, 27, 28, 29, 35, 55, 56, 57, 58, 59, 60, 61, 62, 106 ])) {
 if (!$array['show-header-button']) {
 $array['content'] = preg_replace('/<!-- HEADER-BUTTON-START.+HEADER-BUTTON-END -->/s', '', $array['content']);
 }
@@ -6528,7 +6558,7 @@ $array['content'] = preg_replace('/<div class="ti-rating-text">.*<\/div>/mU', ''
 $array['content'] = preg_replace('/<div class="ti-footer">\s*<\/div>/m', '', $array['content']);
 }
 }
-if ($array['footer-filter-text'] && (!in_array($widgetType, [ 'button', 'badge', 'floating' ]) || in_array($array['style-id'], [ 23, 30, 32, 53 ]))) {
+if ($array['footer-filter-text'] && (!in_array($widgetType, [ 'button', 'badge', 'floating', 'top-rated-badge' ]) || in_array($array['style-id'], [ 23, 30, 32, 53 ]))) {
 $filterText = $this->get_footer_filter_text($array['language']);
 if (!$array['no-rating-text'] && !in_array($array['style-id'], [ 5, 8, 9, 10, 13, 18, 23, 30, 31, 32, 33, 34, 53, 54 ])) {
 $array['content'] = str_replace('</span><!-- FOOTER FILTER TEXT -->', ',</span><span class="nowrap"><!-- FOOTER FILTER TEXT --></span>', $array['content']);
@@ -7040,7 +7070,7 @@ $result[ $platforms[ $index ] ] = get_option('trustindex-'. $platforms[ $index ]
 }
 return [
 'result' => $result,
-'setup_url' => admin_url('admin.php?page='. $activePluginSlug .'/settings.php&tab=advanced')
+'setup_url' => admin_url('admin.php?page='. $activePluginSlug .'/settings.php&tab=advanced') ."#trustindex-admin"
 ];
 }
 function init_restapi()
@@ -7101,7 +7131,12 @@ public function is_table_exists($name = "")
 {
 global $wpdb;
 $tableName = $this->get_tablename($name);
-return ($wpdb->get_var("SHOW TABLES LIKE '$tableName'") == $tableName);
+/*
+check both actual name and lowercase name because LIKE is case sensitive in this query (unfortunately)
+and there is a possibility that $wpdb->prefix is something like "JxdFg_"
+(2024-08-23: "jxdfg_trustindex_google_reviews" table existed but this query returned false)
+*/
+return ($wpdb->get_var("SHOW TABLES LIKE '$tableName'") == $tableName) || ($wpdb->get_var("SHOW TABLES LIKE '". strtolower($tableName) ."'") == strtolower($tableName));
 }
 }
 ?>

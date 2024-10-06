@@ -119,3 +119,47 @@ details > summary {
     @apply hidden;
   }
 }
+
+/***********************************************************
+Facebook feed **************************************************/
+.fts-simple-fb-wrapper {
+  @apply !grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6;
+
+  /* &:nth-child(2) {
+    @apply !hidden sm:!block;
+  }
+
+  &:nth-child(3) {
+    @apply !hidden lg:!block;
+  }
+
+  &:nth-child(4) {
+    @apply !hidden xl:!block;
+  } */
+
+  .fts-jal-single-fb-post {
+    @apply bg-white !p-4;
+
+    &:nth-of-type(2) {
+      @apply !hidden sm:!block;
+    }
+  
+    &:nth-of-type(3) {
+      @apply !hidden lg:!block;
+    }
+  
+    &:nth-of-type(4) {
+      @apply !hidden xl:!block;
+    }
+
+    .fts-jal-fb-message {
+      @apply max-h-80 overflow-y-scroll;
+    }
+  }
+
+  .fts-fb-photo-post-wrap {
+    .fts-jal-fb-message {
+      @apply max-h-40 overflow-y-scroll;
+    }
+  }
+}

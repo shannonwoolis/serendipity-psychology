@@ -130,6 +130,8 @@ delete_option($pluginManagerInstance->get_option_name('show-arrows'));
 delete_option($pluginManagerInstance->get_option_name('show-header-button'));
 delete_option($pluginManagerInstance->get_option_name('reviews-load-more'));
 delete_option($pluginManagerInstance->get_option_name('show-reviewers-photo'));
+delete_option($pluginManagerInstance->get_option_name('floating-desktop-open'));
+delete_option($pluginManagerInstance->get_option_name('floating-mobile-open'));
 delete_option($pluginManagerInstance->get_option_name('widget-setted-up'));
 }
 $wpdb->query('TRUNCATE `'. $pluginManagerInstance->get_tablename('reviews') .'`');
@@ -159,6 +161,8 @@ $optionsToDelete = [
 'show-header-button',
 'reviews-load-more',
 'dateformat',
+'floating-desktop-open',
+'floating-mobile-open',
 ];
 foreach ($optionsToDelete as $name) {
 delete_option($pluginManagerInstance->get_option_name($name));
@@ -298,6 +302,16 @@ if (isset($_POST['footer-filter-text'])) {
 $r = sanitize_text_field($_POST['footer-filter-text']);
 }
 update_option($pluginManagerInstance->get_option_name('footer-filter-text'), $r, false);
+$r = 1;
+if (isset($_POST['floating-desktop-open'])) {
+$r = sanitize_text_field($_POST['floating-desktop-open']);
+}
+update_option($pluginManagerInstance->get_option_name('floating-desktop-open'), $r, false);
+$r = 0;
+if (isset($_POST['floating-mobile-open'])) {
+$r = sanitize_text_field($_POST['floating-mobile-open']);
+}
+update_option($pluginManagerInstance->get_option_name('floating-mobile-open'), $r, false);
 $filter = $pluginManagerInstance->getWidgetOption('filter');
 $filter['only-ratings'] = isset($_POST['only-ratings']) ? (bool)$_POST['only-ratings'] : $pluginManagerInstance->getWidgetOption('filter', false, true)['only-ratings'];
 update_option($pluginManagerInstance->get_option_name('filter'), $filter, false);
@@ -481,8 +495,8 @@ update_option($pluginManagerInstance->get_option_name('review-download-token'), 
 <span class="ti-checkbox">
 <input type="radio" name="layout-select" value="<?php echo esc_attr($category); ?>" data-ids="<?php echo esc_attr($ids); ?>">
 <label><?php
-$categoryUcfirst = ucfirst($category);
-echo esc_html(__($categoryUcfirst, 'trustindex-plugin'));
+$categoryName = ucwords(str_replace('-', ' ', $category));
+echo esc_html(__($categoryName, 'trustindex-plugin'));
 ?></label>
 </span>
 <?php endforeach; ?>
@@ -491,7 +505,7 @@ echo esc_html(__($categoryUcfirst, 'trustindex-plugin'));
 <?php foreach ($pluginManager::$widget_templates['templates'] as $id => $template): ?>
 <?php
 $className = 'ti-full-width';
-if (in_array($template['type'], [ 'badge', 'button', 'floating', 'popup', 'sidebar' ])) {
+if (in_array($template['type'], [ 'badge', 'button', 'floating', 'popup', 'sidebar', 'top-rated-badge' ])) {
 $className = 'ti-half-width';
 }
 $set = 'light-background';
@@ -545,7 +559,7 @@ if (!isset($template['is-active']) || $template['is-active']):
 <?php endif; ?>
 <?php
 $className = 'ti-full-width';
-if (in_array($pluginManager::$widget_templates['templates'][ $styleId ]['type'], [ 'badge', 'button', 'floating', 'popup', 'sidebar' ])) {
+if (in_array($pluginManager::$widget_templates['templates'][ $styleId ]['type'], [ 'badge', 'button', 'floating', 'popup', 'sidebar', 'top-rated-badge' ])) {
 $className = 'ti-half-width';
 }
 ?>
@@ -573,7 +587,7 @@ $className = 'ti-half-width';
 <?php elseif ($stepCurrent === 4): ?>
 <?php
 $widgetType = $pluginManager::$widget_templates['templates'][$styleId]['type'];
-$widgetHasReviews = !in_array($widgetType, ['button', 'badge']) || in_array($styleId, [23, 30, 32]);
+$widgetHasReviews = !in_array($widgetType, ['button', 'badge', 'top-rated-badge']) || in_array($styleId, [23, 30, 32]);
 ?>
 <h1 class="ti-header-title"><?php echo __('Set up widget', 'trustindex-plugin'); ?></h1>
 <?php if (!count($reviews) && !$isReviewDownloadInProgress): ?>
@@ -789,12 +803,19 @@ break;
 <?php if ($widgetHasReviews && $styleId != 52): ?>
 <span class="ti-checkbox ti-checkbox-row">
 <input type="checkbox" name="show-reviewers-photo" value="1"<?php if ($pluginManagerInstance->getWidgetOption('show-reviewers-photo')): ?> checked<?php endif; ?> />
-<label><?php echo __("Show reviewers' photo", 'trustindex-plugin'); ?></label>
+<label><?php echo __("Show reviewer's profile picture", 'trustindex-plugin'); ?></label>
 </span>
 <span class="ti-checkbox ti-checkbox-row ti-disabled">
 <input type="checkbox" value="1" disabled />
 <label class="ti-tooltip">
-<?php echo __("Show reviewers' photos locally, from a single image (less requests)", 'trustindex-plugin'); ?>
+<?php echo __("Show reviewer's profile picture locally, from a single image (less requests)", 'trustindex-plugin'); ?>
+<span class="ti-tooltip-message"><?php echo __('Paid package feature', 'trustindex-plugin'); ?></span>
+</label>
+</span>
+<span class="ti-checkbox ti-checkbox-row ti-disabled">
+<input type="checkbox" value="1" disabled />
+<label class="ti-tooltip">
+<?php echo __('Show photos in reviews', 'trustindex-plugin'); ?>
 <span class="ti-tooltip-message"><?php echo __('Paid package feature', 'trustindex-plugin'); ?></span>
 </label>
 </span>
@@ -814,12 +835,22 @@ break;
 <input type="checkbox" name="show-logos" value="1"<?php if ($pluginManagerInstance->getWidgetOption('show-logos')): ?> checked<?php endif;?> />
 <label><?php echo __('Show platform logos', 'trustindex-plugin'); ?></label>
 </span>
-<?php if (!$pluginManagerInstance->is_ten_scale_rating_platform()): ?>
+<?php if (!$pluginManagerInstance->is_ten_scale_rating_platform() && $pluginManagerInstance->getShortName() !== 'google'): ?>
 <span class="ti-checkbox ti-checkbox-row">
 <input type="checkbox" name="show-stars" value="1"<?php if ($pluginManagerInstance->getWidgetOption('show-stars')): ?> checked<?php endif;?> />
 <label><?php echo __('Show platform stars', 'trustindex-plugin'); ?></label>
 </span>
 <?php endif; ?>
+<?php endif; ?>
+<?php if ($widgetType === 'floating'): ?>
+<span class="ti-checkbox ti-checkbox-row">
+<input type="checkbox" name="floating-desktop-open" value="1"<?php if ($pluginManagerInstance->getWidgetOption('floating-desktop-open')): ?> checked<?php endif; ?> />
+<label><?php echo __('Opened on desktop', 'trustindex-plugin'); ?></label>
+</span>
+<span class="ti-checkbox ti-checkbox-row">
+<input type="checkbox" name="floating-mobile-open" value="1"<?php if ($pluginManagerInstance->getWidgetOption('floating-mobile-open')): ?> checked<?php endif; ?> />
+<label><?php echo __('Opened on mobile', 'trustindex-plugin'); ?></label>
+</span>
 <?php endif; ?>
 </form>
 </div>
