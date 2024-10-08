@@ -199,6 +199,16 @@ h3 {
     }
 }
 
+.page.privacy-policy {
+    .copy {
+        ol {
+            li {
+                @apply list-none;
+            }
+        }
+    }
+}
+
 .bg-grey, .bg-secondary-pale {
     .copy {
         .styled-list, ul {

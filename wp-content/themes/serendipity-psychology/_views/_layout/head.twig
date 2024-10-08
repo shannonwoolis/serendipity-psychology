@@ -38,7 +38,7 @@
   {{ function('wp_head') }}
 </head>
 
-<body>
+<body class="{{ body_class }}">
 
 {# Set up a new mobile menu  #}
 {% set mobileMenu = primaryMenu.items %}
