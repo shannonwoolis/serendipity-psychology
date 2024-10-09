@@ -102,6 +102,10 @@ function team_categories() {
 		'show_admin_column'          => true,
 		'show_in_nav_menus'          => true,
 		'show_tagcloud'              => true,
+		'rewrite' => array(
+			'slug' => 'team-category',
+			'with_front' => false
+		),
 	);
 	register_taxonomy( 'team-category', array( 'our-team' ), $args );
 
