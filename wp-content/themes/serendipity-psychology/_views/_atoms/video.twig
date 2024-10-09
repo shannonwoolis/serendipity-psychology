@@ -13,8 +13,8 @@
 
             <div class="video-popup">
 				<span class="loader"></span>
-				<div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;">
-					<div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;">
+				{# <div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;">
+					<div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;"> #}
 						{% if video.file_or_embed == 'file' %}
                             <video width="100%" height="auto" class="max-w-full max-h-full w-full h-full" controls>
                                 <source src="{{ video.file.url }}" type="video/mp4">
@@ -23,8 +23,8 @@
                         {% else %}
                             {{ video.embed_code }}
                         {% endif %}
-					</div>
-				</div>
+					{# </div>
+				</div> #}
 			</div>
 			<div class="modal-underlay" tabindex="0">
 				<span class="sr-only">Close video</span>

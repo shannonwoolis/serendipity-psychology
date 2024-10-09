@@ -60,6 +60,38 @@ if (typeof (bucketsMob) != 'undefined' && bucketsMob != null) {
 }
 
 
+var bucketsSidebar = document.querySelector('.js-bucketsSidebar-slider');
+
+if (typeof (bucketsSidebar) != 'undefined' && bucketsSidebar != null) {
+    let bucketsSidebar = document.querySelector('.js-bucketsSidebar-slider');
+
+    let slider = new tns({
+        container: bucketsSidebar,
+        items: 1,
+        gutter: 20,
+        responsive: {
+            1: {
+                items: 1
+            },
+            480: {
+                items: 2
+            },
+            1024: {
+                disable: true
+            },
+        },
+        autoplay: false,
+        loop: false,
+        mouseDrag: true,
+        controls: true,
+        controlsContainer: ".tns-controls-bucketsSidebar",
+        nav: true,
+        autoHeight: true,
+        lazyload: true
+    });
+}
+
+
 var bucketsDesktop = document.querySelector('.js-bucketsDesktop-slider');
 
 if (typeof (bucketsDesktop) != 'undefined' && bucketsDesktop != null) {

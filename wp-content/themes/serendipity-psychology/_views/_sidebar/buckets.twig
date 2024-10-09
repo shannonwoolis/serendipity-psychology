@@ -1,7 +1,15 @@
-<div class="flex flex-wrap -m-4">
-    {% for post in side.buckets %}
-        <div class="w-full md:w-1/2 p-4">
-            {% include "_atoms/bucket.twig" %}
+<div class="">
+    <div class="relative">
+        <div class="lg:flex lg:flex-wrap lg:-m-4 js-bucketsSidebar-slider">
+            {% for post in side.buckets %}
+                <div class="w-full lg:w-1/2 lg:p-4">
+                    {% include "_atoms/bucket.twig" %}
+                </div>
+            {% endfor %}
         </div>
-    {% endfor %}
+        {% include "_atoms/slider-controls.twig" with {
+            sliderName: 'bucketsSidebar',
+            controlsClasses: 'lg:hidden pr-0 !mt-4'
+        } %}
+    </div>
 </div>

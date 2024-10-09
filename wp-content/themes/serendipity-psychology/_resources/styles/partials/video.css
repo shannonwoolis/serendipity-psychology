@@ -3,19 +3,25 @@
 --------------------------------------------------------------- */
  
 .video-popup {
-    display: block !important; 
+    display: flex !important; 
+    align-items: center;
+    justify-content: center;
     position: fixed;
     top: 50%;
     left: 50%;
     -webkit-transform: translateX(-50%) translateY(-50%);
     transform: translateX(-50%) translateY(-50%);
-    width: 90%;
-    max-width: 600px;
+    width: 100%;
     z-index: 9999;
     visibility: hidden;
     opacity: 0;
     transition: .3s;
     text-align: center;
+
+    iframe, video {
+        max-width: 100%;
+        width: 600px;
+    }
  
     &.active {
         opacity: 1;
