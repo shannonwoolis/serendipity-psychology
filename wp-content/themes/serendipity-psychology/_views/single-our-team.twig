@@ -24,7 +24,7 @@
 						{% endif %}
 					</span>
 					{% if hero.title %}
-						<span class="mb-4 font-heading leading-tight {{ fn('is_front_page') ? 'text-4xl xs:text-5xl xl:text-6xl 3xl:text-7xl' : 'text-3xl sm:text-4xl lg:text-5xl xl:text-6xl' }}">{{ hero.title }}</span>
+						<h1 class="mb-4 font-heading leading-tight text-3xl sm:text-4xl lg:text-5xl xl:text-6xl">{{ hero.title }}</h1>
 					{% endif %}
 					{% if hero.pre_title %}
 						<span class="mb-2 text-lg font-medium pre-title text-secondary-extraDark">{{ hero.pre_title }}</span>
