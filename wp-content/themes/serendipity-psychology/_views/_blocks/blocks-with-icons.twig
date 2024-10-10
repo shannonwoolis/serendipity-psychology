@@ -40,7 +40,7 @@
                         {% if item.icon %}<img src="" data-src="{{ item.icon.url|resize(200) }}" class="lazyload w-16 h-16 mb-4 object-center object-contain">{% endif %}
                         {% if item.title %}
                             {% if item.link %}
-                                <a href="{{ item.link }}" class="text-lg sm:text-xl lg:text-2xl font-heading text-secondary leading-tight underline hover:text-white">{{ item.title }}</a>
+                                <a href="{{ item.link.url }}" class="text-lg sm:text-xl lg:text-2xl font-heading text-secondary leading-tight underline hover:text-white">{{ item.title }}</a>
                             {% else %}
                                 <span class="text-lg sm:text-xl lg:text-2xl font-heading text-secondary leading-tight">{{ item.title }}</span>
                             {% endif %}
