@@ -16,6 +16,8 @@ function teamQuery($cats) {
     $postArgs = [
         'post_type' => 'our-team',
         'posts_per_page' => -1,
+        'orderby' => 'menu_order',
+        'order' => 'ASC',
         'tax_query' => $tax_query
     ]; 
     $posts = new Timber\PostQuery($postArgs);

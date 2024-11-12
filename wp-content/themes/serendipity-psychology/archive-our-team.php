@@ -13,7 +13,7 @@ $teamArgs = [
     'post_type' => 'our-team',
     'posts_per_page' => 20,
     'paged' => $paged,
-    'orderby' => 'title',
+    'orderby' => 'menu_order',
     'order'   => 'ASC',
 ]; 
 $team = new Timber\PostQuery($teamArgs);
@@ -22,7 +22,7 @@ $context['allTeam'] = $team;
 $context['teamCategories'] = get_terms( array(
     'taxonomy'   => 'team-category',
     'hide_empty' => true,
-    'orderby' => 'title',
+    'orderby' => 'menu_order',
     'order'   => 'ASC'
 ) );
 
