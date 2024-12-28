@@ -9,11 +9,16 @@ $context['categories'] = get_categories( array(
     'order'   => 'ASC'
 ) );
 
+if(is_singular( array('locations') )) {
+  $context['front'] = new Timber\Post(get_option('page_on_front') );
+}
+
 if(is_singular( array('care-pathways', 'specialist-therapies', 'conditions') )) {
   Timber::render( [ 'page.twig' ], $context );
 } else {
   Timber::render( [ 'single-' . $timber_post->post_type . '.twig', 'single.twig' ], $context );
 }
+
 
 if (is_singular('post')) { ?>
   <script type="text/javascript">

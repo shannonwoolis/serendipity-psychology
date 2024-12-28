@@ -64,18 +64,18 @@
       $context['specialistTherapies'] = new Timber\PostQuery($specialistTherapies);
 
       $conditions = [
-        'post_type' => 'conditions',
-        'orderby' => 'title',
-        'order' => 'ASC',
-        'posts_per_page' => -1,
-    ];
-    $context['conditions'] = new Timber\PostQuery($conditions);
+          'post_type' => 'conditions',
+          'orderby' => 'title',
+          'order' => 'ASC',
+          'posts_per_page' => -1,
+      ];
+      $context['conditions'] = new Timber\PostQuery($conditions);
 
-    $testimonials = [
-        'post_type' => 'testimonials',
-        'posts_per_page' => 10,
-    ];
-    $context['testimonials'] = new Timber\PostQuery($testimonials);
+      $testimonials = [
+          'post_type' => 'testimonials',
+          'posts_per_page' => 10,
+      ];
+      $context['testimonials'] = new Timber\PostQuery($testimonials);
 
       $context['spacingY'] = 'py-12 lg:py-16 2xl:py-20';
       $context['spacingT'] = 'pt-12 lg:pt-16 2xl:pt-20';
@@ -83,6 +83,8 @@
       $context['spacingX'] = 'px-4 2xs:px-6 md:px-8 lg:px-6 xl:px-10';
       $context['spacingR'] = 'pr-4 2xs:pr-6 md:pr-8 lg:pr-6 xl:pr-10';
       $context['spacingL'] = 'pl-4 2xs:pl-6 md:pl-8 lg:pl-6 xl:pl-10';
+
+      $context['defaultUSPs'] = get_field('hero',get_option('page_on_front'))['usps'];
 
       return $context;
     }

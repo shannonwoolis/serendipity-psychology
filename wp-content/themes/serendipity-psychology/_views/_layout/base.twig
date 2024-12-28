@@ -14,7 +14,7 @@
 			h1: hero.h1,
 			copy: hero.copy,
 			buttons: hero.buttons,
-			usps: hero.usps,
+			usps: (hero.use_default_usps ? defaultUSPs : hero.usps),
 			show_insurance_providers: hero.show_insurance_providers
 		} %}
 	{% endblock %}

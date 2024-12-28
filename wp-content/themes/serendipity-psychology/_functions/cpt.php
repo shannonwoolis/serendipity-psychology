@@ -112,6 +112,49 @@ function team_categories() {
 }
 add_action( 'init', 'team_categories', 0 );
 
+// Register Custom Taxonomy
+function team_location() {
+
+	$labels = array(
+		'name'                       => _x( 'Team Locations', 'Taxonomy General Name', 'text_domain' ),
+		'singular_name'              => _x( 'Team Location', 'Taxonomy Singular Name', 'text_domain' ),
+		'menu_name'                  => __( 'Location', 'text_domain' ),
+		'all_items'                  => __( 'All Locations', 'text_domain' ),
+		'parent_item'                => __( 'Parent Location', 'text_domain' ),
+		'parent_item_colon'          => __( 'Parent Location:', 'text_domain' ),
+		'new_item_name'              => __( 'New Location Name', 'text_domain' ),
+		'add_new_item'               => __( 'Add New Location', 'text_domain' ),
+		'edit_item'                  => __( 'Edit Location', 'text_domain' ),
+		'update_item'                => __( 'Update Location', 'text_domain' ),
+		'view_item'                  => __( 'View Location', 'text_domain' ),
+		'separate_items_with_commas' => __( 'Separate Locations with commas', 'text_domain' ),
+		'add_or_remove_items'        => __( 'Add or remove Locations', 'text_domain' ),
+		'choose_from_most_used'      => __( 'Choose from the most used', 'text_domain' ),
+		'popular_items'              => __( 'Popular Locations', 'text_domain' ),
+		'search_items'               => __( 'Search Locations', 'text_domain' ),
+		'not_found'                  => __( 'Not Found', 'text_domain' ),
+		'no_terms'                   => __( 'No Locations', 'text_domain' ),
+		'items_list'                 => __( 'Locations list', 'text_domain' ),
+		'items_list_navigation'      => __( 'Locations list navigation', 'text_domain' ),
+	);
+	$args = array(
+		'labels'                     => $labels,
+		'hierarchical'               => true,
+		'public'                     => true,
+		'show_ui'                    => true,
+		'show_admin_column'          => true,
+		'show_in_nav_menus'          => true,
+		'show_tagcloud'              => true,
+		'rewrite' => array(
+			'slug' => 'team-location',
+			'with_front' => false
+		),
+	);
+	register_taxonomy( 'team-location', array( 'our-team' ), $args );
+
+}
+add_action( 'init', 'team_location', 0 );
+
 
 
 
@@ -459,3 +502,141 @@ function register_testimonials() {
 
 }
 add_action( 'init', 'register_testimonials', 0 );
+
+
+
+/* ========================================================================================================================
+
+Register Locations CPT
+
+======================================================================================================================== */
+function register_locations() {
+
+	$labels = array(
+		'name'                  => _x( 'Locations', 'Post Type General Name', 'text_domain' ),
+		'singular_name'         => _x( 'Location', 'Post Type Singular Name', 'text_domain' ),
+		'menu_name'             => __( 'Locations', 'text_domain' ),
+		'name_admin_bar'        => __( 'Locations', 'text_domain' ),
+		'archives'              => __( 'Location Archives', 'text_domain' ),
+		'attributes'            => __( 'Location Attributes', 'text_domain' ),
+		'parent_item_colon'     => __( 'Parent Location:', 'text_domain' ),
+		'all_items'             => __( 'All Locations', 'text_domain' ),
+		'add_new_item'          => __( 'Add New Location', 'text_domain' ),
+		'add_new'               => __( 'Add New', 'text_domain' ),
+		'new_item'              => __( 'New Location', 'text_domain' ),
+		'edit_item'             => __( 'Edit Location', 'text_domain' ),
+		'update_item'           => __( 'Update Location', 'text_domain' ),
+		'view_item'             => __( 'View Location', 'text_domain' ),
+		'view_items'            => __( 'View Locations', 'text_domain' ),
+		'search_items'          => __( 'Search Location', 'text_domain' ),
+		'not_found'             => __( 'Not found', 'text_domain' ),
+		'not_found_in_trash'    => __( 'Not found in Trash', 'text_domain' ),
+		'featured_image'        => __( 'Location Image', 'text_domain' ),
+		'set_featured_image'    => __( 'Set Location image', 'text_domain' ),
+		'remove_featured_image' => __( 'Remove Location image', 'text_domain' ),
+		'use_featured_image'    => __( 'Use as Location image', 'text_domain' ),
+		'insert_into_item'      => __( 'Insert into Location', 'text_domain' ),
+		'uploaded_to_this_item' => __( 'Uploaded to this Location', 'text_domain' ),
+		'items_list'            => __( 'Locations list', 'text_domain' ),
+		'items_list_navigation' => __( 'Locations list navigation', 'text_domain' ),
+		'filter_items_list'     => __( 'Filter Locations list', 'text_domain' ),
+	);
+	$rewrite = array(
+		'slug'                  => 'locations',
+		'with_front'            => false,
+		'pages'                 => true,
+		'feeds'                 => true,
+	);
+	$args = array(
+		'label'                 => __( 'Location', 'text_domain' ),
+		'description'           => __( 'Locations CPT', 'text_domain' ),
+		'labels'                => $labels,
+		'supports'              => array( 'title', 'editor', 'thumbnail' ),
+		'hierarchical'          => false,
+		'public'                => true,
+		'show_ui'               => true,
+		'show_in_menu'          => true,
+		'menu_position'         => 5,
+		'menu_icon'             => 'dashicons-location',
+		'show_in_admin_bar'     => true,
+		'show_in_nav_menus'     => true,
+		'can_export'            => true,
+		'has_archive'           => false,
+		'exclude_from_search'   => false,
+		'publicly_queryable'    => true,
+		'rewrite'               => $rewrite,
+		'capability_type'       => 'page',
+	);
+	register_post_type( 'locations', $args );
+
+}
+add_action( 'init', 'register_locations', 0 );
+
+
+
+/* ========================================================================================================================
+
+Register Practices CPT
+
+======================================================================================================================== */
+function register_practices() {
+
+	$labels = array(
+		'name'                  => _x( 'Practices', 'Post Type General Name', 'text_domain' ),
+		'singular_name'         => _x( 'Practice', 'Post Type Singular Name', 'text_domain' ),
+		'menu_name'             => __( 'Practices', 'text_domain' ),
+		'name_admin_bar'        => __( 'Practices', 'text_domain' ),
+		'archives'              => __( 'Practice Archives', 'text_domain' ),
+		'attributes'            => __( 'Practice Attributes', 'text_domain' ),
+		'parent_item_colon'     => __( 'Parent Practice:', 'text_domain' ),
+		'all_items'             => __( 'All Practices', 'text_domain' ),
+		'add_new_item'          => __( 'Add New Practice', 'text_domain' ),
+		'add_new'               => __( 'Add New', 'text_domain' ),
+		'new_item'              => __( 'New Practice', 'text_domain' ),
+		'edit_item'             => __( 'Edit Practice', 'text_domain' ),
+		'update_item'           => __( 'Update Practice', 'text_domain' ),
+		'view_item'             => __( 'View Practice', 'text_domain' ),
+		'view_items'            => __( 'View Practices', 'text_domain' ),
+		'search_items'          => __( 'Search Practice', 'text_domain' ),
+		'not_found'             => __( 'Not found', 'text_domain' ),
+		'not_found_in_trash'    => __( 'Not found in Trash', 'text_domain' ),
+		'featured_image'        => __( 'Practice Image', 'text_domain' ),
+		'set_featured_image'    => __( 'Set Practice image', 'text_domain' ),
+		'remove_featured_image' => __( 'Remove Practice image', 'text_domain' ),
+		'use_featured_image'    => __( 'Use as Practice image', 'text_domain' ),
+		'insert_into_item'      => __( 'Insert into Practice', 'text_domain' ),
+		'uploaded_to_this_item' => __( 'Uploaded to this Practice', 'text_domain' ),
+		'items_list'            => __( 'Practices list', 'text_domain' ),
+		'items_list_navigation' => __( 'Practices list navigation', 'text_domain' ),
+		'filter_items_list'     => __( 'Filter Practices list', 'text_domain' ),
+	);
+	$rewrite = array(
+		'slug'                  => 'practices',
+		'with_front'            => false,
+		'pages'                 => true,
+		'feeds'                 => true,
+	);
+	$args = array(
+		'label'                 => __( 'Practice', 'text_domain' ),
+		'description'           => __( 'Practices CPT', 'text_domain' ),
+		'labels'                => $labels,
+		'supports'              => array( 'title', 'editor', 'thumbnail' ),
+		'hierarchical'          => false,
+		'public'                => true,
+		'show_ui'               => true,
+		'show_in_menu'          => true,
+		'menu_position'         => 5,
+		'menu_icon'             => 'dashicons-admin-home',
+		'show_in_admin_bar'     => true,
+		'show_in_nav_menus'     => true,
+		'can_export'            => true,
+		'has_archive'           => false,
+		'exclude_from_search'   => false,
+		'publicly_queryable'    => true,
+		'rewrite'               => $rewrite,
+		'capability_type'       => 'page',
+	);
+	register_post_type( 'practices', $args );
+
+}
+add_action( 'init', 'register_practices', 0 );
