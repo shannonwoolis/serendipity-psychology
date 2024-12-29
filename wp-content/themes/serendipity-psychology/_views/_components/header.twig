@@ -4,11 +4,11 @@
 		<div class="py-3 lg:py-0 relative container items-center justify-between flex">
 
 			<a aria-label="Go to homepage" class="block lg:inline-block" href="{{site.site_url}}">
-				<img class="mx-auto w-36 min-w-36 2xs:w-40 2xs:min-w-40 lg:w-36 lg:min-w-36 xl:w-44 xl:min-w-44 mr-4 xl:mr-8" src="{{options.site_logo.url}}" alt="{{site.title}} Logo"/>
+				<img class="mx-auto w-36 min-w-36 2xs:w-40 2xs:min-w-40 lg:w-32 lg:min-w-32 xl:w-44 xl:min-w-44 mr-4 xl:mr-8" src="{{options.site_logo.url}}" alt="{{site.title}} Logo"/>
 			</a>
 
 			<div class="hidden lg:flex flex-col w-full">
-				<div class="bg-secondary-pale relative rounded-bl-2xl pl-4 flex justify-between items-center">
+				<div class="bg-secondary-pale relative rounded-bl-2xl pl-2.5 xl:pl-4 flex justify-between items-center">
 					<div class="w-screen absolute h-full top-0 left-full bg-secondary-pale"></div>
 					<nav id="menu-secondary" class="menu" aria-labelledby="secondary-navigation">
 						<span class="sr-only" id="secondary-navigation">Secondary Navigation</span>
@@ -50,28 +50,19 @@
 							{% endfor %}
 						</ul>
 					</nav>
-
-					{# <div class="py-2 text-xs 3xl:text-sm">
-						<span class="mb-0.5 2xl:mb-0 2xl:mr-4 flex items-center">
-							{{ fn('icon','email','text-primary mr-1') }}
-							Email: 
-							<a href="mailto:{{ options.site_email }}" class="ml-1 text-primary hover:underline font-bold">{{ options.site_email }}</a>
-						</span>
-					</div> #}
-					{# {% include "_components/phone-top-right.twig" %} #}
 				</div>
 
-				<div class="flex items-center justify-between">
+				<div class="flex items-center justify-between -ml-1.5 xl:ml-0">
 
 					<nav id="menu-primary" class="menu" aria-labelledby="primary-navigation">
 						<span class="sr-only" id="primary-navigation">Primary Navigation</span>
 						<ul class="flex flex-wrap justify-start menu-primary">
 							{% for item in primaryMenu.items %}
 								<li class="{{item.class}}">
-									<a href="{{item.link}}" class="relative block px-2 xl:px-3 py-6 text-black hover:text-primary focus:text-primary">
+									<a href="{{item.link}}" class="relative block px-1.5 xl:px-3 py-6 text-sm 2xl:text-base text-black hover:text-primary focus:text-primary">
 										{{item.name}}
 										{% if item.children %}
-											{{ fn('icon','angles-down','text-primary text-xs xl:ml-1') }}
+											{{ fn('icon','angles-down','text-primary text-3xs xl:text-xs xl:ml-1') }}
 										{% endif %}
 									</a>
 									{% if item.children %}

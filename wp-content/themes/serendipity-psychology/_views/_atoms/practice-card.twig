@@ -22,7 +22,7 @@
 
         <span class="mt-2 font-heading text-primary text-xl sm:text-2xl lg:text-3xl leading-tight">{{ post.title }}</span>
 
-        <span class="mt-4">
+        <span class="mt-4 break-words w-full">
             {% if post.meta('practice_description') %}
                 <p class="text-sm mb-4">{{ post.meta('practice_description')|striptags|slice(0,70) }}...</p>
             {% endif %}
