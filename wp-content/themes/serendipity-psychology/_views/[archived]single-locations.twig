@@ -1,7 +1,7 @@
 {% extends '_layout/base.twig' %}
 
 {% block content %}
-	{% for section in front.meta('page_layout') %}
+	{# {% for section in front.meta('page_layout') %}
 		{% if 'copy' in section.acf_fc_layout %}
 			{% include "_blocks/"~section.acf_fc_layout|replace({"_":"-"})~".twig" with {
 				section: post.meta('page_layout').0
@@ -9,5 +9,5 @@
 		{% elseif 'facebook' not in section.acf_fc_layout %}
 			{% include "_blocks/"~section.acf_fc_layout|replace({"_":"-"})~".twig" %}
 		{% endif %}
-	{% endfor %}
+	{% endfor %} #}
 {% endblock %}

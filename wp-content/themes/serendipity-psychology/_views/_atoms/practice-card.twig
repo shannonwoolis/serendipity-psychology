@@ -1,0 +1,44 @@
+<a href="{{ post.link }}" class="flex flex-col transform hover:scale-103 rounded-tr-3xl bg-secondary-pale h-full">
+    {# {% include "_atoms/picture.twig" with {
+        source: post.thumbnail.src,
+        pictureClasses: 'relative z-0',
+        lazyload: true,
+        breakpoints: {
+            "1px" : {
+                w: 600,
+                h: 350,
+                crop: 'center'
+            },
+        },
+        img: {
+            classes: 'lazyload rounded-tr-3xl',
+            w: 600,
+            h: 350,
+            crop: 'center',
+        }
+    } %} #}
+
+    <span class="px-6 pt-6 flex flex-col items-start">
+
+        <span class="mt-2 font-heading text-primary text-xl sm:text-2xl lg:text-3xl leading-tight">{{ post.title }}</span>
+
+        <span class="mt-4">
+            {% if post.meta('practice_description') %}
+                <p class="text-sm mb-4">{{ post.meta('practice_description')|striptags|slice(0,70) }}...</p>
+            {% endif %}
+            {% if post.meta('phone_number') %}
+                <p class="block mb-2"><strong>Phone: <span class="text-primary">{{ post.meta('phone_number') }}</span></strong></p>
+            {% endif %}
+            {% if post.meta('email_address') %}
+                <p class="block mb-2"><strong>Email: <span class="text-primary">{{ post.meta('email_address') }}</span></strong></p>
+            {% endif %}
+            {% if post.meta('address') %}
+                <p class="block mb-2"><strong>Address: <span class="text-primary">{{ post.meta('address') }}</span></strong></p>
+            {% endif %}
+        </span>
+
+    </span>
+    <span class="px-6 pb-6 pt-4 mt-auto">
+        <span class="mt-auto w-full btn btn-secondary justify-center">View practice {{ fn('icon','angles-right') }}</span>
+    </span>
+</a>

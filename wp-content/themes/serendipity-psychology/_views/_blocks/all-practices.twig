@@ -1,0 +1,14 @@
+<section class="{{ spacingY }} bg-white">
+    <div class="container">
+        <div class="flex flex-wrap -mx-4">
+            {% for post in practices %}
+                <div class="p-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4">
+                    {% include "_atoms/practice-card.twig" %}
+                </div>
+            {% endfor %}
+        </div>
+        {# {% include "_atoms/pagination.twig" with {
+            posts: posts 
+        } %} #}
+    </div>
+</section>

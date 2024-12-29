@@ -1,28 +1,36 @@
-<section class="bg-primary-pale">
+{% if section.show_current_practice == false %}
+    {% set practice = Post(section.practice.0) %}
+{% else %}
+    {% set practice = Post(post.id) %}
+{% endif %}
+<section class="bg-{{ section.background_colour|default('primary-pale') }}">
     <div class="max-w-screen-4xl mx-auto lg:px-6 xl:px-10">
         <div class="flex flex-wrap lg:flex-row-reverse">
             <div class="w-full -mt-12 lg:mt-0 lg:w-1/2 px-4 2xs:px-6 md:px-8 lg:pl-8 lg:pr-0 {{ spacingY }}">
-                {% if section.practice_name %}
-                    <span class="text-primary font-heading text-3xl md:text-4xl lg:text-5xl leading-tight mb-3 block">{{ section.practice_name }}</span>
+                {% if section.pre_title %}
+                    <span class="block mb-2 font-subheading pre-title text-secondary-extraDark">{{ section.pre_title }}</span>
+                {% endif %}
+                {% if practice.meta('practice_name') %}
+                    <span class="text-primary font-heading text-3xl md:text-4xl lg:text-5xl leading-tight mb-3 block">{{ practice.meta('practice_name') }}</span>
                 {% endif %}
                 <span class="copy -mb-6 mt-4">
-                    {% if section.practice_description %}
-                        <p>{{ section.practice_description }}</p>
+                    {% if practice.meta('practice_description') %}
+                        <p>{{ practice.meta('practice_description') }}</p>
                     {% endif %}
-                    {% if section.phone_number %}
-                        <p><strong>Phone: <a href="tel:{{ section.phone_number }}">{{ section.phone_number }}</a></strong></p>
+                    {% if practice.meta('phone_number') %}
+                        <p><strong>Phone: <a href="tel:{{ practice.meta('phone_number') }}">{{ practice.meta('phone_number') }}</a></strong></p>
                     {% endif %}
-                    {% if section.email_address %}
-                        <p><strong>Email: <a href="mailto:{{ section.email_address }}">{{ section.email_address }}</a></strong></p>
+                    {% if practice.meta('email_address') %}
+                        <p><strong>Email: <a href="mailto:{{ practice.meta('email_address') }}">{{ practice.meta('email_address') }}</a></strong></p>
                     {% endif %}
-                    {% if section.address %}
-                        <p><strong>Address: <span class="text-primary">{{ section.address }}</span></strong></p>
+                    {% if practice.meta('address') %}
+                        <p><strong>Address: <span class="text-primary">{{ practice.meta('address') }}</span></strong></p>
                     {% endif %}
                 </span>
             </div>
             <div class="w-full lg:w-1/2 overflow-hidden rounded-tr-4xl lg:rounded-tr-5xl lg:-ml-6 xl:-ml-10 lg:mr-6 xl:mr-10">
                 <div class="map-embed-h-full">
-                    {{ section.map_embed_code }}
+                    {{ practice.meta('map_embed_code') }}
                 </div>
             </div>
         </div>
