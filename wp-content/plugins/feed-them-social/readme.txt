@@ -4,8 +4,8 @@ Donate link: https://www.slickremix.com/
 Tags: Instagram, Facebook, TikTok, YouTube, Social
 Requires at least: 5.4
 Requires PHP: 7.0
-Tested up to: 6.6.2
-Stable tag: 4.3.1
+Tested up to: 6.7.1
+Stable tag: 4.3.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -24,7 +24,7 @@ Easily Create and Display Customizable Social Feeds from Instagram, Facebook, Ti
  * **Simple** Access Token fetching.
  * **Customize** Font colors.
  * **Convert** old shortcodes to saved feed options.
- * **Share** buttons for Instagram, Facebook, Twitter, and YouTube Feeds.
+ * **Share** buttons for Instagram, Facebook, TikTok, and YouTube Feeds.
  * **Add** Like and/or Follow Buttons above or below any feeds.
  * **Works** with Gutenberg Blocks or Classic Editor.
 
@@ -124,6 +124,33 @@ Log into WordPress dashboard then click **Plugins** > **Add new** > Then under t
 16. Add the shortcode you generated from the settings page to any post, page, or text widget.
 
 == Changelog ==
+= Version 4.3.4 Friday, December 6th, 2024 =
+  * New: Cron Job > Clear Cache > Backup method to make sure the cache is deleted on set intervals according to the cache time set in the settings. Runs and clears cache on activation of the plugin, manual and automatic updates.
+  * Fix: Remove last comma on a sprint_f that can cause potential error on some installs.
+  * Fix: get_plugin_data() causing a PHP warning about _load_textdomain_just_in_time for 6.7
+  * Fix: Activation Hooks not firing.
+  * Fix: Settings Page: headers already sent notice when saving the page.
+  * Fix: Settings Page > Remove Data on Uninstall checkbox > Now all fts posts and cron jobs are removed as well.
+  * Fix: Default Settings: Default settings are set on activation of the plugin. fts_cache_time, fts_show_admin_bar, date_time_format, timezone
+  * Remove: Backwards Capability and Unused code from the plugin.
+  * Update: System Info Page: added cron job scheduled info for fts_clear_cache_event.
+  * NOTE: Works with WordPress version 6.7.1
+
+= Version 4.3.3 Monday, November 18th, 2024 =
+  * Fix: Instagram Feed > Get Access Token > Instagram was returning, Error Please wait a few minutes before you try again, for many users. I found using 5G helped but that does not help everyone. Restructured the url to prevent this error.
+  * NOTE: Works with WordPress version 6.7
+
+= Version 4.3.2 Wednesday, October 30th, 2024 =
+  * Update: Instagram Feed Basic > [You must get a new access token](https://www.slickremix.com/documentation/connect-instagram-professional-account/) before December 4th. Depreciation Notice on December 4th, 2024 for the Instagram Basic API. The new connection requires your Instagram account to be a Professional with the Creator or Business option set. We have updated the plugin to reflect this change. Login to your Instagram Account and go to your Profile page, then click the gear icon and choose the Settings, then scroll down and find the Creator Tools and Controls menu option. Now choose either a Business or Creator option. Then you can click the button on our plugin to gain an Access Token. Your account cannot be set to personal for this to work. [More In-depth Info](https://developers.facebook.com/blog/post/2024/09/04/update-on-instagram-basic-display-api/)
+  * New: Instagram Feed > The profile photo now displays for the updated Instagram Feed.
+  * New: Instagram Basic Business Feed > Cron Job > Access Token will automatically refresh every 54 days.
+  * New: YouTube Feed > Cron Job > Access Token will automatically refresh every hour. We still recommend using an [API Key](https://www.slickremix.com/documentation/create-youtube-api-key/).
+  * New: YouTube Feed > Encrypt Refresh Token > For added security.
+  * Fix: Facebook Feed > Shared posts that contain a description under the photo have been added.
+  * Fix: Facebook Feed > Video Posts > Video was duplicating in some cases and the video image was not being removed when clicked.
+  * Fix: License Activation > Some server locations were not able to activate the license key for premium extensions.
+  * Optimize: Remove unused code from the plugin.
+
 = Version 4.3.1 Monday, September 23rd, 2024 =
   * Fix: Facebook Feed > Feeds with more than one post with 2 or more photos were not rendering properly.
   * Fix > Leave a review > message was set for 2 seconds not 2 weeks.

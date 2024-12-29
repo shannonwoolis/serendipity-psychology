@@ -96,6 +96,11 @@ class updater_license_page {
      */
     public $setting_option_name;
 
+    // Declare the properties explicitly
+    public $plugin_title;
+    public $demo_url;
+    public $purchase_url;
+
 	/**
 	 * Construct
 	 *
@@ -342,6 +347,7 @@ class updater_license_page {
 		<?php
 	}
 
+
 	/**
      * Display Premium Needed License
      *
@@ -484,7 +490,7 @@ class updater_license_page {
 		);
 
         // make sure the response came back okay
-        if (is_wp_error($response) || 200 !== wp_remote_retrieve_response_code($response)) {
+        if (is_wp_error($response) || wp_remote_retrieve_response_code($response) !== 200 ) {
 
             if (is_wp_error($response)) {
                 $message = $response->get_error_message();
@@ -587,7 +593,7 @@ class updater_license_page {
 		);
 
         // make sure the response came back okay
-        if (is_wp_error($response) || 200 !== wp_remote_retrieve_response_code($response)) {
+        if (is_wp_error($response) || wp_remote_retrieve_response_code($response) !== 200 ) {
 
             if (is_wp_error($response)) {
                 $message = $response->get_error_message();

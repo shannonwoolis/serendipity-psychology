@@ -3,9 +3,9 @@ Contributors: trustindex
 Donate link: https://www.trustindex.io/prices/
 Tags: google, google places reviews, reviews, widget, google business
 Requires at least: 3.0.1
-Tested up to: 6.6
+Tested up to: 6.7
 Requires PHP: 5.2
-Stable tag: 12.2
+Stable tag: 12.4.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Plugin Name: Widgets for Google Reviews
@@ -14,7 +14,7 @@ Plugin URI: https://wordpress.org/plugins/wp-reviews-plugin-for-google/
 Author: Trustindex.io <support@trustindex.io>
 Author URI: https://www.trustindex.io/
 Text Domain: wp-reviews-plugin-for-google
-Version: 12.2
+Version: 12.4.7
 
 Embed Google reviews fast and easily into your WordPress site. Increase SEO, trust and sales using Google reviews.
 
@@ -52,6 +52,7 @@ The Google Reviews WordPress plugin offers various layouts and styles to choose 
 * 25+ Pre-designed widget styles
 * 1 Review widget
 * Filter reviews by rating
+* Display review reply
 * Hide any reviews
 * Language support
 * Shortcode integration
@@ -59,9 +60,11 @@ The Google Reviews WordPress plugin offers various layouts and styles to choose 
 * SEO boost
 * Dark website support
 * Use in any page builder: Gutenberg, Elementor, Page Origin, Beaver Builder, WPBakery, Divi, Classic, ...
+* Widget lazy load
 * Zero loading time
 * Use of assets stored in CDN
 * Linux & Windows (XAMPP, WAMP,...) compatible
+* Multisite compatibility
 
 ### Get more features with our professional review software
 
@@ -147,7 +150,7 @@ We recommend the following order when searching for answers:
 3. [Trustindex FAQ](https://www.trustindex.io/frequently-asked-questions/)
 4. Check topics or ask a new question here: [Support Forum](https://wordpress.org/support/plugin/wp-reviews-plugin-for-google/)
 5. Join our Community on Facebook: https://www.facebook.com/groups/990874785532977
-5. If you still can't find the answer, feel free to email us: support@trustindex.io
+6. If you still can't find the answer, feel free to email us: support@trustindex.io
 
 To find out more about who we are and what we do, here are some useful links:
 
