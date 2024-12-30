@@ -28,6 +28,41 @@ if (typeof (testimonials) != 'undefined' && testimonials != null) {
     });
 }
 
+
+var gallery = document.querySelector('.js-gallery-slider');
+
+if (typeof (gallery) != 'undefined' && gallery != null) {
+    let gallery = document.querySelector('.js-gallery-slider');
+
+    let slider = new tns({
+        container: gallery,
+        items: 2,
+        gutter: 0,
+        responsive: {
+            480: {
+                items: 3,
+            },
+            768: {
+                items: 4,
+            },
+            850: {
+                items: 5,
+            },
+            1024: {
+                items: 6,
+            },
+        },
+        autoplay: false,
+        loop: true,
+        mouseDrag: true,
+        controls: true,
+        controlsContainer: ".tns-controls-gallery",
+        nav: true,
+        autoHeight: false,
+        lazyload: true
+    });
+}
+
 var bucketsMob = document.querySelector('.js-bucketsMob-slider');
 
 if (typeof (bucketsMob) != 'undefined' && bucketsMob != null) {
