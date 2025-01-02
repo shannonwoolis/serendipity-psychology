@@ -75,6 +75,7 @@ class Instagram_Access_Functions {
 
         $user_id_basic           = !empty( $saved_feed_options['fts_instagram_custom_id'] ) ? $saved_feed_options['fts_instagram_custom_id'] :  '';
         $access_token            = !empty( $saved_feed_options['fts_instagram_custom_api_token'] ) ? $saved_feed_options['fts_instagram_custom_api_token'] : '';
+        $access_token_expires_in = !empty( $saved_feed_options['fts_instagram_custom_api_token_expires_in'] ) ? $saved_feed_options['fts_instagram_custom_api_token_expires_in'] : '';
 
 	    // Decrypt Access Token?
         $decrypted_access_token  = false !== $this->data_protection->decrypt( $access_token ) ?  $this->data_protection->decrypt( $access_token ) : $access_token;
@@ -104,7 +105,7 @@ class Instagram_Access_Functions {
                      1677574786979 get today's timestamp and add some seconds to it so we can test.
                      var expires_in_check  = 1677574786979 + 5173728; */
 
-                     var expires_in_check  = url.searchParams.get("expires_in");
+                     var expires_in_check  = url.searchParams.get("expires_in") - 432000;
 
                     if( undefined!== cpt_id && undefined!== feed_type && 'instagram_basic' === feed_type ) {
 
@@ -150,15 +151,11 @@ class Instagram_Access_Functions {
             $data = json_decode( $response );
 
         }
-        // https://developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-login/business-login#step-2---exchange-the-code-for-a-token
+
         echo sprintf(
             esc_html__( '%1$sLogin and Get my Access Token%2$s', 'feed-them-social' ),
-            '<div class="fts-clear fts-token-spacer"></div><a href="' . esc_url( 'https://api.instagram.com/oauth/authorize?client_id=523345500405663&redirect_uri=https://www.slickremix.com/instagram-business-basic-token-redirect/&response_type=code&scope=instagram_business_basic&state=' . urlencode( urlencode( urlencode( $post_url ) ) ) ) . '" class="fts-instagram-get-access-token">',
-            '</a>'
-
-           /* esc_html__( '%1$sLogin and Get my Access Token%2$s', 'feed-them-social' ),
             '<div class="fts-clear fts-token-spacer"></div><a href="' . esc_url( 'https://api.instagram.com/oauth/authorize?app_id=206360940619297&redirect_uri=https://www.slickremix.com/instagram-basic-token/&response_type=code&scope=user_profile,user_media&state=' . urlencode( urlencode( urlencode( $post_url ) ) ) ) . '" class="fts-instagram-get-access-token">',
-            '</a>'*/
+            '</a>'
         );
 
         ?>
@@ -224,6 +221,13 @@ class Instagram_Access_Functions {
                 }
             }
 
+            // Take the time() + $expiration_time will equal the current date and time in seconds, then we add the 60 days worth of seconds to the time.
+            // That gives us the time to compare, of 60 days to the current date and Time.
+            // For now we are going to get a new token every 7 days just to be on the safe side.
+            // That means we will negate 53 days from the seconds which is 4579200 <-- https://www.convertunits.com/from/60+days/to/seconds
+            // We get 60 days to refresh the token, if it's not refreshed before then it will expire.
+            $expiration_time = $access_token_expires_in;
+
             ?>
             <script>
                 // This script is to display the countdown timer for the access token expiration.
@@ -265,13 +269,21 @@ class Instagram_Access_Functions {
                             if (distance < 0) {
                                 clearInterval(x);
                                 jQuery('.fts-tab-content1-instagram.fts-token-wrap .fts-success').fadeIn();
-                                jQuery('.fts-tab-content1-instagram.fts-token-wrap #fts-timer').html( "Token Expired, click the Login and Get my Access Token button to get new a token." );
+                                jQuery('.fts-tab-content1-instagram.fts-token-wrap #fts-timer').html( "Token Expired, refresh page to get new a token." );
                             }
                         }, 1000);
                     }
 
                 }, 600);
             </script>
+            <?php
+
+            // Making it be time() < $expiration_time to test ajax, otherwise it should be time() > $expiration_time
+            if (  ! empty( $fts_instagram_access_token ) && time() > $expiration_time ) {
+                // Refresh token action!
+                $this->feed_functions->feed_them_instagram_refresh_token( $feed_cpt_id );
+            }
+            ?>
         </div>
         <?php
     }

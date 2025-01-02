@@ -38,14 +38,17 @@ break;
 }
 }
 if (!$wasError && $instance['ti-widget-ID']) {
-echo $trustindex_pm_google->renderWidgetFrontend($instance['ti-widget-ID']);
-} else if ($trustindex_pm_google->is_noreg_linked()) {
-echo $trustindex_pm_google->renderWidgetFrontend();
-} else {
-echo $trustindex_pm_google->frontEndErrorForAdmins(sprintf(__("Please fill out <strong>all the required fields</strong> in the <a href='%s'>widget settings</a> page", 'trustindex-plugin'), admin_url('admin.php?page='.$trustindex_pm_google->get_plugin_slug().'/settings.php')));
+echo $trustindex_pm_google->get_trustindex_widget($instance['ti-widget-ID']);
+}
+else if ($trustindex_pm_google->is_noreg_linked()) {
+echo $trustindex_pm_google->get_noreg_list_reviews();
+}
+else {
+echo $trustindex_pm_google->error_box_for_admins(sprintf(__("Please fill out <strong>all the required fields</strong> in the <a href='%s'>widget settings</a> page", 'trustindex-plugin'), admin_url('admin.php?page='.$trustindex_pm_google->get_plugin_slug().'/settings.php')));
 }
 echo $after_widget;
-} else {
+}
+else {
 }
 }
 function form($instance)

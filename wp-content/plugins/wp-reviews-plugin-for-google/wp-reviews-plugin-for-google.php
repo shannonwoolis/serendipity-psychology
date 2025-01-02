@@ -9,7 +9,7 @@ Author: Trustindex.io <support@trustindex.io>
 Author URI: https://www.trustindex.io/
 Contributors: trustindex
 License: GPLv2 or later
-Version: 12.4.7
+Version: 12.2
 Text Domain: wp-reviews-plugin-for-google
 Domain Path: /languages
 Donate link: https://www.trustindex.io/prices/
@@ -20,23 +20,11 @@ Copyright 2019 Trustindex Kft (email: support@trustindex.io)
 defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 require_once plugin_dir_path(__FILE__) . 'include' . DIRECTORY_SEPARATOR . 'cache-plugin-filters.php';
 require_once plugin_dir_path(__FILE__) . 'trustindex-plugin.class.php';
-$trustindex_pm_google = new TrustindexPlugin_google("google", __FILE__, "12.4.7", "Widgets for Google Reviews", "Google");
-$pluginManager = 'TrustindexPlugin_google';
+$trustindex_pm_google = new TrustindexPlugin_google("google", __FILE__, "12.2", "Widgets for Google Reviews", "Google");
 $pluginManagerInstance = $trustindex_pm_google;
 register_activation_hook(__FILE__, [ $pluginManagerInstance, 'activate' ]);
 register_deactivation_hook(__FILE__, [ $pluginManagerInstance, 'deactivate' ]);
 add_action('plugins_loaded', [ $pluginManagerInstance, 'load' ]);
-add_action('wp_insert_site', function($site) use($pluginManagerInstance) {
-switch_to_blog($site->blog_id);
-$tiReviewsTableName = $pluginManagerInstance->get_tablename('reviews');
-include $pluginManagerInstance->get_plugin_dir() . 'include' . DIRECTORY_SEPARATOR . 'schema.php';
-foreach (array_keys($ti_db_schema) as $tableName) {
-if (!$pluginManagerInstance->is_table_exists($tableName)) {
-dbDelta(trim($ti_db_schema[ $tableName ]));
-}
-}
-restore_current_blog();
-});
 add_action('admin_menu', [ $pluginManagerInstance, 'add_setting_menu' ], 10);
 add_filter('plugin_action_links', [ $pluginManagerInstance, 'add_plugin_action_links' ], 10, 2);
 add_filter('plugin_row_meta', [ $pluginManagerInstance, 'add_plugin_meta_links' ], 10, 2);
@@ -44,23 +32,29 @@ if (!function_exists('register_block_type')) {
 add_action('widgets_init', [ $pluginManagerInstance, 'init_widget' ]);
 add_action('widgets_init', [ $pluginManagerInstance, 'register_widget' ]);
 }
-add_action('init', function() {
-wp_register_script('trustindex-loader-js', 'https://cdn.trustindex.io/loader.js', [], null, [
-'strategy' => 'async',
-'in_footer' => true,
-]);
+if (is_file($pluginManagerInstance->getCssFile())) {
+add_action('init', function() use ($pluginManagerInstance) {
+$path = wp_upload_dir()['baseurl'] .'/'. $pluginManagerInstance->getCssFile(true);
+if (is_ssl()) {
+$path = str_replace('http://', 'https://', $path);
+}
+wp_register_style('ti-widget-css-'. $pluginManagerInstance->getShortName(), $path, [], filemtime($pluginManagerInstance->getCssFile()));
 });
+}
 add_action('init', [ $pluginManagerInstance, 'init_shortcode' ]);
+add_filter('script_loader_tag', function($tag, $handle) {
+if (strpos($tag, 'trustindex.io/loader.js') !== false && strpos($tag, 'defer async') === false) {
+$tag = str_replace(' src', ' defer async src', $tag);
+}
+return $tag;
+}, 10, 2);
 add_action('init', [ $pluginManagerInstance, 'register_tinymce_features' ]);
+add_action('init', [ $pluginManagerInstance, 'output_buffer' ]);
 add_action('wp_ajax_list_trustindex_widgets', [ $pluginManagerInstance, 'list_trustindex_widgets_ajax' ]);
 add_action('admin_enqueue_scripts', [ $pluginManagerInstance, 'trustindex_add_scripts' ]);
 add_action('rest_api_init', [ $pluginManagerInstance, 'init_restapi' ]);
 if (class_exists('Woocommerce') && !class_exists('TrustindexCollectorPlugin') && !function_exists('ti_woocommerce_notice')) {
 function ti_woocommerce_notice() {
-global $pluginManager;
-if (!current_user_can($pluginManager::$permissionNeeded)) {
-return;
-}
 $wcNotification = get_option('trustindex-wc-notification', time() - 1);
 if ($wcNotification == 'hide' || (int)$wcNotification > time()) {
 return;
@@ -86,10 +80,7 @@ return;
 }
 add_action('admin_notices', 'ti_woocommerce_notice');
 }
-add_action('admin_notices', function() use ($pluginManager, $pluginManagerInstance) {
-if (!current_user_can($pluginManager::$permissionNeeded)) {
-return;
-}
+add_action('admin_notices', function() use ($pluginManagerInstance) {
 foreach ($pluginManagerInstance->getNotificationOptions() as $type => $options) {
 if (!$pluginManagerInstance->isNotificationActive($type)) {
 continue;
