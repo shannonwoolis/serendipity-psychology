@@ -32,11 +32,11 @@
                             <span class="px-6 pt-6 flex flex-col items-start">
                                 <span class="mb-4 font-heading text-secondary-extraDark text-xl sm:text-2xl md:text-3xl leading-tight">{{ item.location_name }}</span>
 
-                                <span><strong>Phone:</strong> <a class="text-secondary-extraDark hover:text-primary" href="tel:{{ practice.meta('phone_number')|default(options.default_phone_number) }}">{{ practice.meta('phone_number')|default(options.default_phone_number) }}</a></span>
+                                <span><strong>Phone:</strong> <a class="hover:text-secondary-extraDark underline text-primary" href="tel:{{ practice.meta('phone_number')|default(options.default_phone_number) }}">{{ practice.meta('phone_number')|default(options.default_phone_number) }}</a></span>
                                 
                                 {# <span><strong>Email:</strong> <a class="text-secondary-extraDark hover:text-primary" href="mailto:{{ practice.meta('email_address')|default(options.site_email) }}">{{ practice.meta('email_address')|default(options.site_email) }}</a></span> #}
 
-                                <span><strong>Address:</strong> <span class="text-secondary-extraDark">{{ item.location_address }}</span></span>
+                                <span><strong>Address:</strong> <span>{{ item.location_address }}</span></span>
                             </span>
 
                             <span class="px-6 pb-6 pt-4 mt-auto">
