@@ -1,7 +1,9 @@
 {% if section.show_current_practice == false %}
     {% set practice = Post(section.practice.0) %}
+    {% set link = practice.link ~ "#practiceLocations" %}
 {% else %}
     {% set practice = Post(post.id) %}
+    {% set link = "#practiceLocations" %}
 {% endif %}
 <section class="bg-{{ section.background_colour|default('primary-pale') }}">
     <div class="max-w-screen-4xl mx-auto lg:px-6 xl:px-10">
@@ -17,7 +19,7 @@
                     {% if practice.meta('practice_description') %}
                         <p>{{ practice.meta('practice_description') }}</p>
                     {% endif %}
-                    {% if practice.meta('phone_number') %}
+                    {# {% if practice.meta('phone_number') %}
                         <p><strong>Phone: <a href="tel:{{ practice.meta('phone_number') }}">{{ practice.meta('phone_number') }}</a></strong></p>
                     {% endif %}
                     {% if practice.meta('email_address') %}
@@ -25,8 +27,14 @@
                     {% endif %}
                     {% if practice.meta('address') %}
                         <p><strong>Address: <span class="text-primary">{{ practice.meta('address') }}</span></strong></p>
-                    {% endif %}
+                    {% endif %} #}
                 </span>
+                {% include "_atoms/button.twig" with {
+                    link: link,
+                    text: 'Find your nearest location',
+                    colour: 'secondary',
+                    classes: 'mt-2 mr-2',
+                } %}
             </div>
             <div class="w-full lg:w-1/2 overflow-hidden rounded-tr-4xl lg:rounded-tr-5xl lg:-ml-6 xl:-ml-10 lg:mr-6 xl:mr-10">
                 <div class="map-embed-h-full">

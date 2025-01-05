@@ -1,4 +1,4 @@
-<div class="bg-{{ section.background_colour ? section.background_colour : 'white' }}">
+<section class="bg-{{ section.background_colour ? section.background_colour : 'white' }}">
     <div class="max-w-screen-4xl mx-auto lg:px-6 xl:px-10">
         {% for row in section.copy_rows %}
             {% set odd = loop.index is odd %}
@@ -53,4 +53,4 @@
             </div>
         {% endfor %}
     </div>
-</div>
+</section>

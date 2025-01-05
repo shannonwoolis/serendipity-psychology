@@ -1,7 +1,7 @@
-<div class="{{ spacingY }}">
+<section class="{{ spacingY }}">
     <div class="container">
         {% if section.title %}
-            <span class="text-primary font-heading text-4xl md:text-5xl lg:text-6xl leading-tight mb-3 block">{{ section.title }}</span>
+            <span class="text-primary font-heading text-3xl md:text-4xl lg:text-5xl leading-tight mb-3 block">{{ section.title }}</span>
         {% endif %}
         {% if section.copy %}
             <div class="copy">{{ section.copy }}</div>
@@ -15,4 +15,4 @@
             {% endfor %}
         </div>
     </div>
-</div>
+</section>

@@ -1,0 +1,56 @@
+{% if fn('is_singular','practices') %}
+    {% set practice = Post(post.id) %}
+    <section id="practiceLocations" class="bg-secondary-pale {{ section.padding_top ? spacingT }} {{ section.padding_bottom ? spacingB }}">
+        <div class="container">
+            {% if section.title %}
+                <span class="text-secondary-extraDark font-heading text-3xl md:text-4xl lg:text-5xl leading-tight mb-6 block">{{ section.title }}</span>
+            {% endif %}
+            <div class="flex flex-wrap -m-4">
+                {% for item in practice.meta('practice_locations') %}
+                    <div class="p-4 w-full sm:w-1/2 lg:w-1/3">
+                        <div class="flex flex-col rounded-tr-3xl bg-white h-full">
+                            {% include "_atoms/picture.twig" with {
+                                source: item.location_photo.url,
+                                pictureClasses: 'relative z-0',
+                                lazyload: true,
+                                breakpoints: {
+                                    "1px" : {
+                                        w: 600,
+                                        h: 350,
+                                        crop: 'center'
+                                    },
+                                },
+                                img: {
+                                    classes: 'lazyload rounded-tr-3xl',
+                                    w: 600,
+                                    h: 350,
+                                    crop: 'center',
+                                    alt: item.location_photo.alt
+                                }
+                            } %}
+
+                            <span class="px-6 pt-6 flex flex-col items-start">
+                                <span class="mb-4 font-heading text-secondary-extraDark text-xl sm:text-2xl md:text-3xl leading-tight">{{ item.location_name }}</span>
+
+                                <span><strong>Phone:</strong> <a class="text-secondary-extraDark hover:text-primary" href="tel:{{ practice.meta('phone_number')|default(options.default_phone_number) }}">{{ practice.meta('phone_number')|default(options.default_phone_number) }}</a></span>
+                                
+                                {# <span><strong>Email:</strong> <a class="text-secondary-extraDark hover:text-primary" href="mailto:{{ practice.meta('email_address')|default(options.site_email) }}">{{ practice.meta('email_address')|default(options.site_email) }}</a></span> #}
+
+                                <span><strong>Address:</strong> <span class="text-secondary-extraDark">{{ item.location_address }}</span></span>
+                            </span>
+
+                            <span class="px-6 pb-6 pt-4 mt-auto">
+                                {% include "_atoms/button.twig" with {
+                                    link: '/contact-us/',
+                                    text: 'Get Started',
+                                    colour: 'primary',
+                                    classes: 'transform origin-right lg:scale-90 xl:scale-100',
+                                } %}
+                            </span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endif %}
