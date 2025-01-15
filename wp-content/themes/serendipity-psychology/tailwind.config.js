@@ -33,7 +33,7 @@ module.exports = {
         },
         primary: {
           pale: "#EDF3FA",
-          light: "#7285b5",
+          light: "#cdd4e5",
           DEFAULT: "#53699F",
           dark: "#42537f",
         },

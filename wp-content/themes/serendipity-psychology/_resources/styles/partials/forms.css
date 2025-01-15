@@ -5,6 +5,7 @@
 --------------------------------------------------- */
 
 form {
+    @apply -mx-2;
 
     input[type="text"],
     input[type="password"],
@@ -39,14 +40,6 @@ form {
         @apply p-0 m-0;
     }
 
-    .privacy-notice, .terms-notice {
-        @apply w-full mb-4 flex items-center;
-
-        a {
-            @apply ml-1 text-primary underline hover:text-secondary-extraDark;
-        }
-    }
-
     input[type=submit],
     button {
         @apply w-full inline-flex items-center justify-center px-5 py-3 rounded-tl-2xl transition duration-300 font-medium text-sm leading-tight;
@@ -57,4 +50,84 @@ form {
             @apply text-3xs ml-2 min-w-4 text-secondary;
         }
     }
+
+    .form-heading {
+        @apply p-2 text-primary font-heading text-3xl md:text-4xl lg:text-5xl leading-tight mb-2 block;
+        +.desc {
+            @apply px-2;
+        }
+    }
+
+    label {
+        @apply w-full block font-semibold text-lg mb-2 font-heading text-primary;
+    }
+
+    .desc {
+        @apply block -mt-1.5 mb-3 text-sm leading-tight; 
+    }
+
+    .field {
+        @apply px-2 py-3;
+    }
+
+    .styled {
+        > span {
+            @apply relative mb-2 w-full;
+        }
+        input[type="radio"] {
+            @apply absolute top-0 left-0 w-full h-full opacity-0;
+            +span {
+                @apply pointer-events-none relative rounded-tl-3xl w-full px-6 py-3 flex items-center bg-white;
+
+                &:after {
+                    content: '';
+                    @apply rounded-full w-2 h-2 border border-primary ml-auto;
+                }
+            }
+    
+            &:checked+span {
+                @apply bg-secondary;
+                &:after {
+                    content: '';
+                    @apply bg-secondary-extraDark;
+                }
+            }
+        }
+    }
+
+    .cf7mls-btns {
+        @apply p-2 flex justify-between mt-2;
+
+        .cf7mls_next.action-button, .cf7mls_back.action-button {
+            @apply m-0 w-auto;
+        }
+
+        .cf7mls_next.action-button {
+            @apply ml-auto bg-primary rounded-none rounded-tl-3xl;
+        }
+
+        .cf7mls_back.action-button {
+            @apply bg-primary-light rounded-none rounded-tl-3xl;
+        }
+    }
+
+    .wpcf7-not-valid-tip {
+        @apply mt-2;
+    }
+
+    .privacy-notice, .terms-notice {
+        @apply w-full mb-4 flex items-center;
+
+        a {
+            @apply ml-0.5 text-primary underline hover:text-secondary-extraDark;
+        }
+
+        label {
+            @apply mb-0 font-normal text-base font-sans text-black;
+        }
+    }
+}
+
+.wpcf7-form .fieldset-cf7mls .cf7mls-btns {
+    @apply !min-h-0;
 }

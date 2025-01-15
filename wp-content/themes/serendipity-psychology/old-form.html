@@ -1,0 +1,47 @@
+<div class="grid sm:grid-cols-2 gap-4">
+
+    <div class="">
+        <label class="sr-only">Your name *</label>
+        [text* your-name autocomplete:name placeholder "Your name *"]
+    </div>
+    
+    <div class="">
+        <label class="sr-only">Your telephone number *</label>
+        [tel* your-tel placeholder "Your telephone number *"]
+    </div>
+    
+    <div class="">
+        <label class="sr-only">Your email *</label>
+        [email* your-email autocomplete:email placeholder "Your email *"]
+    </div>
+    
+    <div class="">
+        <label class="sr-only">Town/ City *</label>
+        [text* your-town placeholder "Town/ City *"]
+    </div>
+    
+    <div class="">
+        <label class="sr-only">Type of session *</label>
+        [select* session-type "Type of session *" "Online" "In Person" "Hybrid" "Either"]
+    </div>
+    
+    <div class="">
+        <label class="sr-only">Distance willing to travel *</label>
+        [text* travel-distance placeholder "Distance willing to travel *"]
+    </div>
+    
+    <div class="sm:col-span-2">
+        <label class="sr-only">Please provide details on how we can help *</label>
+        [textarea* your-message placeholder "Please provide details on how we can help *"]
+    </div>
+    
+    <div class="sm:col-span-2">
+        <div class="privacy-notice">[acceptance privacy-notice] I have read and agree to the <a href='/privacy-policy/'>Privacy Policy</a> [/acceptance]</div>
+        <div class="terms-notice">[acceptance terms-notice] I have read and agree to the <a href='/terms-and-conditions/'>Terms & Conditions</a> [/acceptance]</div>
+    </div>
+    
+    <div class="sm:col-span-2">
+        <button type="submit">Get Started <svg class="icon icon-angles-right "><use href="https://serendipity-psychology.vm/wp-content/themes/serendipity-psychology/_resources/images/icons-sprite.svg#icon-angles-right"></use></svg></button>
+    </div>
+    
+</div>
