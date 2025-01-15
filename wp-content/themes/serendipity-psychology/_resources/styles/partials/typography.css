@@ -31,6 +31,10 @@ h3 {
     @apply text-2xl xs:text-3xl 3xl:text-4xl;
 }
 
+.text-balance {
+    text-wrap: balance;
+}
+
 /* Copy */
 
 .copy {

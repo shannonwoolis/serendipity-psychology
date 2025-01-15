@@ -10,10 +10,10 @@
         <div class="flex flex-wrap lg:flex-row-reverse">
             <div class="w-full -mt-12 lg:mt-0 lg:w-1/2 px-4 2xs:px-6 md:px-8 lg:pl-8 lg:pr-0 {{ spacingY }}">
                 {% if section.pre_title %}
-                    <span class="block mb-2 font-subheading pre-title text-secondary-extraDark">{{ section.pre_title }}</span>
+                    <span class="block mb-2 font-subheading pre-title text-secondary-extraDark text-balance">{{ section.pre_title }}</span>
                 {% endif %}
                 {% if practice.meta('practice_name') %}
-                    <span class="text-primary font-heading text-3xl md:text-4xl lg:text-5xl leading-tight mb-3 block">{{ practice.meta('practice_name') }}</span>
+                    <span class="text-primary font-heading text-3xl md:text-4xl lg:text-5xl leading-tight mb-3 block text-balance">{{ practice.meta('practice_name') }}</span>
                 {% endif %}
                 <span class="copy -mb-6 mt-4">
                     {% if practice.meta('practice_description') %}
