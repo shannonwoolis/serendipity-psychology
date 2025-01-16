@@ -126,6 +126,10 @@ form {
             @apply mb-0 font-normal text-base font-sans text-black;
         }
     }
+
+    input[type=checkbox] {
+        @apply border border-solid border-primary;
+    }
 }
 
 .wpcf7-form .fieldset-cf7mls .cf7mls-btns {
