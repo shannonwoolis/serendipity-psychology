@@ -5,6 +5,9 @@
             {% if section.title %}
                 <span class="text-secondary-extraDark font-heading text-3xl md:text-4xl lg:text-5xl leading-tight mb-6 block">{{ section.title }}</span>
             {% endif %}
+            {% if section.copy %}
+                <div class="copy">{{ section.copy }}</div>
+            {% endif %}
             <div class="flex flex-wrap -m-4">
                 {% for item in section.practice_locations %}
                     <div class="p-4 w-full sm:w-1/2 lg:w-1/3">
