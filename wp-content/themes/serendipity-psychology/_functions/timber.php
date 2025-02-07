@@ -78,10 +78,10 @@
       $context['testimonials'] = new Timber\PostQuery($testimonials);
 
       $practices = [
-        'post_type' => 'practices',
-        'posts_per_page' => -1,
-    ];
-    $context['practices'] = new Timber\PostQuery($practices);
+          'post_type' => 'practices',
+          'posts_per_page' => -1,
+      ];
+      $context['practices'] = new Timber\PostQuery($practices);
 
       $context['spacingY'] = 'py-12 lg:py-16 2xl:py-20';
       $context['spacingT'] = 'pt-12 lg:pt-16 2xl:pt-20';

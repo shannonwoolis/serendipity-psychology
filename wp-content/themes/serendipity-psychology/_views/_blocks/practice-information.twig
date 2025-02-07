@@ -15,20 +15,11 @@
                 {% if practice.meta('practice_name') %}
                     <span class="text-primary font-heading text-3xl md:text-4xl lg:text-5xl leading-tight mb-3 block text-balance">{{ practice.meta('practice_name') }}</span>
                 {% endif %}
-                <span class="copy -mb-6 mt-4">
+                <div class="copy -mb-6 mt-4">
                     {% if practice.meta('practice_description') %}
-                        <p>{{ practice.meta('practice_description') }}</p>
+                        {{ practice.meta('practice_description') }}
                     {% endif %}
-                    {# {% if practice.meta('phone_number') %}
-                        <p><strong>Phone: <a href="tel:{{ practice.meta('phone_number') }}">{{ practice.meta('phone_number') }}</a></strong></p>
-                    {% endif %}
-                    {% if practice.meta('email_address') %}
-                        <p><strong>Email: <a href="mailto:{{ practice.meta('email_address') }}">{{ practice.meta('email_address') }}</a></strong></p>
-                    {% endif %}
-                    {% if practice.meta('address') %}
-                        <p><strong>Address: <span class="text-primary">{{ practice.meta('address') }}</span></strong></p>
-                    {% endif %} #}
-                </span>
+                </div>
                 {% include "_atoms/button.twig" with {
                     link: link,
                     text: 'Find your nearest location',

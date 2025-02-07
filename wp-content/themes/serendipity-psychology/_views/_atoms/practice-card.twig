@@ -22,20 +22,11 @@
 
         <span class="mt-2 font-heading text-primary text-xl sm:text-2xl lg:text-3xl leading-tight">{{ post.title }}</span>
 
-        <span class="mt-4 break-words w-full">
+        <div class="copy -mb-6 mt-4">
             {% if post.meta('practice_description') %}
-                <p class="text-sm mb-4">{{ post.meta('practice_description')|striptags|slice(0,70) }}...</p>
+                {{ post.meta('practice_description') }}
             {% endif %}
-            {% if post.meta('phone_number') %}
-                <p class="block mb-2"><strong>Phone: <span class="text-primary">{{ post.meta('phone_number') }}</span></strong></p>
-            {% endif %}
-            {% if post.meta('email_address') %}
-                <p class="block mb-2"><strong>Email: <span class="text-primary">{{ post.meta('email_address') }}</span></strong></p>
-            {% endif %}
-            {% if post.meta('address') %}
-                <p class="block mb-2"><strong>Address: <span class="text-primary">{{ post.meta('address') }}</span></strong></p>
-            {% endif %}
-        </span>
+        </div>
 
     </span>
     <span class="px-6 pb-6 pt-4 mt-auto">
