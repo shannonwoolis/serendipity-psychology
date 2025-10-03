@@ -1,22 +1,5 @@
-<a href="{{ post.link }}" class="flex flex-col transform hover:scale-103 rounded-tr-3xl bg-secondary-pale h-full">
-    {# {% include "_atoms/picture.twig" with {
-        source: post.thumbnail.src,
-        pictureClasses: 'relative z-0',
-        lazyload: true,
-        breakpoints: {
-            "1px" : {
-                w: 600,
-                h: 350,
-                crop: 'center'
-            },
-        },
-        img: {
-            classes: 'lazyload rounded-tr-3xl',
-            w: 600,
-            h: 350,
-            crop: 'center',
-        }
-    } %} #}
+<div class="relative flex flex-col transform hover:scale-103 rounded-tr-3xl bg-secondary-pale h-full transition-all">
+    <a href="{{ post.link }}" class="absolute inset-0 w-full h-full opacity-0 z-10">{{ post.title }}</a>
 
     <span class="px-6 pt-6 flex flex-col items-start">
 
@@ -32,4 +15,4 @@
     <span class="px-6 pb-6 pt-4 mt-auto">
         <span class="mt-auto w-full btn btn-secondary justify-center">View practice {{ fn('icon','angles-right') }}</span>
     </span>
-</a>
+</div>
