@@ -9,11 +9,21 @@ $ti_command_list = [
 'save-set',
 'save-language',
 'save-dateformat',
+'save-nameformat',
 'save-top-rated-type',
 'save-top-rated-date',
 'save-options',
 'save-align',
+'save-fomo-icon',
+'save-fomo-color',
+'save-fomo-margin',
+'save-fomo-title',
+'save-fomo-text',
+'save-fomo-url',
+'save-fomo-day',
+'save-fomo-hide-count',
 'save-review-text-mode',
+'save-verified-by-trustindex',
 'save-amp-notice-hide',
 
 ];
@@ -123,6 +133,7 @@ delete_option($pluginManagerInstance->get_option_name('scss-set'));
 delete_option($pluginManagerInstance->get_option_name('filter'));
 delete_option($pluginManagerInstance->get_option_name('lang'));
 delete_option($pluginManagerInstance->get_option_name('dateformat'));
+delete_option($pluginManagerInstance->get_option_name('nameformat'));
 delete_option($pluginManagerInstance->get_option_name('no-rating-text'));
 delete_option($pluginManagerInstance->get_option_name('verified-icon'));
 delete_option($pluginManagerInstance->get_option_name('enable-animation'));
@@ -130,9 +141,9 @@ delete_option($pluginManagerInstance->get_option_name('show-arrows'));
 delete_option($pluginManagerInstance->get_option_name('show-header-button'));
 delete_option($pluginManagerInstance->get_option_name('reviews-load-more'));
 delete_option($pluginManagerInstance->get_option_name('show-reviewers-photo'));
-delete_option($pluginManagerInstance->get_option_name('floating-desktop-open'));
-delete_option($pluginManagerInstance->get_option_name('floating-mobile-open'));
 delete_option($pluginManagerInstance->get_option_name('widget-setted-up'));
+delete_option($pluginManagerInstance->get_option_name('show-review-replies'));
+delete_option($pluginManagerInstance->get_option_name('verified-by-trustindex'));
 }
 $wpdb->query('TRUNCATE `'. $pluginManagerInstance->get_tablename('reviews') .'`');
 $pluginManagerInstance->setNotificationParam('not-using-no-connection', 'active', true);
@@ -161,12 +172,27 @@ $optionsToDelete = [
 'show-header-button',
 'reviews-load-more',
 'dateformat',
-'floating-desktop-open',
-'floating-mobile-open',
+'nameformat',
+'show-review-replies',
+'verified-by-trustindex',
+'fomo-open',
+'fomo-link',
+'fomo-border',
+'fomo-arrow',
+'fomo-icon',
+'fomo-color',
+'fomo-icon-background',
+'fomo-margin',
+'fomo-title',
+'fomo-text',
+'fomo-url',
+'fomo-day',
+'fomo-hide-count',
 ];
 foreach ($optionsToDelete as $name) {
 delete_option($pluginManagerInstance->get_option_name($name));
 }
+$pluginManagerInstance->emptyViews();
 }
 if ($step < 4) {
 delete_option($pluginManagerInstance->get_option_name('scss-set'));
@@ -198,7 +224,7 @@ $styleId = (int)$_REQUEST['style_id'];
 update_option($pluginManagerInstance->get_option_name('style-id'), $styleId, false);
 delete_option($pluginManagerInstance->get_option_name('review-content'));
 trustindex_plugin_change_step(3);
-if (in_array($styleId, [ 17, 21, 52, 53 ])) {
+if (in_array($pluginManager::$widget_templates['templates'][$styleId]['type'], ['floating', 'fomo'])) {
 $pluginManagerInstance->noreg_save_css();
 }
 if (isset($_GET['style_id'])) {
@@ -211,6 +237,9 @@ check_admin_referer('ti-save-set');
 update_option($pluginManagerInstance->get_option_name('scss-set'), sanitize_text_field($_REQUEST['set_id']), false);
 trustindex_plugin_change_step(4);
 $pluginManagerInstance->noreg_save_css(true);
+if (isset($_GET['verified_by_trustindex'])) {
+update_option($pluginManagerInstance->get_option_name('verified-by-trustindex'), 1, false);
+}
 if (isset($_GET['set_id'])) {
 header('Location: admin.php?page='. sanitize_text_field($_GET['page']) .'&tab=free-widget-configurator');
 }
@@ -227,11 +256,19 @@ else if ($ti_command === 'save-language') {
 check_admin_referer('ti-save-language');
 update_option($pluginManagerInstance->get_option_name('lang'), sanitize_text_field($_POST['lang']), false);
 delete_option($pluginManagerInstance->get_option_name('review-content'));
+if ($pluginManagerInstance->isRtlLanguage()) {
+update_option($pluginManagerInstance->get_option_name('align'), 'right', false);
+}
 exit;
 }
 else if ($ti_command === 'save-dateformat') {
 check_admin_referer('ti-save-dateformat');
 update_option($pluginManagerInstance->get_option_name('dateformat'), sanitize_text_field($_POST['dateformat']), false);
+exit;
+}
+else if ($ti_command === 'save-nameformat') {
+check_admin_referer('ti-save-nameformat');
+update_option($pluginManagerInstance->get_option_name('nameformat'), sanitize_text_field($_POST['nameformat']), false);
 exit;
 }
 else if ($ti_command === 'save-top-rated-type') {
@@ -302,19 +339,39 @@ if (isset($_POST['footer-filter-text'])) {
 $r = sanitize_text_field($_POST['footer-filter-text']);
 }
 update_option($pluginManagerInstance->get_option_name('footer-filter-text'), $r, false);
-$r = 1;
-if (isset($_POST['floating-desktop-open'])) {
-$r = sanitize_text_field($_POST['floating-desktop-open']);
-}
-update_option($pluginManagerInstance->get_option_name('floating-desktop-open'), $r, false);
 $r = 0;
-if (isset($_POST['floating-mobile-open'])) {
-$r = sanitize_text_field($_POST['floating-mobile-open']);
+if (isset($_POST['show-review-replies'])) {
+$r = sanitize_text_field($_POST['show-review-replies']);
 }
-update_option($pluginManagerInstance->get_option_name('floating-mobile-open'), $r, false);
+update_option($pluginManagerInstance->get_option_name('show-review-replies'), $r, false);
 $filter = $pluginManagerInstance->getWidgetOption('filter');
 $filter['only-ratings'] = isset($_POST['only-ratings']) ? (bool)$_POST['only-ratings'] : $pluginManagerInstance->getWidgetOption('filter', false, true)['only-ratings'];
 update_option($pluginManagerInstance->get_option_name('filter'), $filter, false);
+$r = 1;
+if (isset($_POST['fomo-open'])) {
+$r = sanitize_text_field($_POST['fomo-open']);
+}
+update_option($pluginManagerInstance->get_option_name('fomo-open'), $r, false);
+$r = 0;
+if (isset($_POST['fomo-link'])) {
+$r = sanitize_text_field($_POST['fomo-link']);
+}
+update_option($pluginManagerInstance->get_option_name('fomo-link'), $r, false);
+$r = 1;
+if (isset($_POST['fomo-border'])) {
+$r = sanitize_text_field($_POST['fomo-border']);
+}
+update_option($pluginManagerInstance->get_option_name('fomo-border'), $r, false);
+$r = 1;
+if (isset($_POST['fomo-arrow'])) {
+$r = sanitize_text_field($_POST['fomo-arrow']);
+}
+update_option($pluginManagerInstance->get_option_name('fomo-arrow'), $r, false);
+$r = 0;
+if (isset($_POST['fomo-icon-background'])) {
+$r = sanitize_text_field($_POST['fomo-icon-background']);
+}
+update_option($pluginManagerInstance->get_option_name('fomo-icon-background'), $r, false);
 exit;
 }
 else if ($ti_command === 'save-align') {
@@ -322,9 +379,64 @@ check_admin_referer('ti-save-align');
 update_option($pluginManagerInstance->get_option_name('align'), sanitize_text_field($_POST['align']), false);
 exit;
 }
+else if ($ti_command === 'save-fomo-icon') {
+check_admin_referer('ti-save-fomo-icon');
+$v = sanitize_text_field($_POST['fomo-icon']);
+update_option($pluginManagerInstance->get_option_name('fomo-icon'), $v, false);
+if ('hide' === $v) {
+update_option($pluginManagerInstance->get_option_name('fomo-open'), 1, false);
+}
+exit;
+}
+else if ($ti_command === 'save-fomo-color') {
+check_admin_referer('ti-save-fomo-color');
+update_option($pluginManagerInstance->get_option_name('fomo-color'), sanitize_text_field($_POST['fomo-color']), false);
+exit;
+}
+else if ($ti_command === 'save-fomo-margin') {
+check_admin_referer('ti-save-fomo-margin');
+update_option($pluginManagerInstance->get_option_name('fomo-margin'), sanitize_text_field($_POST['fomo-margin']), false);
+exit;
+}
+else if ($ti_command === 'save-fomo-title') {
+check_admin_referer('ti-save-fomo-title');
+$text = stripslashes($_POST['fomo-title']);
+update_option($pluginManagerInstance->get_option_name('fomo-title'), sanitize_text_field(htmlentities($text)), false);
+exit;
+}
+else if ($ti_command === 'save-fomo-text') {
+check_admin_referer('ti-save-fomo-text');
+$text = stripslashes($_POST['fomo-text']);
+update_option($pluginManagerInstance->get_option_name('fomo-text'), sanitize_text_field(htmlentities($text)), false);
+exit;
+}
+else if ($ti_command === 'save-fomo-url') {
+check_admin_referer('ti-save-fomo-url');
+if ($url = sanitize_text_field(htmlentities($_POST['fomo-url']))) {
+update_option($pluginManagerInstance->get_option_name('fomo-url'), $url, false);
+} else {
+delete_option($pluginManagerInstance->get_option_name('fomo-url'));
+}
+exit;
+}
+else if ($ti_command === 'save-fomo-day') {
+check_admin_referer('ti-save-fomo-day');
+update_option($pluginManagerInstance->get_option_name('fomo-day'), (int)sanitize_text_field($_POST['fomo-day']), false);
+exit;
+}
+else if ($ti_command === 'save-fomo-hide-count') {
+check_admin_referer('ti-save-fomo-hide-count');
+update_option($pluginManagerInstance->get_option_name('fomo-hide-count'), (int)sanitize_text_field($_POST['fomo-hide-count']), false);
+exit;
+}
 else if ($ti_command === 'save-review-text-mode') {
 check_admin_referer('ti-save-review-text-mode');
 update_option($pluginManagerInstance->get_option_name('review-text-mode'), sanitize_text_field($_POST['review_text_mode']), false);
+exit;
+}
+else if ($ti_command === 'save-verified-by-trustindex') {
+check_admin_referer('ti-save-verified-by-trustindex');
+update_option($pluginManagerInstance->get_option_name('verified-by-trustindex'), sanitize_text_field($_POST['verified-by-trustindex']), false);
 exit;
 }
 else if ($ti_command === 'save-amp-notice-hide') {
@@ -359,7 +471,7 @@ $widgetSettedUp = null;
 $pageDetails = $pluginManagerInstance->getPageDetails();
 $isTopRatedBadge = $styleId ? $pluginManager::$widget_templates['templates'][$styleId]['is-top-rated-badge'] : false;
 if ($isTopRatedBadge) {
-$isTopRatedBadgeValid = (float)$pageDetails['rating_score'] >= $pluginManager::$topRatedMinimumScore;
+$isTopRatedBadgeValid = isset($pageDetails['rating_score']) ? (float)$pageDetails['rating_score'] >= $pluginManager::$topRatedMinimumScore : false;
 }
 }
 wp_enqueue_style('trustindex-widget-preview-css', 'https://cdn.trustindex.io/assets/ti-preview-box.css');
@@ -375,7 +487,7 @@ __('Insert code', 'trustindex-plugin')
 ];
 $stepDone = 0;
 $stepCurrent = isset($_GET['step']) ? (int)sanitize_text_field($_GET['step']) : 0;
-if ($stepCurrent === 3 && in_array($styleId, [ 17, 21, 52, 53 ])) {
+if ($stepCurrent === 3 && in_array($pluginManager::$widget_templates['templates'][$styleId]['type'], ['floating', 'fomo'])) {
 $stepCurrent = 4;
 }
 if ($widgetSettedUp) {
@@ -419,7 +531,7 @@ echo sprintf(__("You have connected your Trustindex account, so you can find pre
 <?php if ($pluginManagerInstance->is_trustindex_connected()): ?>
  <a href="?page=<?php echo esc_attr($_GET['page']); ?>&tab=advanced">Trustindex admin</a>
 <?php else: ?>
- <a href="https://www.trustindex.io/ti-redirect.php?a=sys&c=wp-amp" target="_blank"><?php echo __('Try premium features (like AMP) for free', 'trustindex-plugin'); ?></a>
+ <a href="https://www.trustindex.io/?a=sys&c=wp-amp" target="_blank"><?php echo __('Try premium features (like AMP) for free', 'trustindex-plugin'); ?></a>
 <?php endif; ?>
 </p>
 <button type="button" class="notice-dismiss" data-command="save-amp-notice-hide"></button>
@@ -429,7 +541,7 @@ echo sprintf(__("You have connected your Trustindex account, so you can find pre
 <h1 class="ti-header-title"><?php echo sprintf(__('Connect %s', 'trustindex-plugin'), 'Google'); ?></h1>
 <?php if ($pluginManagerInstance->is_noreg_linked()): ?>
 <div class="ti-source-box">
-<?php if (isset($pageDetails['avatar_url'])): ?>
+<?php if (isset($pageDetails['avatar_url']) && $pageDetails['avatar_url']): ?>
 <img src="<?php echo esc_url($pageDetails['avatar_url']); ?>" />
 <?php endif; ?>
 <div class="ti-source-info">
@@ -505,7 +617,7 @@ echo esc_html(__($categoryName, 'trustindex-plugin'));
 <?php foreach ($pluginManager::$widget_templates['templates'] as $id => $template): ?>
 <?php
 $className = 'ti-full-width';
-if (in_array($template['type'], [ 'badge', 'button', 'floating', 'popup', 'sidebar', 'top-rated-badge' ])) {
+if (in_array($template['type'], [ 'badge', 'button', 'floating', 'popup', 'sidebar', 'top-rated-badge', 'fomo' ])) {
 $className = 'ti-half-width';
 }
 $set = 'light-background';
@@ -518,7 +630,9 @@ if (isset($template['params']['top-rated-badge-border']) && $template['params'][
 $set = 'ligth-border';
 }
 }
-$isTopRatedBadgeValid = (float)$pageDetails['rating_score'] >= $pluginManager::$topRatedMinimumScore;
+$isTopRatedBadgeValid = isset($pageDetails['rating_score']) ? (float)$pageDetails['rating_score'] >= $pluginManager::$topRatedMinimumScore : false;
+$fomoWidgetInvalid = in_array($id, [119, 120]) && (!isset($pageDetails['rating_numbers']) || !isset($pageDetails['rating_numbers_last']));
+
 if (!isset($template['is-active']) || $template['is-active']):
 ?>
 <div class="<?php echo esc_attr($className); ?>">
@@ -527,7 +641,16 @@ if (!isset($template['is-active']) || $template['is-active']):
 <div class="ti-box-header ti-box-header-normal">
 <?php echo __('Layout', 'trustindex-plugin'); ?>:
 <strong><?php echo esc_html(__($template['name'], 'trustindex-plugin')); ?></strong>
-<?php if (!$template['is-top-rated-badge'] || $isTopRatedBadgeValid): ?>
+<?php if ($template['is-popular']): ?>
+<span class="ti-badge ti-most-popular-badge ti-tooltip">
+<?php echo __('Most popular', 'trustindex-plugin'); ?> <span class="dashicons dashicons-info-outline"></span>
+<span class="ti-tooltip-message"><?php echo
+__('Selected by most users!', 'trustindex-plugin').' '.
+__('This widget layout helps build trust and effectively increases sales.', 'trustindex-plugin');
+?></span>
+</span>
+<?php endif; ?>
+<?php if ((!$template['is-top-rated-badge'] || $isTopRatedBadgeValid) && !$fomoWidgetInvalid): ?>
 <a href="<?php echo wp_nonce_url('?page='. esc_attr($_GET['page']) .'&tab=free-widget-configurator&command=save-style&style_id='. esc_attr(urlencode($id)), 'ti-save-style'); ?>" class="ti-btn ti-btn-sm ti-btn-loading-on-click ti-pull-right"><?php echo __('Select', 'trustindex-plugin'); ?></a>
 <div class="clear"></div>
 <?php endif; ?>
@@ -540,7 +663,14 @@ if (!isset($template['is-active']) || $template['is-active']):
 </p>
 </div>
 <?php endif; ?>
-<?php echo str_replace('ti-widget ti-disabled', 'ti-widget', $pluginManagerInstance->get_noreg_list_reviews(null, true, $id, $set, true, true)); ?>
+<?php if ($fomoWidgetInvalid): ?>
+<div class="ti-notice ti-notice-info" style="margin: 0 0 15px 0">
+<p>
+<?php echo __('Update your reviews to use this widget.', 'trustindex-plugin'); ?><br />
+</p>
+</div>
+<?php endif; ?>
+<?php echo $pluginManagerInstance->renderWidgetAdmin(true, false, ['style-id' => $id, 'set-id' => $set]); ?>
 </div>
 </div>
 </div>
@@ -564,7 +694,10 @@ $className = 'ti-half-width';
 }
 ?>
 <div class="ti-preview-boxes-container">
-<?php foreach ($pluginManager::$widget_styles as $id => $style): ?>
+<?php
+$isFirstLayout = true;
+$isVerifiedByTrustindexAvailable = $pluginManagerInstance->isVerifiedByTrustindexAvailable();
+foreach ($pluginManager::$widget_styles as $id => $style): ?>
 <?php if (!isset($style['is-active']) || $style['is-active']): ?>
 <div class="<?php echo esc_attr($className); ?>">
 <div class="ti-box ti-preview-boxes" data-layout-id="<?php echo esc_attr($styleId); ?>" data-set-id="<?php echo esc_attr($id); ?>">
@@ -572,23 +705,67 @@ $className = 'ti-half-width';
 <div class="ti-box-header ti-box-header-normal">
 <?php echo __('Style', 'trustindex-plugin'); ?>:
 <strong><?php echo __($style['name'], 'trustindex-plugin'); ?></strong>
+<?php if ($isFirstLayout && !$isVerifiedByTrustindexAvailable): ?>
+<span class="ti-badge ti-most-popular-badge ti-tooltip">
+<?php echo __('Most popular', 'trustindex-plugin'); ?> <span class="dashicons dashicons-info-outline"></span>
+<span class="ti-tooltip-message"><?php echo
+__('Selected by most users!', 'trustindex-plugin').' '.
+__('This widget style helps build trust and effectively increases sales.', 'trustindex-plugin');
+?></span>
+</span>
+<?php endif; ?>
 <a href="<?php echo wp_nonce_url('?page='. esc_attr($_GET['page']) .'&tab=free-widget-configurator&command=save-set&set_id='. esc_attr(urlencode($id)), 'ti-save-set'); ?>" class="ti-btn ti-btn-sm ti-btn-loading-on-click ti-pull-right"><?php echo __('Select', 'trustindex-plugin'); ?></a>
 <div class="clear"></div>
 </div>
 <div class="preview">
-<?php echo $pluginManagerInstance->get_noreg_list_reviews(null, true, $styleId, $id, true, true); ?>
+<?php echo $pluginManagerInstance->renderWidgetAdmin(true, false, ['style-id' => $styleId, 'set-id' => $id]); ?>
 </div>
+</div>
+</div>
+</div>
+<?php if ($id === 'light-background' && $isVerifiedByTrustindexAvailable): ?>
+<div class="<?php echo esc_attr($className); ?>">
+<div class="ti-box ti-preview-boxes" data-layout-id="<?php echo esc_attr($styleId); ?>" data-set-id="<?php echo esc_attr($id); ?>">
+<div class="ti-box-inner">
+<div class="ti-box-header ti-box-header-normal">
+<?php echo __('Style', 'trustindex-plugin'); ?>:
+<strong>
+<?php echo __($style['name'], 'trustindex-plugin'); ?>
+-
+<?php echo __('with Trustindex verified', 'trustindex-plugin'); ?>
+</strong>
+<?php if ($className === 'ti-half-width'): ?><br /><?php endif; ?>
+<span class="ti-badge ti-most-popular-badge ti-tooltip">
+<?php echo __('Most popular', 'trustindex-plugin'); ?> <span class="dashicons dashicons-info-outline"></span>
+<span class="ti-tooltip-message"><?php echo
+__('Selected by most users!', 'trustindex-plugin').' '.
+__('This widget style helps build trust and effectively increases sales.', 'trustindex-plugin');
+?></span>
+</span>
+<a href="<?php echo wp_nonce_url('?page='. esc_attr($_GET['page']) .'&tab=free-widget-configurator&command=save-set&set_id='. esc_attr(urlencode($id)), 'ti-save-set'); ?>&verified_by_trustindex" class="ti-btn ti-btn-sm ti-btn-loading-on-click ti-pull-right"><?php echo __('Select', 'trustindex-plugin'); ?></a>
+<div class="clear"></div>
+</div>
+<div class="preview">
+<?php echo $pluginManagerInstance->renderWidgetAdmin(true, false, ['style-id' => $styleId, 'set-id' => $id, 'verified-by-trustindex' => true]); ?>
+</div>
+</div>
+<div class="ti-notice ti-notice-info ti-verified-badge-notice">
+<p>
+<span class="dashicons dashicons-star-empty"></span> <strong><?php echo esc_html(__('Congratulations!', 'trustindex-plugin')); ?></strong><br />
+<?php echo sprintf(__('Our system ranked you in the top %d%% of companies based on your reviews. Your total rating score above %s in the last %d month, and your reviews are genuine', 'trustindex-plugin'), 5, $pluginManager::$topRatedMinimumScore, 12); ?><br />
+<?php echo __('This allows you to <strong>use in the widgets the Trustindex verified badge, the Universal Symbol of Trust.</strong> With the verified badge you can build more trust, and sell more!', 'trustindex-plugin'); ?>
+</p>
 </div>
 </div>
 </div>
 <?php endif; ?>
-<?php endforeach; ?>
+<?php endif; ?>
+<?php
+$isFirstLayout = false;
+endforeach; ?>
 </div>
 <?php elseif ($stepCurrent === 4): ?>
-<?php
-$widgetType = $pluginManager::$widget_templates['templates'][$styleId]['type'];
-$widgetHasReviews = !in_array($widgetType, ['button', 'badge', 'top-rated-badge']) || in_array($styleId, [23, 30, 32]);
-?>
+<?php $widgetType = $pluginManager::$widget_templates['templates'][$styleId]['type']; ?>
 <h1 class="ti-header-title"><?php echo __('Set up widget', 'trustindex-plugin'); ?></h1>
 <?php if (!count($reviews) && !$isReviewDownloadInProgress): ?>
 <div class="ti-notice ti-notice-warning" style="margin: 0 0 15px 0">
@@ -611,7 +788,7 @@ $widgetHasReviews = !in_array($widgetType, ['button', 'badge', 'top-rated-badge'
 <div class="ti-box-inner">
 <div class="ti-box-header">
 <?php echo __('Widget Preview', 'trustindex-plugin'); ?>
-<?php if (!in_array($styleId, [ 17, 21, 52, 53 ])): ?>
+<?php if (!in_array($styleId, [17, 21, 52, 53, 112, 114])): ?>
 <span class="ti-box-header-normal ti-pull-right">
 <?php echo __('Style', 'trustindex-plugin'); ?>:
 <strong><?php echo esc_html(__($pluginManager::$widget_styles[ $scssSet ]['name'], 'trustindex-plugin')); ?></strong>
@@ -623,10 +800,7 @@ $widgetHasReviews = !in_array($widgetType, ['button', 'badge', 'top-rated-badge'
 </span>
 </div>
 <div class="preview ti-widget-editor-preview">
-<?php echo $pluginManagerInstance->get_noreg_list_reviews(null, true, null, null, false, true); ?>
-<div style="display: none; text-align: center">
-<?php echo __('You do not have reviews with the current filters. <br />Change your filters if you would like to display reviews on your page!', 'trustindex-plugin'); ?>
-</div>
+<?php echo $pluginManagerInstance->renderWidgetAdmin(true); ?>
 </div>
 </div>
 </div>
@@ -639,9 +813,28 @@ $widgetHasReviews = !in_array($widgetType, ['button', 'badge', 'top-rated-badge'
 <div class="ti-box-inner">
 <div class="ti-box-header"><?php echo __('Widget Settings', 'trustindex-plugin'); ?></div>
 <div class="ti-left-block" id="ti-widget-selects">
-<?php if ($widgetHasReviews): ?>
+<?php if ($pluginManagerInstance->isVerifiedByTrustindexAvailable()): ?>
+<div class="ti-form-group">
+<label>
+<?php echo __('Verified by Trustindex', 'trustindex-plugin'); ?>
+<span class="ti-badge ti-badge-info"><?php echo esc_html(__('Recommended', 'trustindex-plugin')); ?></span>
+</label>
+<form method="post" action="">
+<input type="hidden" name="command" value="save-verified-by-trustindex" />
+<?php wp_nonce_field('ti-save-verified-by-trustindex'); ?>
+<?php $verifiedByTrustindex = (int)$pluginManagerInstance->getWidgetOption('verified-by-trustindex'); ?>
+<select class="ti-form-control" name="verified-by-trustindex">
+<option value="0"<?php if (!$verifiedByTrustindex): ?> selected<?php endif; ?>><?php echo esc_html(__('Hide', 'trustindex-plugin')); ?></option>
+<option value="1"<?php if ($verifiedByTrustindex === 1): ?> selected<?php endif; ?>><?php echo esc_html(sprintf(__('Style %d', 'trustindex-plugin'), 1)); ?></option>
+<option value="2"<?php if ($verifiedByTrustindex === 2): ?> selected<?php endif; ?>><?php echo esc_html(sprintf(__('Style %d', 'trustindex-plugin'), 2)); ?></option>
+</select>
+</form>
+</div>
+<?php endif; ?>
+<?php if ($pluginManagerInstance->isLayoutHasReviews()): ?>
 <div class="ti-form-group">
 <label><?php echo __('Filter your ratings', 'trustindex-plugin'); ?></label>
+
 <form method="post" action="">
 <input type="hidden" name="command" value="save-filter-stars" />
 <?php wp_nonce_field('ti-save-filter-stars'); ?>
@@ -665,7 +858,7 @@ $widgetHasReviews = !in_array($widgetType, ['button', 'badge', 'top-rated-badge'
 </select>
 </form>
 </div>
-<?php if ($widgetHasReviews): ?>
+<?php if ($pluginManagerInstance->isLayoutHasReviews()): ?>
 <div class="ti-form-group">
 <label><?php echo __('Select date format', 'trustindex-plugin'); ?></label>
 <form method="post" action="">
@@ -695,7 +888,27 @@ break;
 </select>
 </form>
 </div>
-<?php if (!in_array($styleId, [ 17, 21, 52, 53 ])): ?>
+<div class="ti-form-group">
+<label><?php echo __('Select name format', 'trustindex-plugin'); ?></label>
+<form method="post" action="">
+<input type="hidden" name="command" value="save-nameformat" />
+<?php wp_nonce_field('ti-save-nameformat'); ?>
+<select class="ti-form-control" name="nameformat">
+<?php foreach ($pluginManager::$widget_nameformats as $format): ?>
+<option value="<?php echo esc_attr($format['id']); ?>" <?php echo $pluginManagerInstance->getWidgetOption('nameformat') == $format['id'] ? 'selected' : ''; ?>>
+<?php
+if (1 === (int)$format['id']) {
+echo __('Do not format', 'trustindex-plugin');
+} else {
+echo esc_html($pluginManagerInstance->renderNameFormat('Firstname Lastname', $format['id']));
+}
+?>
+</option>
+<?php endforeach; ?>
+</select>
+</form>
+</div>
+<?php if (!in_array($styleId, [17, 21, 52, 53, 112, 114])): ?>
 <div class="ti-form-group">
 <label><?php echo __('Align', 'trustindex-plugin'); ?></label>
 <form method="post" action="">
@@ -739,6 +952,7 @@ break;
 </select>
 </form>
 </div>
+<?php if (!$pluginManagerInstance->isFomoWidget()): ?>
 <div class="ti-form-group">
 <label><?php echo __('Select date format', 'trustindex-plugin'); ?></label>
 <form method="post" action="">
@@ -753,12 +967,128 @@ break;
 </form>
 </div>
 <?php endif; ?>
+<?php endif; ?>
+<?php if ($pluginManagerInstance->isFomoWidget()): ?>
+<?php if ($pluginManagerInstance->isFomoCustomWidget()): ?>
+<div class="ti-form-group" style="max-width: 400px">
+<label><?php echo __('Title', 'trustindex-plugin'); ?></label>
+<form method="post" action="">
+<input type="hidden" name="command" value="save-fomo-title" />
+<?php wp_nonce_field('ti-save-fomo-title'); ?>
+<input type="text" class="ti-form-control ti-save-input-on-change" value="<?php echo esc_attr($pluginManagerInstance->getWidgetOption('fomo-title')); ?>" name="fomo-title" />
+<small class="ti-text-muted" style="padding-left: 5px"><?php echo htmlentities(__('Enclose the text in <u></u> if you want to highlight it', 'trustindex-plugin')); ?></small>
+</form>
+</div>
+<div class="ti-form-group" style="max-width: 400px">
+<label><?php echo __('Subtitle', 'trustindex-plugin'); ?></label>
+<form method="post" action="">
+<input type="hidden" name="command" value="save-fomo-text" />
+<?php wp_nonce_field('ti-save-fomo-text'); ?>
+<input type="text" class="ti-form-control ti-save-input-on-change" value="<?php echo esc_attr($pluginManagerInstance->getWidgetOption('fomo-text')); ?>" name="fomo-text" />
+<small class="ti-text-muted" style="padding-left: 5px"><?php echo htmlentities(__('Enclose the text in <u></u> if you want to highlight it', 'trustindex-plugin')); ?></small>
+</form>
+</div>
+<?php endif; ?>
+<?php if ($choices = $pluginManagerInstance->getFomoSubtitleTextChoices()): ?>
+<div class="ti-form-group">
+<label><?php echo __('Subtitle', 'trustindex-plugin'); ?></label>
+<form method="post" action="">
+<input type="hidden" name="command" value="save-fomo-text" />
+<?php wp_nonce_field('ti-save-fomo-text'); ?>
+<select class="ti-form-control" name="fomo-text">
+<option value="hide" <?php echo $pluginManagerInstance->getWidgetOption('fomo-text') === '' ? 'selected' : ''; ?>><?php echo __('Hide', 'trustindex-plugin'); ?></option>
+<?php foreach ($choices as $choice => $choiceText): ?>
+<option value="<?php echo esc_attr($choice); ?>" <?php echo $pluginManagerInstance->getWidgetOption('fomo-text') == $choice ? 'selected' : ''; ?>><?php echo esc_html($choiceText); ?></option>
+<?php endforeach; ?>
+</select>
+</form>
+</div>
+<?php endif; ?>
+<div class="ti-form-row">
+<div class="ti-form-group">
+<label><?php echo __('Icon', 'trustindex-plugin'); ?></label>
+<form method="post" action="">
+<input type="hidden" name="command" value="save-fomo-icon" />
+<?php wp_nonce_field('ti-save-fomo-icon'); ?>
+<select class="ti-form-control" name="fomo-icon">
+<option value="hide" <?php echo $pluginManagerInstance->getWidgetOption('fomo-icon') === 'hide' ? 'selected' : ''; ?>><?php echo __('Hide', 'trustindex-plugin'); ?></option>
+<?php foreach ($pluginManager::$widget_templates['templates'][$styleId]['params']['fomo-icon-choices'] as $icon): ?>
+<?php echo $iconName = ucfirst(str_replace('-', ' ', $icon)); ?>
+<option value="<?php echo esc_attr($icon); ?>" <?php echo $pluginManagerInstance->getWidgetOption('fomo-icon') == $icon ? 'selected' : ''; ?>><?php echo __($iconName, 'trustindex-plugin'); ?></option>
+<?php endforeach; ?>
+</select>
+</form>
+</div>
+<div class="ti-form-group">
+<label><?php echo __('Color', 'trustindex-plugin'); ?></label>
+<form method="post" action="">
+<input type="hidden" name="command" value="save-fomo-color" />
+<?php wp_nonce_field('ti-save-fomo-color'); ?>
+<input type="text" class="ti-form-control ti-color-picker ti-save-input-on-change-color" value="<?php echo esc_attr($pluginManagerInstance->getWidgetOption('fomo-color')); ?>" name="fomo-color" readonly />
+</form>
+</div>
+</div>
+<div class="ti-form-row">
+<div class="ti-form-group">
+<label><?php echo __('Align', 'trustindex-plugin'); ?></label>
+<form method="post" action="">
+<input type="hidden" name="command" value="save-align" />
+<?php wp_nonce_field('ti-save-align'); ?>
+<select class="ti-form-control" name="align">
+<?php foreach ([ 'left', 'right' ] as $type): ?>
+<option value="<?php echo esc_attr($type); ?>" <?php echo $pluginManagerInstance->getWidgetOption('align') == $type ? 'selected' : ''; ?>><?php echo __($type, 'trustindex-plugin'); ?></option>
+<?php endforeach; ?>
+</select>
+</form>
+</div>
+<div class="ti-form-group">
+<label><?php echo __('Margin', 'trustindex-plugin'); ?></label>
+<form method="post" action="">
+<input type="hidden" name="command" value="save-fomo-margin" />
+<?php wp_nonce_field('ti-save-fomo-margin'); ?>
+<input type="number" class="ti-form-control ti-save-input-on-change" min=0 step=1 value="<?php echo esc_attr($pluginManagerInstance->getWidgetOption('fomo-margin')); ?>" name="fomo-margin" />
+</form>
+</div>
+</div>
+<div class="ti-form-row">
+<?php if (isset($pluginManager::$widget_templates['templates'][$styleId]['params']['fomo-days'])): ?>
+<div class="ti-form-group">
+<label><?php echo __('Number of days', 'trustindex-plugin'); ?></label>
+<form method="post" action="">
+<input type="hidden" name="command" value="save-fomo-day" />
+<?php wp_nonce_field('ti-save-fomo-day'); ?>
+<select class="ti-form-control" name="fomo-day">
+<?php foreach ($pluginManager::$widget_templates['templates'][$styleId]['params']['fomo-days'] as $day): ?>
+<?php
+$name = sprintf(__('%d days', 'trustindex-plugin'), $day);
+if ($day === 1) {
+$name = sprintf(__('%d hours', 'trustindex-plugin'), 24);
+}
+?>
+<option value="<?php echo esc_attr($day); ?>" <?php echo $pluginManagerInstance->getWidgetOption('fomo-day') == $day ? 'selected' : ''; ?>><?php echo esc_html($name); ?></option>
+<?php endforeach; ?>
+</select>
+</form>
+</div>
+<?php endif; ?>
+<?php if ($pluginManagerInstance->isFomoHideCountAvailable()): ?>
+<div class="ti-form-group">
+<label><?php echo __('Hide until count reaches', 'trustindex-plugin'); ?></label>
+<form method="post" action="">
+<input type="hidden" name="command" value="save-fomo-hide-count" />
+<?php wp_nonce_field('ti-save-fomo-hide-count'); ?>
+<input type="number" class="ti-form-control ti-save-input-on-change" min=0 step=1 value="<?php echo esc_attr($pluginManagerInstance->getWidgetOption('fomo-hide-count')); ?>" name="fomo-hide-count" />
+</form>
+</div>
+<?php endif; ?>
+</div>
+<?php endif; ?>
 </div>
 <div class="ti-right-block">
 <form method="post" id="ti-widget-options">
 <input type="hidden" name="command" value="save-options" />
 <?php wp_nonce_field('ti-save-options'); ?>
-<?php if ($widgetHasReviews): ?>
+<?php if ($pluginManagerInstance->isLayoutHasReviews()): ?>
 <span class="ti-checkbox ti-checkbox-row">
 <input type="checkbox" name="only-ratings" value="1"<?php if ($filter['only-ratings']): ?> checked<?php endif; ?> />
 <label><?php echo __('Hide reviews without comments', 'trustindex-plugin'); ?></label>
@@ -770,10 +1100,16 @@ break;
 <label><?php echo __('Hide rating text', 'trustindex-plugin'); ?></label>
 </span>
 <?php endif; ?>
-<?php if ($widgetHasReviews && (!in_array($widgetType, ['floating']) || $styleId === 53)): ?>
+<?php if ($pluginManagerInstance->isLayoutHasReviews() && (!in_array($widgetType, ['floating']) || $styleId === 53)): ?>
 <span class="ti-checkbox ti-checkbox-row">
 <input type="checkbox" name="footer-filter-text" value="1"<?php if ($pluginManagerInstance->getWidgetOption('footer-filter-text')): ?> checked<?php endif; ?> />
 <label><?php echo __('Show minimum review filter condition', 'trustindex-plugin'); ?></label>
+</span>
+<?php endif; ?>
+<?php if ($pluginManagerInstance->isLayoutHasReviews()): ?>
+<span class="ti-checkbox ti-checkbox-row">
+<input type="checkbox" name="show-review-replies" value="1"<?php if ($pluginManagerInstance->getWidgetOption('show-review-replies')): ?> checked<?php endif; ?> />
+<label><?php echo __('Show review reply', 'trustindex-plugin'); ?></label>
 </span>
 <?php endif; ?>
 <?php if (in_array($styleId, [ 8, 10, 13 ])): ?>
@@ -788,7 +1124,7 @@ break;
 <label><?php echo __('Show "Load more" button', 'trustindex-plugin'); ?></label>
 </span>
 <?php endif; ?>
-<?php if ($widgetHasReviews && !in_array($styleId, [53,54])): ?>
+<?php if ($pluginManagerInstance->isLayoutHasReviews() && !in_array($styleId, [53,54])): ?>
 <span class="ti-checkbox ti-checkbox-row">
 <input type="checkbox" name="verified-icon" value="1"<?php if ($pluginManagerInstance->getWidgetOption('verified-icon')): ?> checked<?php endif; ?> />
 <label><?php echo __('Show verified review icon', 'trustindex-plugin'); ?></label>
@@ -800,7 +1136,7 @@ break;
 <label><?php echo __('Show navigation arrows', 'trustindex-plugin'); ?></label>
 </span>
 <?php endif; ?>
-<?php if ($widgetHasReviews && $styleId != 52): ?>
+<?php if ($pluginManagerInstance->isLayoutHasReviews() && $styleId != 52): ?>
 <span class="ti-checkbox ti-checkbox-row">
 <input type="checkbox" name="show-reviewers-photo" value="1"<?php if ($pluginManagerInstance->getWidgetOption('show-reviewers-photo')): ?> checked<?php endif; ?> />
 <label><?php echo __("Show reviewer's profile picture", 'trustindex-plugin'); ?></label>
@@ -820,17 +1156,19 @@ break;
 </label>
 </span>
 <?php endif; ?>
-<?php if (!in_array($widgetType, [ 'floating' ]) && !$isTopRatedBadge && $scssSet !== 'drop-shadow' && $styleId != 54): ?>
+<?php if (!in_array($widgetType, [ 'floating', 'fomo' ]) && !$isTopRatedBadge && $scssSet !== 'drop-shadow' && $styleId != 54): ?>
 <span class="ti-checkbox ti-checkbox-row">
 <input type="checkbox" name="enable-animation" value="1"<?php if ($pluginManagerInstance->getWidgetOption('enable-animation')): ?> checked<?php endif; ?> />
 <label><?php echo __('Enable mouseover animation', 'trustindex-plugin'); ?></label>
 </span>
 <?php endif; ?>
+<?php if (!$pluginManagerInstance->isFomoWidget()): ?>
 <span class="ti-checkbox ti-checkbox-row">
 <input type="checkbox" name="disable-font" value="1"<?php if ($pluginManagerInstance->getWidgetOption('disable-font')): ?> checked<?php endif; ?> />
 <label><?php echo __("Use site's font", 'trustindex-plugin'); ?></label>
 </span>
-<?php if ($widgetHasReviews): ?>
+<?php endif; ?>
+<?php if ($pluginManagerInstance->isLayoutHasReviews()): ?>
 <span class="ti-checkbox ti-checkbox-row">
 <input type="checkbox" name="show-logos" value="1"<?php if ($pluginManagerInstance->getWidgetOption('show-logos')): ?> checked<?php endif;?> />
 <label><?php echo __('Show platform logos', 'trustindex-plugin'); ?></label>
@@ -842,17 +1180,46 @@ break;
 </span>
 <?php endif; ?>
 <?php endif; ?>
-<?php if ($widgetType === 'floating'): ?>
+<?php if ($pluginManagerInstance->isFomoWidget()): ?>
+<?php if ('hide' !== $pluginManagerInstance->getWidgetOption('fomo-icon')): ?>
 <span class="ti-checkbox ti-checkbox-row">
-<input type="checkbox" name="floating-desktop-open" value="1"<?php if ($pluginManagerInstance->getWidgetOption('floating-desktop-open')): ?> checked<?php endif; ?> />
-<label><?php echo __('Opened on desktop', 'trustindex-plugin'); ?></label>
-</span>
-<span class="ti-checkbox ti-checkbox-row">
-<input type="checkbox" name="floating-mobile-open" value="1"<?php if ($pluginManagerInstance->getWidgetOption('floating-mobile-open')): ?> checked<?php endif; ?> />
-<label><?php echo __('Opened on mobile', 'trustindex-plugin'); ?></label>
+<input type="checkbox" name="fomo-open" value="1"<?php if ($pluginManagerInstance->getWidgetOption('fomo-open')): ?> checked<?php endif; ?> />
+<label><?php echo __('Default open', 'trustindex-plugin'); ?></label>
 </span>
 <?php endif; ?>
+<span class="ti-checkbox ti-checkbox-row">
+<input type="checkbox" name="fomo-border" value="1"<?php if ($pluginManagerInstance->getWidgetOption('fomo-border')): ?> checked<?php endif; ?> />
+<label><?php echo __('Show border', 'trustindex-plugin'); ?></label>
+</span>
+<?php if ('hide' !== $pluginManagerInstance->getWidgetOption('fomo-icon') && 'platform-images' !== $pluginManagerInstance->getWidgetOption('fomo-icon')): ?>
+<span class="ti-checkbox ti-checkbox-row">
+<input type="checkbox" name="fomo-icon-background" value="1"<?php if ($pluginManagerInstance->getWidgetOption('fomo-icon-background')): ?> checked<?php endif; ?> />
+<label><?php echo __('Show icon background', 'trustindex-plugin'); ?></label>
+</span>
+<?php endif; ?>
+<span class="ti-checkbox ti-checkbox-row">
+<input type="checkbox" name="fomo-link" value="1"<?php if ($pluginManagerInstance->getWidgetOption('fomo-link')): ?> checked<?php endif; ?> />
+<label><?php echo __('Enable link', 'trustindex-plugin'); ?></label>
+</span>
+<?php if ($pluginManagerInstance->getWidgetOption('fomo-link')): ?>
+<span class="ti-checkbox ti-checkbox-row">
+<input type="checkbox" name="fomo-arrow" value="1"<?php if ($pluginManagerInstance->getWidgetOption('fomo-arrow')): ?> checked<?php endif; ?> />
+<label><?php echo __('Show arrow', 'trustindex-plugin'); ?></label>
+</span>
+<?php endif; ?>
+<?php endif; ?>
 </form>
+<div class="clear"></div>
+<?php if ($pluginManagerInstance->getWidgetOption('fomo-link') && $pluginManagerInstance->isFomoCustomWidget()): ?>
+<div class="ti-form-group ti-mt-4">
+<label>URL</label>
+<form method="post" action="">
+<input type="hidden" name="command" value="save-fomo-url" />
+<?php wp_nonce_field('ti-save-fomo-url'); ?>
+<input type="text" class="ti-form-control ti-save-input-on-change" value="<?php echo esc_attr($pluginManagerInstance->getWidgetOption('fomo-url')); ?>" name="fomo-url" />
+</form>
+</div>
+<?php endif; ?>
 </div>
 <div class="clear"></div>
 <?php if (!$isTopRatedBadge || $isTopRatedBadgeValid): ?>

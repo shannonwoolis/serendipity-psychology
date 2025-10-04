@@ -2,7 +2,7 @@
 defined('ABSPATH') or die('No script kiddies please!');
 $ti_db_schema = [
 'reviews' => "
-CREATE TABLE ". $this->get_tablename('reviews') ." (
+CREATE TABLE ". $tiReviewsTableName ." (
  `id` TINYINT(1) NOT NULL AUTO_INCREMENT,
  `hidden` TINYINT(1) NOT NULL DEFAULT 0,
  `user` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_ci,
@@ -14,6 +14,13 @@ CREATE TABLE ". $this->get_tablename('reviews') ." (
  `reviewId` TEXT,
  `reply` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
  PRIMARY KEY  (`id`)
+)
+",
+'views' => "
+CREATE TABLE ". $tiViewsTableName ." (
+ `date` DATE NOT NULL,
+ `viewed` BIGINT(20) NOT NULL,
+ PRIMARY KEY  (`date`)
 )
 "
 ];

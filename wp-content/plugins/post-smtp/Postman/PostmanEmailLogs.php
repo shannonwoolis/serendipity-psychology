@@ -4,6 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 require 'Postman-Email-Log/PostmanEmailQueryLog.php';
+require POST_SMTP_PATH . '/includes/libs/HTMLPurifier/HTMLPurifier.auto.php';
 
 class PostmanEmailLogs {
 
@@ -67,16 +68,64 @@ class PostmanEmailLogs {
             $log = $email_query_log->get_log( $id, '' );
             $header = $log['original_headers'];
             $msg = $log['original_message'];
-            $msg = preg_replace( "/<script\b[^>]*>(.*?)<\/script>/s", '', $msg );
-
-            echo ( isset ( $header ) && strpos( $header, "text/html" ) ) ? $msg : '<pre>' . $msg . '</pre>' ;
+ 			$msg = $this->purify_html( $msg );
+           	echo ( isset ( $header ) && strpos( $header, "text/html" ) ) ? $msg : '' . $msg . '' ;
 
             die;
 
         }
 
     }
+	
+    /**
+     * 
+     * Purifies and sanitizes HTML content using HTMLPurifier.
+     *
+     * @param string $html_content The potentially unsafe HTML content.
+     * @return string The purified and sanitized HTML content.
+     * @since 3.1.2
+     * @version 1.0.0
+     * 
+     */
+	public function purify_html( $html_content ) {
+		// Configure HTMLPurifier.
+		$config = HTMLPurifier_Config::createDefault();
+		$config->set('Core.Encoding', 'UTF-8');
+		$config->set('HTML.Doctype', 'XHTML 1.0 Transitional');
+		
+		// ✅ Allow all standard email template elements		
+		$config->set('HTML.AllowedElements', null);
 
+		// ✅ Allow all attributes except JavaScript-based ones
+		$config->set('HTML.AllowedAttributes', null);
+        $config->set('CSS.AllowedProperties', 'border-radius, background');
+    
+		// ❌ Block JavaScript-based attacks
+		$config->set( 'HTML.ForbiddenElements', ['script'] );
+		
+		$config->set( 'HTML.ForbiddenAttributes', ['on*'] );
+		// ❌ Prevent JavaScript in links and images.
+		$config->set('URI.AllowedSchemes', [
+			'http'  => true,
+			'https' => true,
+			'mailto' => true,
+			'tel'   => true,
+		]); 
+        
+		$config->set( 'URI.SafeIframeRegexp', '' );
+		// ✅ Allow inline styles but prevent unsafe styles
+		$config->set( 'CSS.Trusted', false ); // Block dangerous inline styles.
+		$config->set( 'CSS.AllowedProperties', null ); // NULL means allow all CSS properties.
+        $config->set( 'CSS.MaxImgLength', null );
+        // this library is removing display:flex how can we fix it?
+        $config->set( 'CSS.AllowTricky', true );
+
+		// Initialize HTMLPurifier.
+		$purifier = new HTMLPurifier( $config);
+
+		// Purify the dirty HTML.
+		return $purifier->purify( $html_content );
+	}
 
     /**
      * Installs the Table | Creates the Table
@@ -264,12 +313,7 @@ class PostmanEmailLogs {
 
         }
         else {
-
-            return $this->db->insert(
-                $this->db->prefix . $this->db_name,
-                $data  
-            ) ? $this->db->insert_id : false;
-
+            return $this->db->insert( $this->db->prefix . $this->db_name, $data  ) ? $this->db->insert_id : false;
         }
 
     }
@@ -301,13 +345,12 @@ class PostmanEmailLogs {
      * @version 1.0
      */
     public function get_logs_ajax() {
-
         if( !wp_verify_nonce( $_GET['security'], 'security' ) ) {
 
             return;
 
         }
-
+  
         if( isset( $_GET['action'] ) && $_GET['action'] == 'ps-get-email-logs' ) {
 
             $logs_query = new PostmanEmailQueryLog;
@@ -335,15 +378,20 @@ class PostmanEmailLogs {
                 $query['from'] = strtotime( sanitize_text_field( $_GET['from'] ) );
 
             }
-
+       
             if( isset( $_GET['to'] ) && !empty( $_GET['to'] ) ) {
 
                 $query['to'] = strtotime( sanitize_text_field( $_GET['to'] ) ) + 86400;
 
             }
 
-            $data = $logs_query->get_logs( $query );
+            if( isset( $_GET['filter_by'] ) && !empty( $_GET['filter_by'] ) ) {
 
+                $query['filter_by'] = sanitize_text_field( $_GET['filter_by'] );
+
+            }
+
+            $data = $logs_query->get_logs( $query );
             //WordPress Date, Time Format
             $date_format = get_option( 'date_format' );
 		    $time_format = get_option( 'time_format' );
@@ -359,7 +407,7 @@ class PostmanEmailLogs {
                 '&quot;',
                 '&#039;'
             );
-
+   
             //Lets manage the Date format :)
             foreach( $data as $row ) {
 
@@ -369,7 +417,11 @@ class PostmanEmailLogs {
 
                     $row->success = '<span title="Success">Success</span>';
 
-                }
+                } else if( $row->success == 'Sent ( ** Fallback ** )' ){
+
+                    $row->success = '<span title="Sent ( ** Fallback ** )">Success</span><a href="#" class="ps-status-log ps-popup-btn">View details</a>';
+                    
+               }
                 elseif( $row->success == 'In Queue' ) {
 
                     $row->success = '<span title="In Queue">In Queue</span>';
@@ -435,11 +487,13 @@ class PostmanEmailLogs {
 		if( isset( $_POST['action'] ) && $_POST['action'] == 'ps-delete-email-logs' ) {
 
 			$args = array();
+            $deleted_all = false;
 
 			//Delete all
 			if( !isset( $_POST['selected'] ) ) {
 
 				$args = array( -1 );
+                $deleted_all = true;
 
 			}
 			//Delete selected
@@ -465,7 +519,8 @@ class PostmanEmailLogs {
 
 				$response = array(
 					'success' => true,
-					'message' => __( 'Logs deleted successfully', 'post-smtp' )
+					'message' => __( 'Logs deleted successfully', 'post-smtp' ),
+                    'deleted_all' => $deleted_all
 				);
 
 			}
@@ -473,7 +528,8 @@ class PostmanEmailLogs {
 
 				$response = array(
 					'success' => false,
-					'message' => __( 'Error deleting logs', 'post-smtp' )
+					'message' => __( 'Error deleting logs', 'post-smtp' ),
+                    'deleted_all' => $deleted_all
 				);
 
 			}

@@ -5,7 +5,7 @@ defined('ABSPATH') or die('No script kiddies please!');
 <div class="ti-box">
 <div class="ti-box-header"><?php echo __('Skyrocket Your Sales with Customer Reviews', 'trustindex-plugin'); ?></div>
 <p class="ti-bold">
-<?php echo sprintf(__('%s+ WordPress websites use Trustindex to embed reviews fast and easily.', 'trustindex-plugin'), '500.000'); ?><br />
+<?php echo sprintf(__('%s+ WordPress websites use Trustindex to embed reviews fast and easily.', 'trustindex-plugin'), '700.000'); ?><br />
 <?php echo __('Increase SEO, trust and sales using customer reviews.', 'trustindex-plugin'); ?>
 </p>
 <div class="ti-section-title"><?php echo __('Top Features', 'trustindex-plugin'); ?></div>
@@ -13,7 +13,7 @@ defined('ABSPATH') or die('No script kiddies please!');
 <li><?php echo __('Display unlimited number of reviews', 'trustindex-plugin'); ?></li>
 <li><?php echo __('Create unlimited number of widgets', 'trustindex-plugin'); ?></li>
 <li><?php echo __('Display reviews with photos', 'trustindex-plugin'); ?></li>
-<li><?php echo sprintf(__('%d review platforms', 'trustindex-plugin'), 133); ?></li>
+<li><?php echo sprintf(__('%d review platforms', 'trustindex-plugin'), 137); ?></li>
 <li><?php echo __('Mix reviews from different platforms', 'trustindex-plugin'); ?></li>
 <li><?php echo __('Get more reviews', 'trustindex-plugin'); ?></li>
 <li><?php echo __('Manage all reviews in one place', 'trustindex-plugin'); ?></li>

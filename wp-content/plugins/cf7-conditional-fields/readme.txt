@@ -5,8 +5,8 @@ Author: Jules Colle
 Website: http://bdwm.be
 Tags: contact form 7, forms, form, conditional fields, conditional logic
 Requires at least: 5.0
-Tested up to: 6.7
-Stable tag: 2.5.7
+Tested up to: 6.8
+Stable tag: 2.6.4
 Requires PHP: 7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -71,7 +71,6 @@ Pro features include:
 * Repeatable fields (repeaters)
 * Forms with multiple steps (multistep)
 * Custom conditions with JavaScript functions
-* Conditions with regular expressions
 * Multiple file upload
 
 [Get the PRO version of Conditional Fields for Contact Form 7!](https://conditional-fields-cf7.bdwm.be/contact-form-7-conditional-fields-pro/)
@@ -137,6 +136,48 @@ Because the nature of the changes introduced in version 5.7 of Contact Form 7 yo
 Reverted autop-fix because it was causing addional errors. Bottom line: Make sure you are om Conditional Fields version 2.2.11 and CF7 version 5.6.4
 
 == Changelog ==
+
+= 2.6.4 (2025-09-30) =
+* Fully tested with Contact Form 7 version 6.1.2
+
+= 2.6.3 (2025-08-05) =
+* Fully tested with Contact Form 7 version 6.1.1
+
+= 2.6.2 (2025-07-14) =
+* Fix togglebutton problem in 2.6.1
+
+= 2.6.1 (2025-07-13) =
+* Fix problem with some versions of jQuery.
+
+= 2.6 (2025-06-26) =
+* Fully tested with Contact Form 7 version 6.1
+* Add support for [SWV](https://contactform7.com/schema-woven-validation/)
+* always wait until groups are updated before submitting the form
+* Disable submit buttons while the form is submitting
+
+= 2.5.14 (2025-06-14) =
+* Bug fix: Allow multiple class names for group tags [#129](https://github.com/pwkip/contact-form-7-conditional-fields/issues/129)
+
+= 2.5.13 (2025-06-13) =
+* Improve backend mailbox validation.
+
+= 2.5.12 (2025-06-07) =
+* Bug fix: Make sure legacy forms (created before version 1.4) can be edited.
+* Bug fix: Validation Issue with CF7 file upload within multistep form [#128](https://github.com/pwkip/contact-form-7-conditional-fields/issues/128) - Thanks to Sebastian Blasius from [huishu-agentur.de](https://huishu-agentur.de) for the fix!
+
+= 2.5.11 (2025-04-10) =`
+* Fully tested with Contact Form 7 version 6.0.6
+* Tested up to WP 6.8
+
+= 2.5.10 (2025-03-11) =
+* Fully tested with Contact Form 7 version 6.0.5
+
+= 2.5.9 (2025-02-18) =
+* Fully tested with Contact Form 7 version 6.0.4
+
+= 2.5.8 (2025-02-11) =
+* Enable regular expressions again in the free version.
+* Temporarily add contact-form-7-conditional-fields.php file again and point it to the new file. This is to prevent users from getting a fatal error when updating from version 2.5.4. This file will be removed again in a future update.
 
 = 2.5.7 (2025-01-14) =
 * Fully tested with Contact Form 7 version 6.0.3

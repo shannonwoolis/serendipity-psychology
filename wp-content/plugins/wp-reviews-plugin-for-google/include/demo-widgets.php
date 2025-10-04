@@ -10,7 +10,7 @@ defined('ABSPATH') or die('No script kiddies please!');
 <strong><?php echo esc_html(__($pluginManager::$widget_templates['templates'][4]['name'], 'trustindex-plugin')); ?></strong>
  (<?php echo esc_html(__($pluginManager::$widget_styles['light-background']['name'], 'trustindex-plugin')); ?>)
 </div>
-<div class="preview"><?php echo $pluginManagerInstance->get_trustindex_widget('2d9bf9019f8d93ad1430e9135'); ?></div>
+<div class="preview"><?php echo $pluginManagerInstance->renderWidgetFrontend('2d9bf9019f8d93ad1430e9135'); ?></div>
 </div>
 </div>
 </div>
@@ -44,6 +44,9 @@ $demoList = [
 60 => 'light-background',
 25 => 'light-background',
 32 => 'dark-background',
+109 => 'drop-shadow',
+110 => 'drop-shadow',
+111 => 'drop-shadow',
 22 => 'light-background',
 23 => 'ligth-border',
 55 => 'light-minimal',
@@ -66,7 +69,7 @@ $className = 'ti-half-width';
 <strong><?php echo esc_html(__($template['name'], 'trustindex-plugin')); ?></strong>
  (<?php echo esc_html(__($pluginManager::$widget_styles[ $style ]['name'], 'trustindex-plugin')); ?>)
 </div>
-<div class="preview"><?php echo $pluginManagerInstance->get_noreg_list_reviews(null, true, $layout, $style, true, true, true); ?></div>
+<div class="preview"><?php echo $pluginManagerInstance->renderWidgetAdmin(true, true, ['style-id' => $layout, 'set-id' => $style]); ?></div>
 </div>
 </div>
 </div>
