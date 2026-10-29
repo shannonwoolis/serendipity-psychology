@@ -13,7 +13,7 @@ if(is_singular( array('locations') )) {
   $context['front'] = new Timber\Post(get_option('page_on_front') );
 }
 
-if(is_singular( array('care-pathways', 'specialist-therapies', 'conditions') )) {
+if(is_singular( array('care-pathways', 'specialist-therapies', 'conditions', 'assessments') )) {
   Timber::render( [ 'page.twig' ], $context );
 } else {
   Timber::render( [ 'single-' . $timber_post->post_type . '.twig', 'single.twig' ], $context );

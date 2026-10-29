@@ -4,6 +4,7 @@
 			{% include "_atoms/hero-image.twig" with { classes: 'lg:hidden lg:h-full' } %}
 
 			<div class="flex flex-col {{ spacingY }} {{ spacingX }}">
+				{% if not fn('is_front_page') %}{% filter shortcodes %}<span class="mb-4">[wpseo_breadcrumb]</span>{% endfilter %}{% endif %}
 				{% if pre_title %}<span class="mb-2 font-subheading pre-title text-primary text-balance">{{ pre_title }}</span>{% endif %}
 				{% if title %}
 					{% if h1 %}
@@ -13,36 +14,32 @@
 					{% endif %}
 				{% endif %}
 				{% if copy %}<span class="copy -mb-6 mt-4">{{ copy }}</span>{% endif %}
-				{% if buttons %}
+				{% if buttons or show_phone_number %}
 					<div class="flex flex-wrap items-center mt-4">
 						{% for button in buttons %}
 							{% include "_atoms/button.twig" with {
 								link: button.button.url,
 								text: button.button.title,
 								colour: button.colour,
-								classes: 'mt-2 mr-2',
+								classes: 'mt-2 ' ~ (loop.last and show_phone_number ? 'mr-6' : 'mr-2'),
 							} %}
 						{% endfor %}
+						{% if show_phone_number %}
+							{% include "_atoms/phone-number.twig" with {
+								phone_classes: 'mt-2'
+							} %}
+						{% endif %}
 					</div>
 				{% endif %}
 			</div>
 
-			{% if usps %}
-				<div class="bg-primary rounded-tr-4xl lg:rounded-tr-5xl">
-					<div class="{{ spacingY }} {{ spacingX }}">
-						<div class="flex flex-wrap -m-4 lg:pr-16">
-							{% for item in usps %}
-								<div class="w-full sm:w-1/2 flex flex-col p-4">
-									<img src="{{ item.icon.url|resize(100) }}" class="w-12 h-12 object-contain mb-3">
-									<span class="text-lg text-secondary leading-tight font-heading pr-2">{{ item.text }}</span>
-								</div>
-							{% endfor %}
-						</div>
-					</div>
-				</div>
+			{% if usps and show_insurance_providers %}
+				{% include "_atoms/hero-usps.twig" with {
+					usp_classes: 'sm:w-1/2 flex-col'
+				} %}
 			{% endif %}
 		</div>
-		<div class="top-0 right-0 w-full lg:w-1/2 relative {{ usps or show_insurance_providers ? 'lg:pb-32' }}">
+		<div class="top-0 right-0 w-full lg:w-1/2 relative {% if usps %}{{ show_insurance_providers ? 'lg:pb-32' : 'lg:pb-16 2xl:pb-20' }}{% endif %}">
 			{% include "_atoms/hero-image.twig" with { classes: 'hidden lg:block lg:h-full' } %}
 
 			{% if show_insurance_providers %}
@@ -56,5 +53,10 @@
 				</div>
 			{% endif %}
 		</div>
+		{% if usps and not show_insurance_providers %}
+			{% include "_atoms/hero-usps.twig" with {
+				usp_classes: 'sm:w-1/2 lg:w-1/4 flex-row items-center gap-x-4'
+			} %}
+		{% endif %}
 	</div>
 </div>

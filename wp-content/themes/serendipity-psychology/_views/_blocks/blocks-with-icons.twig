@@ -35,18 +35,30 @@
 
         <div class="flex flex-wrap -m-4">
             {% for item in section.block %}
-                <div class="w-full p-4 sm:w-1/2 {{ section.block|length > 2 ? 'lg:w-1/3' }}">
-                    <div class="bg-primary text-white p-6 rounded-tr-3xl flex flex-col h-full">
+                {% set b_length = section.block|length %}
+                {% if section.vary_block_colours %}
+                    {% if loop.index in [1,4] %}
+                        {% set b_colours = 'bg-secondary text-black' %}
+                    {% elseif loop.index in [2,5] %}
+                        {% set b_colours = 'bg-primary text-white' %}
+                    {% else %}
+                        {% set b_colours = 'bg-primary-pale text-black' %}
+                    {% endif %}
+                {% else %}
+                    {% set b_colours = 'bg-primary text-white' %}
+                {% endif %}
+                <div class="w-full p-4 sm:w-1/2 {{ b_length > 2 and b_length != 4 ? 'lg:w-1/3' }}">
+                    <div class="{{ b_colours }} p-6 rounded-tr-3xl flex flex-col h-full {{ b_length in [1,2,4] ? 'md:p-10' }}">
                         {% if item.icon %}<img src="" data-src="{{ item.icon.url|resize(200) }}" class="lazyload w-16 h-16 mb-4 object-center object-contain">{% endif %}
                         {% if item.title %}
                             {% if item.link %}
-                                <a href="{{ item.link.url }}" class="text-lg sm:text-xl lg:text-2xl font-heading text-secondary leading-tight underline hover:text-white">{{ item.title }}</a>
+                                <a href="{{ item.link.url }}" class="text-lg sm:text-xl lg:text-2xl font-heading leading-tight underline {{ 'text-white' in b_colours ? 'text-secondary hover:text-white' : 'text-primary hover:text-primary-dark' }}">{{ item.title }}</a>
                             {% else %}
-                                <span class="text-lg sm:text-xl lg:text-2xl font-heading text-secondary leading-tight">{{ item.title }}</span>
+                                <span class="text-lg sm:text-xl lg:text-2xl font-heading leading-tight {{ 'text-white' in b_colours ? 'text-secondary' : 'text-primary' }}">{{ item.title }}</span>
                             {% endif %}
                         {% endif %}
                         {% if item.copy %}
-                            <div class="mt-4 text-sm copy dark-copy">
+                            <div class="mt-4 text-sm copy {{ 'text-white' in b_colours ? 'dark-copy' : 'light-copy' }}">
                                 {{ item.copy }}
                             </div>
                         {% endif %}

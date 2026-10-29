@@ -1,8 +1,7 @@
 <div class="flex items-center">
-    <span class="flex items-center mr-3 lg:mr-0 xl:mr-6 text-sm lg:text-base xl:text-lg">
-        {{ fn('icon','phone','text-primary mr-1') }}
-        <a href="tel:{{ options.default_phone_number }}" class="xl:ml-1 text-primary hover:underline font-bold">{{ options.default_phone_number }}</a>
-    </span>
+    {% include "_atoms/phone-number.twig" with {
+        phone_classes: 'mr-3 lg:mr-0 xl:mr-6'
+    } %}
     {% include "_atoms/button.twig" with {
         link: '/contact-us/',
         text: 'Get Started',
