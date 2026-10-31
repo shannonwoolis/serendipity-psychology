@@ -156,6 +156,14 @@ h3 {
             }
         }
     }
+
+    .pre-title {
+        @apply text-secondary font-subheading text-2xl md:text-3xl;
+    }
+
+    p:has(.pre-title) {
+        @apply mb-3;
+    }
 }
 
 .qual-copy {

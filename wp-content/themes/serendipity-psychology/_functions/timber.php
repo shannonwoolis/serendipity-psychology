@@ -70,6 +70,14 @@
           'posts_per_page' => -1,
       ];
       $context['conditions'] = new Timber\PostQuery($conditions);
+      
+      $assessments = [
+          'post_type' => 'assessments',
+          'orderby' => 'title',
+          'order' => 'ASC',
+          'posts_per_page' => -1,
+      ];
+      $context['assessments'] = new Timber\PostQuery($assessments);
 
       $testimonials = [
           'post_type' => 'testimonials',

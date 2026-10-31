@@ -1,0 +1,32 @@
+<a href="{{ link }}" class="w-full h-full flex flex-col relative transform transition-all hover:scale-103 bg-primary-pale rounded-tr-3xl overflow-hidden">
+    {% if image %}
+        {% include "_atoms/picture.twig" with {
+            source: image,
+            pictureClasses: 'relative z-0',
+            lazyload: true,
+            breakpoints: {
+                "1px" : {
+                    w: 600,
+                    h: 300,
+                    crop: 'center'
+                },
+            },
+            img: {
+                classes: 'lazyload',
+                w: 600,
+                h: 300,
+                crop: 'center',
+                alt: title
+            }
+        } %}
+    {% endif %}
+    <span class="relative z-10 p-6 md:p-10 flex flex-col items-start flex-grow">
+        {% if type %}<span class="btn btn-secondary mb-4 {{ image ? '-mt-12 md:-mt-16' }}">{{ type }}</span>{% endif %}
+        <span class="text-2xl md:text-3xl leading-tight mb-2 text-primary">{{ title }}</span>
+        <span class="mb-4">{{ copy }}</span>
+        <span class="w-full pt-4 mt-auto border-t border-primary-light flex justify-between items-center">
+            <span class="">{{ price }}</span>
+            <span class="text-primary font-semibold">{{ button_text }} {{ fn('icon','angles-right') }}</span>
+        </span>
+    </span>
+</a>

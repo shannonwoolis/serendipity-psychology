@@ -1,0 +1,7 @@
+{% set assessments_fields = options.assessments %}
+{% include "_components/cards.twig" with {
+    id: 'assessments',
+    fields: assessments_fields,
+    buckets: assessments,
+    bgColour: section.background_colour|default('white'),
+} %}

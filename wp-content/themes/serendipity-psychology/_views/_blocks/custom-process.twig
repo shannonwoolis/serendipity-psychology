@@ -1,0 +1,66 @@
+<div class="container flex justify-center {{ section.padding_top ? spacingT }} {{ section.padding_bottom ? spacingB }}">
+    <div class="relative flex flex-wrap max-w-screen-xl rounded-tr-3xl overflow-hidden">
+        {# <div class="block bg-{{ backgroundColour ? backgroundColour : 'secondary-pale' }} w-screen h-2 absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 z-0"></div> #}
+        <div class="relative z-10 p-6 md:p-10 bg-{{ backgroundColour ? backgroundColour : 'secondary-pale' }} flex flex-col relative">
+            {% if section.pre_title %}<span class="mb-2 font-subheading text-2xl md:text-3xl text-primary">{{ section.pre_title }}</span>{% endif %}
+            {% if section.title %}<span class="font-heading text-2xl md:text-3xl mb-2 leading-tight {{ section.copy and not section.pre_title ? 'text-primary' }}">{{ section.title }}</span>{% endif %}
+            {% if section.copy %}<span class="">{{ section.copy }}</span>{% endif %}
+            {% if section.process %}
+                <div class="flex flex-wrap justify-center -m-2 mt-4">
+                    {% for step in section.process %}
+                        {% if loop.index in [1,4] %}
+                            {% set bg_class = 'bg-primary' %}
+                        {% elseif loop.index in [2,5] %}
+                            {% set bg_class = 'bg-secondary-extraDark' %}
+                        {% else %}
+                            {% set bg_class = 'bg-primary-extraDark' %}
+                        {% endif %}
+                        <div class="w-full sm:w-1/2 lg:w-1/4 p-2">
+                            <div class="w-full h-full p-6 flex flex-col items-start bg-white">
+                                <span class="{{ bg_class }} w-8 h-8 mb-2 rounded-full text-white font-semibold flex items-center justify-center text-center">{{ loop.index }}</span>
+                                <span class="">{{ step.copy }}</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if section.button %}
+                <div class="flex flex-wrap gap-y-3 gap-x-6 mt-8 items-center">
+                    {% include "_atoms/button.twig" with {
+                        link: section.button.url,
+                        text: section.button.title,
+                        colour: 'primary',
+                        classes: '',
+                    } %}
+                    {% if section.button_disclaimer %}<span class="text-sm">{{ section.button_disclaimer }}</span>{% endif %}
+                </div>
+            {% endif %}
+        </div>
+        {% if section.image %}
+            {% include "_atoms/picture.twig" with {
+                source: section.image.url,
+                pictureClasses: 'relative z-10 w-full sm:w-1/3 relative z-0 sm:absolute top-0 right-0 sm:h-full',
+                lazyload: true,
+                breakpoints: {
+                    "600px" : {
+                        w: 480,
+                        h: null,
+                        crop: 'center'
+                    },
+                    "1px" : {
+                        w: 480,
+                        h: 200,
+                        crop: 'center'
+                    },
+                },
+                img: {
+                    classes: 'w-full h-full object-center object-cover lazyload',
+                    w: 480,
+                    h: 200,
+                    crop: 'center',
+                    alt: section.image.alt
+                }
+            } %}
+        {% endif %}
+    </div>
+</div>

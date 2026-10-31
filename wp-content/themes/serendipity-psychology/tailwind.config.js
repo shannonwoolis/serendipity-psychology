@@ -36,6 +36,7 @@ module.exports = {
           light: "#cdd4e5",
           DEFAULT: "#53699F",
           dark: "#42537f",
+          extraDark: '#2e3a58',
         },
         secondary: {
           pale: "#E9F3F3",

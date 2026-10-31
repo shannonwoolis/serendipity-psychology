@@ -1,0 +1,56 @@
+<div id="{{ id }}" class="bg-{{ bgColour ? bgColour : 'white' }} {{ spacingY }}">
+    <div class="container">
+        <div class="flex flex-wrap">
+            <div class="flex flex-col items-start w-full">
+                <span class="text-primary font-heading text-4xl md:text-5xl lg:text-6xl leading-tight mb-3 block">{{ fields.title }}</span>
+                {% if fields.copy %}<div class="copy">{{ fields.copy }}</div>{% endif %}
+                {% if fields.buttons and post.id != dontShowButton %}
+                    {% for button in fields.buttons %}
+                        {% include "_atoms/button.twig" with {
+                            link: button.button.url,
+                            text: button.button.title,
+                            colour: button.colour,
+                            classes: 'mt-2 mb-8',
+                        } %}
+                    {% endfor %}
+                {% endif %} 
+            </div>
+
+            <div class="w-full mt-8">
+                <div class="-m-4 relative">
+                    <div class="flex flex-wrap">
+                        {% for post in buckets %}
+                            {% set post = Post(post) %}
+                            <div class="w-full p-4 sm:w-1/2 lg:w-1/3">
+                                {% include "_atoms/card.twig" with {
+                                    link: post.link,
+                                    image: post.thumbnail.src,
+                                    title: post.meta('card_info').title|default(post.title),
+                                    type: post.meta('card_info').type,
+                                    copy: post.meta('card_info').copy,
+                                    price: post.meta('card_info').price,
+                                    button_text: 'Find out more'
+                                } %}
+                            </div>
+                        {% endfor %}
+                        <div class="w-full p-4 sm:w-1/2 lg:w-1/3">
+                            {% set extra = fields.extra_card %}
+                            {% include "_atoms/card.twig" with {
+                                link: extra.button.url,
+                                title: extra.title,
+                                type: extra.type,
+                                copy: extra.copy,
+                                price: extra.price,
+                                button_text: extra.button.title
+                            } %}
+                        </div>
+                    </div>
+                    {# {% include "_atoms/slider-controls.twig" with {
+                        sliderName: 'bucketsMob',
+                        controlsClasses: 'lg:hidden'
+                    } %} #}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
