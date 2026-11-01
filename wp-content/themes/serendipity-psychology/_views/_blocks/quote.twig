@@ -1,0 +1,56 @@
+<div class="{{ section.padding_top ? spacingT }} {{ section.padding_bottom ? spacingB }}">
+    <div class="container flex justify-center">
+        <div class="relative flex flex-col sm:flex-row overflow-hidden max-w-screen-xl rounded-tr-3xl">
+            {% if section.photo %}
+                {% include "_atoms/picture.twig" with {
+                    source: section.photo.url,
+                    pictureClasses: 'hidden sm:block w-auto max-w-quote-image block aspect-square relative z-0',
+                    lazyload: true,
+                    breakpoints: {
+                        "1px" : {
+                            w: 480,
+                            h: 480,
+                            crop: 'center'
+                        },
+                    },
+                    img: {
+                        classes: 'w-full h-full object-cover object-center lazyload',
+                        w: 480,
+                        h: 480,
+                        crop: 'center',
+                    }
+                } %}
+            {% endif %}
+            <div class="relative z-10 flex flex-col w-full justify-center p-6 md:p-10 bg-primary text-white">
+                <div class="flex mb-6">
+                    {% if section.photo %}
+                        {% include "_atoms/picture.twig" with {
+                            source: section.photo.url,
+                            pictureClasses: 'block sm:hidden w-auto max-w-quote-image block aspect-square relative z-0 mr-6',
+                            lazyload: true,
+                            breakpoints: {
+                                "1px" : {
+                                    w: 480,
+                                    h: 480,
+                                    crop: 'center'
+                                },
+                            },
+                            img: {
+                                classes: 'w-full h-full object-cover object-center lazyload',
+                                w: 480,
+                                h: 480,
+                                crop: 'center',
+                            }
+                        } %}
+                    {% endif %}
+                    <div class="flex flex-col">
+                        {% if section.pre_title %}<span class="mb-2 font-subheading text-2xl md:text-3xl text-secondary">{{ section.pre_title }}</span>{% endif %}
+                        {% if section.person_name %}<span class="font-heading text-2xl md:text-3xl mb-2 leading-tight">{{ section.person_name }}</span>{% endif %}
+                        {% if section.person_position %}<span class="text-lg mb-2">{{ section.person_position }}</span>{% endif %}
+                    </div>
+                </div>
+                {% if section.quote %}<span class="font-light">{{ section.quote }}</span>{% endif %}
+            </div>
+        </div>
+    </div>
+</div>

@@ -32,6 +32,17 @@ a {
   @apply transition duration-300;
 }
 
+.aspect-square {
+  aspect-ratio: 1 / 1;
+}
+
+.max-w-quote-image {
+  max-width: 33%;
+  @screen 2xl {
+    max-width: 25%;
+  }
+}
+
 /***********************************************************
 Lazyload **************************************************/
 

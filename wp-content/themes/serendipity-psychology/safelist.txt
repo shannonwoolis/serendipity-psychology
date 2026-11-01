@@ -28,6 +28,7 @@ sm:grid-cols-2
 gap-4
 sm:col-span-2
 bg-secondary-pale
+bg-primary-pale
 pr-4
 2xs:pr-6
 md:pr-8
